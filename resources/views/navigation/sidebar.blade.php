@@ -94,7 +94,7 @@
           </li>
           <li class="menu-item">
             <a href="pages-account-settings-connections.html" class="menu-link">
-              <div data-i18n="Connections">Connections</div>
+              <div data-i18n="Connections">Manage APIS</div>
             </a>
           </li>
         </ul>
@@ -123,7 +123,7 @@
         </ul>
       </li>
 
-      <!-- Extended components -->
+      <!-- Device components -->
       <li class="menu-item">
         <a href="javascript:void(0)" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-copy"></i>
@@ -143,45 +143,40 @@
         </ul>
       </li>
 
+            <!-- User interface -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-box"></i>
+                  <div data-i18n="User interface">Roles</div>
+                </a>
+                <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="{{ route('roles.index') }}" class="menu-link">
+                      <div data-i18n="Accordion">View Roles</div>
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a href="ui-alerts.html" class="menu-link">
+                      <div data-i18n="Alerts">Create Roles</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
 
-      <li class="menu-item">
-        <a href="javascript:void(0)" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-box"></i>
-          <div data-i18n="User interface">Device Management</div>
-        </a>
-        <ul class="menu-sub">
-          <li class="menu-item">
-            <a href="ui-accordion.html" class="menu-link">
-              <div data-i18n="Accordion">View All Devices</div>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="ui-alerts.html" class="menu-link">
-              <div data-i18n="Alerts">Create Device</div>
-            </a>
-          </li>
-        </ul>
-      </li>
-
-      <!-- Extended components -->
-      <li class="menu-item">
-        <a href="javascript:void(0)" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-copy"></i>
-          <div data-i18n="Extended UI">User Management</div>
-        </a>
-        <ul class="menu-sub">
-          <li class="menu-item">
-            <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-              <div data-i18n="Perfect Scrollbar">View All Users</div>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="extended-ui-text-divider.html" class="menu-link">
-              <div data-i18n="Text Divider">Create New User</div>
-            </a>
-          </li>
-        </ul>
-      </li>
+              <!-- Device components -->
+              <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-copy"></i>
+                  <div data-i18n="Extended UI">Permissions</div>
+                </a>
+                <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
+                      <div data-i18n="Perfect Scrollbar">View Permissions</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
 
       {{-- <!-- Misc -->
       <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
