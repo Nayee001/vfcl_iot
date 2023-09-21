@@ -119,8 +119,33 @@
 
     <!-- Page JS -->
     <script src="../assets/js/dashboards-analytics.js"></script>
+    <script src="../assets/js/ui-toasts.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+ <script type="text/javascript">
+     // Default Configuration
+     $(document).ready(function() {
+         toastr.options = {
+             'closeButton': true,
+             'debug': false,
+             'newestOnTop': false,
+             'progressBar': false,
+             'positionClass': 'toast-top-right',
+             'preventDuplicates': false,
+             'showDuration': '1000',
+             'hideDuration': '1000',
+             'timeOut': '5000',
+             'extendedTimeOut': '1000',
+             'showEasing': 'swing',
+             'hideEasing': 'linear',
+             'showMethod': 'fadeIn',
+             'hideMethod': 'fadeOut',
+         }
+     });
+ </script>
+    @yield('script')
+
   </body>
 </html>

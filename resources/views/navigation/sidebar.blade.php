@@ -69,7 +69,7 @@
     <ul class="menu-inner py-1">
       <!-- Dashboard -->
       <li class="menu-item active">
-        <a href="index.html" class="menu-link">
+        <a href="{{route('home')}}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-home-circle"></i>
           <div data-i18n="Analytics">Dashboard</div>
         </a>
@@ -90,11 +90,6 @@
           <li class="menu-item">
             <a href="pages-account-settings-notifications.html" class="menu-link">
               <div data-i18n="Notifications">Notifications</div>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="pages-account-settings-connections.html" class="menu-link">
-              <div data-i18n="Connections">Manage APIS</div>
             </a>
           </li>
         </ul>
@@ -152,12 +147,7 @@
                 <ul class="menu-sub">
                   <li class="menu-item">
                     <a href="{{ route('roles.index') }}" class="menu-link">
-                      <div data-i18n="Accordion">View Roles</div>
-                    </a>
-                  </li>
-                  <li class="menu-item">
-                    <a href="ui-alerts.html" class="menu-link">
-                      <div data-i18n="Alerts">Create Roles</div>
+                      <div data-i18n="Accordion">Manage Roles</div>
                     </a>
                   </li>
                 </ul>
@@ -172,7 +162,7 @@
                 <ul class="menu-sub">
                   <li class="menu-item">
                     <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-                      <div data-i18n="Perfect Scrollbar">View Permissions</div>
+                      <div data-i18n="Perfect Scrollbar">Manage Permissions</div>
                     </a>
                   </li>
                 </ul>

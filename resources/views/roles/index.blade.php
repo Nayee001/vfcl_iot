@@ -1,8 +1,54 @@
 @extends('layouts.app')
 <!-- Content -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Role Management</h4>
+        <div class="d-flex justify-content-between">
+            <div>
+                <h4 class="fw-bold py-3 mb-4">Role Management</h4>
+            </div>
+            <div class="mt-3">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
+                    Create Role
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel1">Create Role</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="form-roles-create" method="post">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="nameBasic" class="form-label">Name</label>
+                                            {!! Form::text('name', null, ['placeholder' => 'Role Name', 'id' => 'name', 'class' => 'form-control']) !!}
+                                        </div>
+                                    </div>
+                                    @foreach ($permission as $value)
+                                        <label>{{ Form::checkbox('permission[]', $value->id, false, ['id' => 'permission', 'class' => 'name']) }}
+                                            {{ $value->name }}</label>
+                                        <br />
+                                    @endforeach
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
         <div class="card">
             <h5 class="card-header">Roles</h5>
             <div class="table-responsive text-nowrap">
@@ -18,7 +64,8 @@
                         @foreach ($roles as $item)
                             <tr>
                                 <td><i class="fab fa-angular fa-lg text-danger me-3"></i>
-                                    <strong>{{ $item->name }}</strong></td>
+                                    <strong>{{ $item->name }}</strong>
+                                </td>
                                 <td><span class="badge bg-label-primary me-1">{{ $item->guard_name }}</span></td>
                                 <td>
                                     <div class="dropdown">
@@ -44,4 +91,49 @@
         </div>
     </div>
     <!-- / Content -->
+@endsection
+@section('script')
+    <script rel="javascript" type="text/javascript" href="js/jquery-1.11.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Toastr -->
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#form-roles-create').on('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('submit').attr('disabled', true);
+                var formData = new FormData($('#form-roles-create')[0]);
+                $.ajax({
+                    method: 'POST',
+                    url: '{{ route('roles.store') }}',
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function(resp) {
+                        if (resp.code == 200) {
+                            toastr.success(resp.Message);
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1900);
+                        } else {
+                            toastr.error(resp.Message);
+                        }
+                    },
+                    error: function(data) {
+                        $(".submit").attr("disabled", false);
+                        var errors = data.responseJSON;
+                        $.each(errors.errors, function(key, value) {
+                            var ele = "#" + key;
+                            $(ele).addClass('error');
+                            $('<label class="error">' + value + '</label>').insertAfter(
+                                ele);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
