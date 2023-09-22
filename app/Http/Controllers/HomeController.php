@@ -25,4 +25,9 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function accountSettings()
+    {
+        return view('user_settings.account_settings');
+    }
 }
