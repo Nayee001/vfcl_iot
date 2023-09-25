@@ -1,19 +1,19 @@
 @extends('layouts.app')
 <!-- Content -->
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between">
             <div>
-                <h4 class="fw-bold py-3 mb-4">Role Management</h4>
+                <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Role Management /</span> Role List</h4>
+
             </div>
             <div class="mt-3">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRole">
                     Create Role
                 </button>
                 <!-- Modal -->
-                <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+                <div class="modal fade" id="createRole" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -50,7 +50,8 @@
 
         </div>
         <div class="card">
-            <h5 class="card-header">Roles</h5>
+            <h5 class="card-header">Role Management</h5>
+
             <div class="table-responsive text-nowrap">
                 <table class="table">
                     <thead>
@@ -74,11 +75,12 @@
                                             <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="javascript:void(0);"><i
+                                            <a class="dropdown-item"
+                                                onclick="getEditForm('{{ route('roles.edit', $item->id) }}')"
+                                                id="{{ $item->id }}" href="javascript:void(0);"><i
                                                     class="bx bx-edit-alt me-1"></i> Edit</a>
-                                            <a class="dropdown-item" href="javascript:void(0);"><i
-                                                    class="bx bx-trash me-1"></i>
-                                                Delete</a>
+                                            <a class="dropdown-item delete-role" href="javascript:void(0);"
+                                                id="{{ $item->id }}"><i class="bx bx-trash-alt me-1"></i> Delete</a>
                                         </div>
                                     </div>
                                 </td>
@@ -90,14 +92,12 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="editModel" data-backdrop="static">
+    </div>
+
     <!-- / Content -->
 @endsection
 @section('script')
-    <script rel="javascript" type="text/javascript" href="js/jquery-1.11.3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- Toastr -->
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#form-roles-create').on('submit', function(e) {
@@ -113,7 +113,7 @@
                     processData: false,
                     contentType: false,
                     success: function(resp) {
-                        if (resp.code == 200) {
+                        if (resp.code == '{{ __('statuscode.CODE200') }}') {
                             toastr.success(resp.Message);
                             setTimeout(function() {
                                 location.reload();
@@ -135,5 +135,63 @@
                 });
             });
         });
+
+        $(document).on('click', '.delete-role', function(e) {
+            var id = this.id;
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this role!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: 'DELETE',
+                        url: "{{ url('roles') }}" + "/" + id,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function(resp) {
+                            if (resp.code == '{{ __('statuscode.CODE200') }}') {
+                                toastr.success(resp.Message);
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1900);
+                            } else {
+                                toastr.error(resp.Message);
+                            }
+                        },
+                    });
+
+                } else if (
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {}
+            })
+        });
+
+        function getEditForm(url) {
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(res) {
+                    $("#editModel").html(res);
+                    $("#editModel").modal('show');
+                }
+            });
+        }
     </script>
 @endsection

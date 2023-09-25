@@ -63,6 +63,20 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="../assets/js/config.js"></script>
+
+
+
+    {{-- custom CDNS  --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="
+    https://cdn.jsdelivr.net/npm/sweetalert2@11.7.29/dist/sweetalert2.all.min.js
+    "></script>
+    <link href="
+    https://cdn.jsdelivr.net/npm/sweetalert2@11.7.29/dist/sweetalert2.min.css
+    " rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
   </head>
 
   <body>
@@ -123,29 +137,27 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
- <script type="text/javascript">
-     // Default Configuration
-     $(document).ready(function() {
-         toastr.options = {
-             'closeButton': true,
-             'debug': false,
-             'newestOnTop': false,
-             'progressBar': false,
-             'positionClass': 'toast-top-right',
-             'preventDuplicates': false,
-             'showDuration': '1000',
-             'hideDuration': '1000',
-             'timeOut': '5000',
-             'extendedTimeOut': '1000',
-             'showEasing': 'swing',
-             'hideEasing': 'linear',
-             'showMethod': 'fadeIn',
-             'hideMethod': 'fadeOut',
-         }
-     });
- </script>
     @yield('script')
-
+    <script type="text/javascript">
+        // Default Configuration
+        toastr.options = {
+            'closeButton': true,
+            'debug': false,
+            'newestOnTop': false,
+            'progressBar': false,
+            'positionClass': 'toast-top-right',
+            'preventDuplicates': false,
+            'showDuration': '1000',
+            'hideDuration': '1000',
+            'timeOut': '5000',
+            'extendedTimeOut': '1000',
+            'showEasing': 'swing',
+            'hideEasing': 'linear',
+            'showMethod': 'fadeIn',
+            'hideMethod': 'fadeOut',
+        }
+    </script>
   </body>
 </html>

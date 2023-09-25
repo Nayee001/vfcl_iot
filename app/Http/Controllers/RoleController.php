@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Exception;
+use Illuminate\Http\JsonResponse;
 
 class RoleController extends Controller
 {
@@ -68,7 +69,7 @@ class RoleController extends Controller
             $role->syncPermissions($request->input('permission'));
             return response()->json(['code' => statusMessage(200), 'Message' => 'Role Created !!']);
         } catch (Exception $e) {
-            return response()->json(['code' => statusMessage(400), 'Message' => 'Something Wrong Happen !!']);
+            return response()->json(['code' => statusMessage(400), 'Message' => __('messages.error')]);
         }
     }
     /**
@@ -95,13 +96,15 @@ class RoleController extends Controller
      */
     public function edit($id): View
     {
-        $role = Role::find($id);
-        $permission = Permission::get();
-        $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id", $id)
-            ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
-            ->all();
-
-        return view('roles.edit', compact('role', 'permission', 'rolePermissions'));
+        try {
+            $role = Role::find($id);
+            $permission = Permission::get();
+            $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id", $id)
+                ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
+                ->all();
+            return view('roles.edit', compact('role', 'permission', 'rolePermissions'));
+        } catch (Exception $e) {
+        }
     }
 
     /**
@@ -111,21 +114,25 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'permission' => 'required',
-        ]);
+        dd($request->all());
+        try {
+            $this->validate($request, [
+                'name' => 'required',
+                'permission' => 'required',
+            ]);
 
-        $role = Role::find($id);
-        $role->name = $request->input('name');
-        $role->save();
+            $role = Role::find($id);
+            $role->name = $request->input('name');
+            $role->save();
 
-        $role->syncPermissions($request->input('permission'));
+            $role->syncPermissions($request->input('permission'));
 
-        return redirect()->route('roles.index')
-            ->with('success', 'Role updated successfully');
+            return response()->json(['code' => statusMessage(200), 'Message' => 'Role Updated !!']);
+        } catch (Exception $e) {
+            return response()->json(['code' => statusMessage(400), 'Message' => __('messages.error')]);
+        }
     }
     /**
      * Remove the specified resource from storage.
@@ -133,10 +140,13 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id): RedirectResponse
+    public function destroy($id)
     {
-        DB::table("roles")->where('id', $id)->delete();
-        return redirect()->route('roles.index')
-            ->with('success', 'Role deleted successfully');
+        try {
+            Role::where('id', $id)->delete();
+            return response()->json(['code' => statusMessage(200), 'Message' => 'Role Deleted !!']);
+        } catch (Exception $e) {
+            return response()->json(['code' => statusMessage(400), 'Message' => __('messages.error')]);
+        }
     }
 }
