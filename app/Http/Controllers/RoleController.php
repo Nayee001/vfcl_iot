@@ -9,7 +9,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use Yajra\DataTables\Datatables;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
@@ -36,7 +36,7 @@ class RoleController extends Controller
     public function index(Request $request): View
     {
         $permission = Permission::get();
-        $roles = Role::orderBy('id', 'DESC')->paginate(5);
+        $roles = Role::with('permissions')->orderBy('id', 'DESC')->paginate(5);
         return view('roles.index', compact('roles', 'permission'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -116,7 +116,7 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
             $this->validate($request, [
                 'name' => 'required',
@@ -147,6 +147,38 @@ class RoleController extends Controller
             return response()->json(['code' => statusMessage(200), 'Message' => 'Role Deleted !!']);
         } catch (Exception $e) {
             return response()->json(['code' => statusMessage(400), 'Message' => __('messages.error')]);
+        }
+    }
+
+    public function roleAjaxDatatable(Request $request)
+    {
+        if ($request->ajax()) {
+            $roles = Role::with('permissions')->orderBy('id', 'DESC')->get();
+            return DataTables::of($roles)
+                ->addIndexColumn()
+                ->addColumn('guard', function ($row) {
+                    $btn = '<span class="badge bg-label-primary me-1">' . $row->guard_name . '</span>';
+                    return $btn;
+                })
+                ->addColumn('permissions', function ($row) {
+                    $permissions = '';
+                    if (isset($row->permissions)) {
+                        foreach ($row->permissions as $permission) {
+                            $permissions .= '<span class="badge rounded-pill bg-label-primary me-1">' . $permission->name . '</span>';
+                        }
+                    }
+                    return $permissions;
+                })->addColumn('actions', function ($row) {
+                    $actions = '';
+                    $actions .= '<a title="Edit" class="btn rounded-pill btn-icon btn-outline-primary" onClick="getEditForm(\'' . route('roles.edit', $row->id) . '\')"
+                            id="' . $row->id . '" href="javascript:void(0);"><i
+                                class="bx bx-edit-alt me-1"></i></a>';
+                    $actions .= '<a class="mr-1 btn rounded-pill btn-icon btn-outline-danger delete-role"  title="Delete"  href="javascript:void(0);"
+                            id="' . $row->id . '"><i class="bx bx-trash-alt me-1"></i></a>';
+                    return $actions;
+                })
+                ->rawColumns(['guard', 'permissions', 'actions'])
+                ->make(true);
         }
     }
 }

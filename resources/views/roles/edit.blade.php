@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label for="nameBasic" class="form-label">Name</label>
-                        {!! Form::text('name', $role['name'], ['placeholder' => 'Name', 'id' => 'name','class' => 'form-control']) !!}
+                        {!! Form::text('name', $role['name'], ['placeholder' => 'Name', 'id' => 'name', 'class' => 'form-control']) !!}
                     </div>
                 </div>
                 @foreach ($permission as $value)
