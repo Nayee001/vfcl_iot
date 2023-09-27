@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/account-settings', [HomeController::class, 'accountSettings'])->name('account-settings');
     Route::get('/api-connections', [ApiManagerController::class, 'index'])->name('api-connections');
     Route::get('/roles-ajax-datatable', [RoleController::class, 'roleAjaxDatatable'])->name('roles-ajax-datatables');
+    Route::get('/users-ajax-datatable', [UserController::class, 'userAjaxDatatable'])->name('users-ajax-datatables');
 
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);

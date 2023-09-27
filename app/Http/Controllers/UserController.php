@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Yajra\DataTables\Datatables;
+
 
 class UserController extends Controller
 {
@@ -134,5 +136,54 @@ class UserController extends Controller
         User::find($id)->delete();
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
+    }
+
+    public function userAjaxDatatable(Request $request)
+    {
+        if ($request->ajax()) {
+            $users = User::orderBy('id', 'DESC')->withTrashed()->get();
+            return DataTables::of($users)
+                ->addIndexColumn()
+                ->addColumn('role', function ($row) {
+                    $role = '<span class="badge bg-label-secondary me-1">--</span>';
+                    if (!empty($row->getRoleNames())) {
+                        foreach ($row->getRoleNames() as $v) {
+                            $role = '<span class="badge bg-label-primary me-1">' . $v . '</span>';
+                        }
+                    }
+                    return $role;
+                })
+                ->addColumn('devices', function ($row) {
+                    $devices = '<span class="badge bg-label-secondary me-1">--</span>';
+                    return $devices;
+                })
+                ->addColumn('status', function ($row) {
+                    $status = '';
+                    if ($row->status == User::USER_STATUS['ACTIVE']) {
+                        $status .= '<span class="badge rounded-pill bg-label-success me-1">Active</span>';
+                    } elseif ($row->status == User::USER_STATUS['NEWUSER']) {
+                        $status .= '<span class="badge rounded-pill bg-label-primary me-1">New User</span>';
+                    } elseif ($row->status == User::USER_STATUS['NOACTIVEDEVICE']) {
+                        $status .= '<span class="badge rounded-pill bg-label-warning me-1">No Active Devices</span>';
+                    } elseif ($row->status == User::USER_STATUS['INACTIVE']) {
+                        $status .= '<span class="badge rounded-pill bg-label-danger me-1">In Active</span>';
+                    }
+                    return $status;
+                })->addColumn('actions', function ($row) {
+                    $actions = '';
+                    $actions .= '<div class="row"><a title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
+                    class="bx bx-edit-alt"></i></a>';
+                    if ($row->deleted_at == null) {
+                        $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-user"  title="Delete"  href="javascript:void(0);"
+                        id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
+                    }else{
+                        $actions .= '<a class="btn rounded-pill btn-icon btn-outline-warning restore-user"  title="Delete"  href="javascript:void(0);"
+                        id="' . $row->id . '"><i class="bx bx-undo"></i></a></div>';
+                    }
+                    return $actions;
+                })
+                ->rawColumns(['status', 'role', 'devices', 'actions'])
+                ->make(true);
+        }
     }
 }

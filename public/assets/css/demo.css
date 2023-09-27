@@ -109,3 +109,13 @@
 .custom-icon{
     font-size: 25px;
 }
+.edit-btn
+{
+    margin-right: 3px;
+}
+.dataTables_filter{
+    float: right !important;
+}
+.dataTables_paginate{
+    float: right !important;
+}

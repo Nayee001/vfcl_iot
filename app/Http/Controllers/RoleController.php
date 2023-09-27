@@ -116,7 +116,6 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->all());
         try {
             $this->validate($request, [
                 'name' => 'required',
@@ -170,11 +169,13 @@ class RoleController extends Controller
                     return $permissions;
                 })->addColumn('actions', function ($row) {
                     $actions = '';
-                    $actions .= '<a title="Edit" class="btn rounded-pill btn-icon btn-outline-primary" onClick="getEditForm(\'' . route('roles.edit', $row->id) . '\')"
-                            id="' . $row->id . '" href="javascript:void(0);"><i
-                                class="bx bx-edit-alt me-1"></i></a>';
-                    $actions .= '<a class="mr-1 btn rounded-pill btn-icon btn-outline-danger delete-role"  title="Delete"  href="javascript:void(0);"
-                            id="' . $row->id . '"><i class="bx bx-trash-alt me-1"></i></a>';
+                    if ($row->deleted_at == null) {
+                        $actions .= '<div class="row"><a title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" onClick="getEditForm(\'' . route('roles.edit', $row->id) . '\')"
+                        id="' . $row->id . '" href="javascript:void(0);"><i
+                            class="bx bx-edit-alt"></i></a>';
+                        $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-role"  title="Delete"  href="javascript:void(0);"
+                        id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
+                    }
                     return $actions;
                 })
                 ->rawColumns(['guard', 'permissions', 'actions'])

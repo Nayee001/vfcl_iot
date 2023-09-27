@@ -16,6 +16,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="form-roles-edit" method="post">
+            @csrf
+            {{ method_field('PUT') }}
             <div class="modal-body">
                 <div class="row">
                     <div class="col mb-3">
@@ -47,7 +49,7 @@
             $('submit').attr('disabled', true);
             var formData = new FormData($('#form-roles-edit')[0]);
             $.ajax({
-                method: 'PUT',
+                method: 'POST',
                 url: '{{ route('roles.update', $role->id) }}',
                 data: formData,
                 headers: {

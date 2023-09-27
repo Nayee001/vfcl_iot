@@ -8,10 +8,18 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable,HasRoles,SoftDeletes;
+
+    const USER_STATUS = [
+        'INACTIVE' => 0,
+        'ACTIVE' => 1,
+        'NEWUSER' => 2,
+        'NOACTIVEDEVICE' => 3,
+    ];
 
     /**
      * The attributes that are mass assignable.

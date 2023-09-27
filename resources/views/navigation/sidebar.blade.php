@@ -115,12 +115,12 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
+                    <a href="{{ route('users.index') }}" class="menu-link">
                         <div data-i18n="Perfect Scrollbar">View All Users</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="extended-ui-text-divider.html" class="menu-link">
+                    <a href="{{ route('users.create') }}" class="menu-link">
                         <div data-i18n="Text Divider">Create New User</div>
                     </a>
                 </li>

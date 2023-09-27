@@ -648,7 +648,7 @@ progress {
 }
 @media (min-width: 1400px) {
   .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-    max-width: 1440px;
+    max-width: 1550px;
   }
 }
 .row {
@@ -15297,7 +15297,7 @@ html:not(.layout-menu-fixed) .menu-inner-shadow {
   padding: 0 1.5rem;
 }
 .layout-navbar.navbar-detached.container-xxl {
-  max-width: calc(1440px - calc(1.625rem * 2));
+  max-width: calc(1550px - calc(1.625rem * 2));
 }
 .layout-navbar-fixed .layout-navbar.navbar-detached {
   width: calc(100% - calc(1.625rem * 2) - 16.25rem);

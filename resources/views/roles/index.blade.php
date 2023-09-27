@@ -65,46 +65,6 @@
                             </tr>
                         </thead>
                         <tbody class="table-border-bottom-0">
-                            {{-- @foreach ($roles as $item)
-                                <tr>
-                                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i>
-                                        <strong>{{ $item->name }}</strong>
-                                    </td>
-                                    <td>
-                                        @empty($item->permissions)
-                                            <div class="row">
-                                                No Permissions Given
-                                            </div>
-                                        @else
-                                            <div class="demo-inline-spacing">
-                                                @foreach ($item->permissions as $permission)
-                                                    <p>
-                                                        <span class="badge bg-label-primary me-1">{{ $permission->name }}</span>
-                                                    </p>
-                                                @endforeach
-                                            </div>
-                                        @endempty
-                                    </td>
-                                    <td><span class="badge rounded-pill bg-label-secondary">{{ $item->guard_name }}</span></td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                data-bs-toggle="dropdown">
-                                                <i class="bx bx-dots-vertical-rounded"></i>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item"
-                                                    onclick="getEditForm('{{ route('roles.edit', $item->id) }}')"
-                                                    id="{{ $item->id }}" href="javascript:void(0);"><i
-                                                        class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                <a class="dropdown-item delete-role" href="javascript:void(0);"
-                                                    id="{{ $item->id }}"><i class="bx bx-trash-alt me-1"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach --}}
-
                         </tbody>
                     </table>
                 </div>
