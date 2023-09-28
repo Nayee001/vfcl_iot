@@ -48,18 +48,21 @@ class UserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        dd($request->all());
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
+            'fname' => 'required',
+            'lname' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'email' => 'required',
+            'role' => 'required'
+
         ]);
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
 
         $user = User::create($input);
-        $user->assignRole($request->input('roles'));
+        $user->assignRole($request->input('role'));
 
         return redirect()->route('users.index')
             ->with('success', 'User created successfully');
@@ -117,7 +120,7 @@ class UserController extends Controller
 
         $user = User::find($id);
         $user->update($input);
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
+        DB::table('model_has_roles')->where('model_id', $id)->forceDelete();
 
         $user->assignRole($request->input('roles'));
 
@@ -133,7 +136,7 @@ class UserController extends Controller
      */
     public function destroy($id): RedirectResponse
     {
-        User::find($id)->delete();
+        User::find($id)->forceDelete();
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
     }
@@ -141,7 +144,7 @@ class UserController extends Controller
     public function userAjaxDatatable(Request $request)
     {
         if ($request->ajax()) {
-            $users = User::orderBy('id', 'DESC')->withTrashed()->get();
+            $users = User::orderBy('id', 'DESC')->get();
             return DataTables::of($users)
                 ->addIndexColumn()
                 ->addColumn('role', function ($row) {
@@ -176,7 +179,7 @@ class UserController extends Controller
                     if ($row->deleted_at == null) {
                         $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-user"  title="Delete"  href="javascript:void(0);"
                         id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
-                    }else{
+                    } else {
                         $actions .= '<a class="btn rounded-pill btn-icon btn-outline-warning restore-user"  title="Delete"  href="javascript:void(0);"
                         id="' . $row->id . '"><i class="bx bx-undo"></i></a></div>';
                     }

@@ -7,63 +7,54 @@
                 ajax: "{{ route('users-ajax-datatables') }}",
                 columns: [{
                         data: 'id',
-                        name: 'id',
-                        width: '20px'
+                        name: 'id'
                     },
                     {
                         data: 'title',
-                        name: 'title',
-                        width: '20px'
+                        name: 'title'
                     },
                     {
                         data: 'fname',
-                        name: 'fname',
-                        width: '20px'
+                        name: 'fname'
                     },
                     {
                         data: 'lname',
-                        name: 'lname',
-                        width: '20px'
+                        name: 'lname'
                     },
                     {
                         data: 'email',
-                        name: 'email',
-                        width: '50px    '
+                        name: 'email'
                     },
                     {
                         data: 'role',
-                        name: 'role',
-                        width: '50px'
+                        name: 'role'
                     },
                     {
                         data: 'devices',
-                        name: 'devices',
-                        width: '50px'
+                        name: 'devices'
                     },
                     {
                         data: 'status',
                         name: 'status',
                         orderable: false,
-                        searchable: false,
-                        width: '50px'
+                        searchable: false
                     },
                     {
                         data: 'actions',
                         name: 'actions',
-                        orderable: false,
-                        searchable: false
+                        orderable: false
                     },
                 ]
             });
-            $('#form-users-create').on('submit', function(e) {
+            $('#form-create-users').on('submit', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 $('submit').attr('disabled', true);
-                var formData = new FormData($('#form-users-create')[0]);
+                var userCreateForm = new FormData($('#form-create-users')[0]);
                 $.ajax({
                     method: 'POST',
                     url: '{{ route('users.store') }}',
-                    data: formData,
+                    data: userCreateForm,
                     cache: false,
                     processData: false,
                     contentType: false,
@@ -93,26 +84,18 @@
 
         $(document).on('click', '.delete-user', function(e) {
             var id = this.id;
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
-            })
-
             swalWithBootstrapButtons.fire({
                 title: 'Are you sure?',
-                text: "You Are Deactivating this user from there activities !!",
+                text: "You sure want to delete this user !!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, Deactivate user!',
+                confirmButtonText: 'Yes, Delete user!',
                 cancelButtonText: 'No, cancel!',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        method: 'DELETE',
+                        method: 'delete',
                         url: "{{ url('users') }}" + "/" + id,
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -140,13 +123,7 @@
 
         $(document).on('click', '.restore-user', function(e) {
             var id = this.id;
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
-            })
+
 
             swalWithBootstrapButtons.fire({
                 title: 'Are you sure?',
@@ -189,15 +166,20 @@
             })
         });
 
-        function getEditForm(url) {
-            $.ajax({
-                url: url,
-                method: 'GET',
-                success: function(res) {
-                    $("#editModel").html(res);
-                    $("#editModel").modal('show');
-                }
-            });
+
+        function generateRandomPassword(length) {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset.charAt(randomIndex);
+            }
+            return password;
         }
+        document.getElementById("generatePassword").addEventListener("click", function() {
+            const randomPassword = generateRandomPassword(10); // Change the length as needed
+            document.getElementById("passwordDisplay").textContent = "Random Password: " + randomPassword;
+        });
     </script>
 @endsection

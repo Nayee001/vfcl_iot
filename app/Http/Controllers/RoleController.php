@@ -35,6 +35,7 @@ class RoleController extends Controller
      */
     public function index(Request $request): View
     {
+
         $permission = Permission::get();
         $roles = Role::with('permissions')->orderBy('id', 'DESC')->paginate(5);
         return view('roles.index', compact('roles', 'permission'))
@@ -67,9 +68,9 @@ class RoleController extends Controller
         try {
             $role = Role::create(['name' => $request->input('name')]);
             $role->syncPermissions($request->input('permission'));
-            return response()->json(['code' => statusMessage(200), 'Message' => 'Role Created !!']);
+            return successMessage('Role Created !!');
         } catch (Exception $e) {
-            return response()->json(['code' => statusMessage(400), 'Message' => __('messages.error')]);
+            return errorMessage();
         }
     }
     /**
@@ -128,9 +129,9 @@ class RoleController extends Controller
 
             $role->syncPermissions($request->input('permission'));
 
-            return response()->json(['code' => statusMessage(200), 'Message' => 'Role Updated !!']);
+            return response()->json(successMessage('Role Updated !!'));
         } catch (Exception $e) {
-            return response()->json(['code' => statusMessage(400), 'Message' => __('messages.error')]);
+            return response()->json(errorMessage());
         }
     }
     /**
@@ -142,10 +143,10 @@ class RoleController extends Controller
     public function destroy($id)
     {
         try {
-            Role::where('id', $id)->delete();
+            Role::where('id', $id)->forceDelete();
             return response()->json(['code' => statusMessage(200), 'Message' => 'Role Deleted !!']);
         } catch (Exception $e) {
-            return response()->json(['code' => statusMessage(400), 'Message' => __('messages.error')]);
+            return response()->json(errorMessage());
         }
     }
 

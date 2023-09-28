@@ -57,3 +57,17 @@ if (!function_exists('statusMessage')) {
         }
     }
 }
+
+if (!function_exists("errorMessage")) {
+    function errorMessage()
+    {
+        return response()->json(['code' => statusMessage(400), 'Message' => __('messages.error')]);
+    }
+}
+
+if (!function_exists("successMessage")) {
+    function successMessage($message)
+    {
+        return response()->json(['code' => statusMessage(200), 'Message' => $message]);
+    }
+}

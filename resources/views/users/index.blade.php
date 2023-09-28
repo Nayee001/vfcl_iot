@@ -9,7 +9,7 @@
             </div>
             <div class="mt-3">
                 <!-- Button trigger modal -->
-                <a href="" class="btn btn-primary">Create User</a>
+                <a href="{{route('users.create')}}" class="btn btn-primary">Create User</a>
             </div>
 
         </div>
