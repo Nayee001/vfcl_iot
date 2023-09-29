@@ -18,7 +18,7 @@ use App\Http\Controllers\ApiManagerController;
 |
 */
 
-Route::any('/', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 
 Auth::routes();
 

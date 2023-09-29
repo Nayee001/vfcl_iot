@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * Write code on Method
@@ -69,5 +70,13 @@ if (!function_exists("successMessage")) {
     function successMessage($message)
     {
         return response()->json(['code' => statusMessage(200), 'Message' => $message]);
+    }
+}
+
+if(!function_exists("generateRandomPassword")){
+    function generateRandomPassword($length)
+    {
+        $randomString = Str::random($length);
+        return $randomString;
     }
 }

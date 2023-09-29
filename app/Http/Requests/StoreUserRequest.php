@@ -23,10 +23,13 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'fname' => 'required',
-            'lname' => 'required|email|unique:users,email',
+            'lname' => 'required',
+            'title' => 'required',
+            'role' => 'required',
             'password' => 'required|same:confirm-password',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required'
+            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber',
+            'status' => 'required|boolean',
         ];
     }
 }

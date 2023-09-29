@@ -1,55 +1,5 @@
 @extends('layouts.app')
-
-
 @section('content')
-    {{-- <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>Create New User</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
-            </div>
-        </div>
-    </div> --}}
-    {{--
-    {!! Form::open(['route' => 'users.store', 'method' => 'POST']) !!}
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Name:</strong>
-                {!! Form::text('name', null, ['placeholder' => 'Name', 'class' => 'form-control']) !!}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Email:</strong>
-                {!! Form::text('email', null, ['placeholder' => 'Email', 'class' => 'form-control']) !!}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Password:</strong>
-                {!! Form::password('password', ['placeholder' => 'Password', 'class' => 'form-control']) !!}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Confirm Password:</strong>
-                {!! Form::password('confirm-password', ['placeholder' => 'Confirm Password', 'class' => 'form-control']) !!}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Role:</strong>
-                {!! Form::select('roles[]', $roles, [], ['class' => 'form-control', 'multiple']) !!}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-    </div>
-    {!! Form::close() !!} --}}
     <div class="content-wrapper">
         <!-- Content -->
 
@@ -65,52 +15,67 @@
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
                                         <label for="fname" class="form-label">First Name</label>
-                                        {!! Form::text('fname', null, ['placeholder' => 'First Name', 'class' => 'form-control']) !!}
+                                        {!! Form::text('fname', null, ['placeholder' => 'First Name','id'=>'fname','class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="lname" class="form-label">Last Name</label>
-                                        {!! Form::text('lname', null, ['placeholder' => 'Last Name', 'class' => 'form-control']) !!}
+                                        {!! Form::text('lname', null, ['placeholder' => 'Last Name','id'=>'lname','class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="email" class="form-label">E-mail</label>
-                                        {!! Form::text('email', null, ['placeholder' => 'Email', 'class' => 'form-control']) !!}
+                                        {!! Form::text('email', null, ['placeholder' => 'Email','id'=>'email','class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="title" class="form-label">Title</label>
                                         {!! Form::text('title', null, [
                                             'placeholder' => 'Title; Professor, Research Assistant, etc..',
-                                            'class' => 'form-control',
+                                            'class' => 'form-control','id'=>'title'
                                         ]) !!}
                                     </div>
-                                    {{-- <div class="mb-3 col-md-6">
+                                    <div class="mb-3 col-md-6">
                                         <label class="form-label" for="phoneNumber">Phone Number</label>
                                         <div class="input-group input-group-merge">
                                             <span class="input-group-text">US (+1)</span>
-                                            {!! Form::select('phonenumber', null, ['placeholder' => '123 456 7890','class' => 'form-control', 'id' => 'phonenumber']) !!}
+                                            {!! Form::tel('phonenumber', null, [
+                                                'placeholder' => '123 456 7890',
+                                                'class' => 'form-control',
+                                                'id' => 'phonenumber','pattern'=>"[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                                            ]) !!}
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="role" class="form-label">Role</label>
                                         {!! Form::select('role', $roles, [], ['class' => 'form-control', 'id' => 'role']) !!}
                                     </div>
 
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label" for="password">Password</label>
-                                        <div class="input-group input-group-merge">
-                                            {!! Form::password('password', ['placeholder' => 'Password', 'id' => 'password', 'class' => 'form-control']) !!}
+                                        <div class="form-password-toggle">
+                                            <label class="form-label" for="password">Password</label>
+                                            <div class="input-group input-group-merge">
+                                                <span class="input-group-text" title="Generate Random Password"><a
+                                                        href="javascript:void(0);" title="Generate Random Password"
+                                                        id="generatePassword"
+                                                        class="btn rounded-pill btn-icon-generate_password btn-outline-primary __web-inspector-hide-shortcut__"><span
+                                                            class="tf-icons bx bx-refresh"></span></a></span>
+                                                {!! Form::password('password', ['placeholder' => 'Password', 'id' => 'password', 'class' => 'form-control']) !!}
+                                                <span class="input-group-text cursor-pointer" id="basic-default-password"><i
+                                                        class="bx bx-hide"></i></span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="confirm-password" class="form-label">Confirm Password</label>
-                                        {!! Form::password('confirm-password', ['placeholder' => 'Confirm Password','id'=> 'confirm_password','class' => 'form-control']) !!}
-                                    </div>
-                                    <div class="mb-3 col-md-6">
-                                        <br>
-                                        <button type="button" title="Generate Random Password"
-                                            class="btn rounded-pill btn-icon btn-outline-primary __web-inspector-hide-shortcut__">
-                                            <span class="tf-icons bx bx-refresh"></span>
-
-                                        </button>
+                                        <div class="form-password-toggle">
+                                            <label class="form-label" for="confirm-password">Confirm Password</label>
+                                            <div class="input-group input-group-merge">
+                                                {!! Form::password('confirm-password', [
+                                                    'placeholder' => 'Confirm Password',
+                                                    'id' => 'confirm_password',
+                                                    'class' => 'form-control',
+                                                ]) !!}
+                                                <span class="input-group-text cursor-pointer" id="basic-default-password"><i
+                                                        class="bx bx-hide"></i></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="mt-2">

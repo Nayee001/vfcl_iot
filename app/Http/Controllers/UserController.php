@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Yajra\DataTables\Datatables;
+use App\Http\Requests\StoreUserRequest;
 
 
 class UserController extends Controller
@@ -46,18 +47,8 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        dd($request->all());
-        $this->validate($request, [
-            'fname' => 'required',
-            'lname' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'email' => 'required',
-            'role' => 'required'
-
-        ]);
-
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
 

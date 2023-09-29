@@ -70,12 +70,22 @@
                     },
                     error: function(data) {
                         $(".submit").attr("disabled", false);
+                        $('.error').remove();
                         var errors = data.responseJSON;
                         $.each(errors.errors, function(key, value) {
                             var ele = "#" + key;
-                            $(ele).addClass('error');
-                            $('<label class="error">' + value + '</label>').insertAfter(
-                                ele);
+                            $(ele).addClass('errors');
+                            var $parentInputGroup = $(ele).closest(
+                            '.input-group-merge');
+                            if (parentInputGroup) {
+                                $('<label class="error">' + value + '</label>')
+                                    .insertAfter(
+                                        parentInputGroup);
+                            } else {
+                                $('<label class="error">' + value + '</label>')
+                                    .insertAfter(
+                                        ele);
+                            }
                         });
                     }
                 });
@@ -167,6 +177,7 @@
         });
 
 
+        // to Genarate Random Password
         function generateRandomPassword(length) {
             const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
 
@@ -178,8 +189,9 @@
             return password;
         }
         document.getElementById("generatePassword").addEventListener("click", function() {
-            const randomPassword = generateRandomPassword(10); // Change the length as needed
-            document.getElementById("passwordDisplay").textContent = "Random Password: " + randomPassword;
+            const randomPassword = generateRandomPassword(8);
+            document.getElementById("password").value = randomPassword;
+            document.getElementById("confirm_password").value = randomPassword;
         });
     </script>
 @endsection
