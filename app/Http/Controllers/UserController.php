@@ -96,10 +96,14 @@ class UserController extends Controller
     public function update(Request $request, $id): RedirectResponse
     {
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'fname' => 'required',
+            'lname' => 'required',
+            'title' => 'required',
+            'role' => 'required',
             'password' => 'same:confirm-password',
-            'roles' => 'required'
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber',
+            // 'status' => 'required|boolean',
         ]);
 
         $input = $request->all();
@@ -111,7 +115,7 @@ class UserController extends Controller
 
         $user = User::find($id);
         $user->update($input);
-        DB::table('model_has_roles')->where('model_id', $id)->forceDelete();
+        // DB::table('model_has_roles')->where('model_id', $id)->forceDelete();
 
         $user->assignRole($request->input('roles'));
 
@@ -165,7 +169,7 @@ class UserController extends Controller
                     return $status;
                 })->addColumn('actions', function ($row) {
                     $actions = '';
-                    $actions .= '<div class="row"><a title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
+                    $actions .= '<div class="row"><a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
                     class="bx bx-edit-alt"></i></a>';
                     if ($row->deleted_at == null) {
                         $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-user"  title="Delete"  href="javascript:void(0);"

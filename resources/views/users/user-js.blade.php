@@ -46,6 +46,7 @@
                     },
                 ]
             });
+            // Create Users
             $('#form-create-users').on('submit', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -76,7 +77,7 @@
                             var ele = "#" + key;
                             $(ele).addClass('errors');
                             var $parentInputGroup = $(ele).closest(
-                            '.input-group-merge');
+                                '.input-group-merge');
                             if (parentInputGroup) {
                                 $('<label class="error">' + value + '</label>')
                                     .insertAfter(
@@ -92,6 +93,7 @@
             });
         });
 
+        // Delete Users (Tempaery Delete)
         $(document).on('click', '.delete-user', function(e) {
             var id = this.id;
             swalWithBootstrapButtons.fire({
@@ -130,7 +132,7 @@
                 ) {}
             })
         });
-
+        // deleted User Restore
         $(document).on('click', '.restore-user', function(e) {
             var id = this.id;
 
@@ -188,10 +190,13 @@
             }
             return password;
         }
-        document.getElementById("generatePassword").addEventListener("click", function() {
-            const randomPassword = generateRandomPassword(8);
-            document.getElementById("password").value = randomPassword;
-            document.getElementById("confirm_password").value = randomPassword;
-        });
+        var controlError = document.getElementById("generatePassword");
+        if (controlError) {
+            document.getElementById("generatePassword").addEventListener("click", function() {
+                const randomPassword = generateRandomPassword(8);
+                document.getElementById("password").value = randomPassword;
+                document.getElementById("confirm_password").value = randomPassword;
+            });
+        }
     </script>
 @endsection
