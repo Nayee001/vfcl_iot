@@ -13,10 +13,23 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Yajra\DataTables\Datatables;
 use App\Http\Requests\StoreUserRequest;
-
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    function __construct()
+    {
+        // $this->middleware('permission:users-list|users-create|users-edit|users-delete', ['only' => ['index', 'store']]);
+        // $this->middleware('permission:users-create', ['only' => ['create', 'store']]);
+        // $this->middleware('permission:users-edit', ['only' => ['edit', 'update']]);
+        // $this->middleware('permission:users-delete', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -45,18 +58,20 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     *
      */
-    public function store(StoreUserRequest $request): RedirectResponse
+    public function store(StoreUserRequest $request)
     {
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
-
-        $user = User::create($input);
-        $user->assignRole($request->input('role'));
-
-        return redirect()->route('users.index')
-            ->with('success', 'User created successfully');
+        try {
+            $input = $request->all();
+            $input['password'] = Hash::make($input['password']);
+            $input = array_merge($input,['status'=>User::USER_STATUS['NEWUSER']]);
+            $user = User::create($input);
+            $user->assignRole($request->input('role'));
+            return successMessage('User created !!');
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -93,34 +108,38 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id)
     {
         $this->validate($request, [
             'fname' => 'required',
             'lname' => 'required',
             'title' => 'required',
-            'role' => 'required',
+            'roles' => 'required',
             'password' => 'same:confirm-password',
             'email' => 'required|email|unique:users,email,' . $id,
-            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber',
-            // 'status' => 'required|boolean',
+            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,' . $id,
         ]);
-
-        $input = $request->all();
-        if (!empty($input['password'])) {
-            $input['password'] = Hash::make($input['password']);
-        } else {
-            $input = Arr::except($input, array('password'));
+        try {
+            $input = $request->all();
+            if (!empty($input['password'])) {
+                $input['password'] = Hash::make($input['password']);
+            } else {
+                $input = Arr::except($input, array('password'));
+            }
+            $user = User::find($id);
+            $user->update($input);
+            $checkIfModelHasRoles = DB::table('model_has_roles')->where('model_id', $id)->get();
+            if (!empty($checkIfModelHasRoles)) {
+                DB::table('model_has_roles')->where('model_id', $id)->delete();
+            }
+            $user->assignRole($request->input('roles'));
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            return response()->json(errorMessage());
         }
 
-        $user = User::find($id);
-        $user->update($input);
-        // DB::table('model_has_roles')->where('model_id', $id)->forceDelete();
-
-        $user->assignRole($request->input('roles'));
-
-        return redirect()->route('users.index')
-            ->with('success', 'User updated successfully');
+        // return redirect()->route('users.index')
+        //     ->with('success', 'User updated successfully');
     }
 
     /**

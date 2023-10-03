@@ -14,6 +14,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable,HasRoles,SoftDeletes;
 
+    //
     const USER_STATUS = [
         'INACTIVE' => 0,
         'ACTIVE' => 1,
@@ -27,9 +28,16 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'email',
         'password',
+        'fname',
+        'lname',
+        'title',
+        'phonenumber',
+        'status',
+        'deleted_at',
+        'created_at',
+        'updated_at'
     ];
 
     /**

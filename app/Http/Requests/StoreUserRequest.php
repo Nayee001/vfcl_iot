@@ -29,7 +29,6 @@ class StoreUserRequest extends FormRequest
             'password' => 'required|same:confirm-password',
             'email' => 'required|email|unique:users,email',
             'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber',
-            'status' => 'required|boolean',
         ];
     }
 }

@@ -39,7 +39,7 @@
                                             {!! Form::tel('phonenumber', null, [
                                                 'placeholder' => '123 456 7890',
                                                 'class' => 'form-control',
-                                                'id' => 'phonenumber','pattern'=>"[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                                                'id' => 'phonenumber'
                                             ]) !!}
                                         </div>
                                     </div>

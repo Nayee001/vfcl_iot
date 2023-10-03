@@ -53,9 +53,9 @@
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="role" class="form-label">Role</label>
-                                        {!! Form::select('role', $roles, $userRole, [
+                                        {!! Form::select('roles', $roles, $userRole, [
                                             'class' => 'form-control',
-                                            'id' => 'role',
+                                            'id' => 'roles',
                                             'placeholder' => 'Select Role',
                                         ]) !!}
                                     </div>
@@ -155,5 +155,25 @@
                 });
             });
         });
+
+        // to Genarate Random Password
+        function generateRandomPassword(length) {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset.charAt(randomIndex);
+            }
+            return password;
+        }
+        var controlError = document.getElementById("generatePassword");
+        if (controlError) {
+            document.getElementById("generatePassword").addEventListener("click", function() {
+                const randomPassword = generateRandomPassword(8);
+                document.getElementById("password").value = randomPassword;
+                document.getElementById("confirm_password").value = randomPassword;
+            });
+        }
     </script>
 @endsection

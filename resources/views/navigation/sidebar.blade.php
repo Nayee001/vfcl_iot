@@ -108,6 +108,7 @@
         </li>
 
         <!-- Device components -->
+        {{-- @can('edit users')/ --}}
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-copy"></i>
@@ -126,7 +127,8 @@
                 </li>
             </ul>
         </li>
-
+        {{-- @endcan --}}
+        {{-- @can('edit roles') --}}
         <!-- User interface -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -141,7 +143,9 @@
                 </li>
             </ul>
         </li>
+        {{-- @endcan --}}
 
+        @can('edit permisssions')
         <!-- Device components -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -156,5 +160,7 @@
                 </li>
             </ul>
         </li>
+        @endcan
+
     </ul>
 </aside>

@@ -128,10 +128,9 @@ class RoleController extends Controller
             $role->save();
 
             $role->syncPermissions($request->input('permission'));
-
-            return response()->json(successMessage('Role Updated !!'));
+            return successMessage('Role Updated !!');
         } catch (Exception $e) {
-            return response()->json(errorMessage());
+            return errorMessage();
         }
     }
     /**
@@ -144,9 +143,9 @@ class RoleController extends Controller
     {
         try {
             Role::where('id', $id)->forceDelete();
-            return response()->json(['code' => statusMessage(200), 'Message' => 'Role Deleted !!']);
+            return successMessage('Role Deleted !!');
         } catch (Exception $e) {
-            return response()->json(errorMessage());
+            return errorMessage();
         }
     }
 
