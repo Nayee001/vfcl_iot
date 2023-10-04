@@ -25,7 +25,11 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('/account-settings', [HomeController::class, 'accountSettings'])->name('account-settings');
+    Route::any('/account-settings/{id}', [UserController::class, 'accountSettings'])->name('account-settings');
+    Route::post('/user-deactivate/{id}', [UserController::class, 'deactivate'])->name('user-deactivate');
+    Route::get('/users-restore/{id}', [UserController::class, 'restore'])->name('user-restore');
+
+
     Route::get('/api-connections', [ApiManagerController::class, 'index'])->name('api-connections');
     Route::get('/roles-ajax-datatable', [RoleController::class, 'roleAjaxDatatable'])->name('roles-ajax-datatables');
     Route::get('/users-ajax-datatable', [UserController::class, 'userAjaxDatatable'])->name('users-ajax-datatables');

@@ -127,7 +127,7 @@
                         if (resp.code == '{{ __('statuscode.CODE200') }}') {
                             toastr.success(resp.Message);
                             setTimeout(function() {
-                                location.reload();
+                                location.href = '{{ url('users') }}';
                             }, 1900);
                         } else {
                             toastr.error(resp.Message);
@@ -139,16 +139,15 @@
                         $.each(errors.errors, function(key, value) {
                             var ele = "#" + key;
                             $(ele).addClass('errors');
-                            var $parentInputGroup = $(ele).closest(
-                                '.input-group-merge');
-                            if (parentInputGroup) {
+                            var parentInputGroup = $(ele).closest('.input-group-merge');
+
+                            if (parentInputGroup.length > 0) {
                                 $('<label class="error">' + value + '</label>')
                                     .insertAfter(
                                         parentInputGroup);
                             } else {
                                 $('<label class="error">' + value + '</label>')
-                                    .insertAfter(
-                                        ele);
+                                    .insertAfter(ele);
                             }
                         });
                     }

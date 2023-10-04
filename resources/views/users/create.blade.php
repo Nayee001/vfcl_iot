@@ -12,24 +12,26 @@
                         <div class="card-body">
                             <form id="form-create-users" method="post">
                                 @csrf
+
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
                                         <label for="fname" class="form-label">First Name</label>
-                                        {!! Form::text('fname', null, ['placeholder' => 'First Name','id'=>'fname','class' => 'form-control']) !!}
+                                        {!! Form::text('fname', null, ['placeholder' => 'First Name', 'id' => 'fname', 'class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="lname" class="form-label">Last Name</label>
-                                        {!! Form::text('lname', null, ['placeholder' => 'Last Name','id'=>'lname','class' => 'form-control']) !!}
+                                        {!! Form::text('lname', null, ['placeholder' => 'Last Name', 'id' => 'lname', 'class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="email" class="form-label">E-mail</label>
-                                        {!! Form::text('email', null, ['placeholder' => 'Email','id'=>'email','class' => 'form-control']) !!}
+                                        {!! Form::text('email', null, ['placeholder' => 'Email', 'id' => 'email', 'class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="title" class="form-label">Title</label>
                                         {!! Form::text('title', null, [
                                             'placeholder' => 'Title; Professor, Research Assistant, etc..',
-                                            'class' => 'form-control','id'=>'title'
+                                            'class' => 'form-control',
+                                            'id' => 'title',
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
@@ -39,7 +41,7 @@
                                             {!! Form::tel('phonenumber', null, [
                                                 'placeholder' => '123 456 7890',
                                                 'class' => 'form-control',
-                                                'id' => 'phonenumber'
+                                                'id' => 'phonenumber',
                                             ]) !!}
                                         </div>
                                     </div>

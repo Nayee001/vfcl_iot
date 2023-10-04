@@ -66,21 +66,24 @@
 
         <!-- Layouts -->
         <li class="menu-item {{  request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
-            <a href="{{ route('account-settings') }}" class="menu-link menu-toggle">
+            <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-dock-top"></i>
                 <div data-i18n="Account Settings">Account Settings</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
-                    <a href="{{ route('account-settings') }}" class="menu-link">
+                    <a href="{{ route('account-settings',Auth::user()->id)}}" class="menu-link">
                         <div data-i18n="Account">Account</div>
                     </a>
                 </li>
+                @can('api-connection')
                 <li class="menu-item">
                     <a href="{{route('api-connections')}}" class="menu-link">
                         <div data-i18n="Notifications">API Connections</div>
                     </a>
                 </li>
+                @endcan
+
             </ul>
         </li>
 
@@ -108,7 +111,7 @@
         </li>
 
         <!-- Device components -->
-        {{-- @can('edit users')/ --}}
+        {{-- @can('edit users') --}}
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-copy"></i>

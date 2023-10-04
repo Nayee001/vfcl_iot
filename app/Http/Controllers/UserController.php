@@ -13,6 +13,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Yajra\DataTables\Datatables;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UserDeactivationRequest;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -58,19 +59,21 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     *
+     * @return \Illuminate\Http\Response
      */
     public function store(StoreUserRequest $request)
     {
         try {
             $input = $request->all();
             $input['password'] = Hash::make($input['password']);
-            $input = array_merge($input,['status'=>User::USER_STATUS['NEWUSER']]);
+            $input['status'] = User::USER_STATUS['NEWUSER'];
             $user = User::create($input);
             $user->assignRole($request->input('role'));
-            return successMessage('User created !!');
+
+            return successMessage('User Created successfully');
         } catch (Exception $e) {
             Log::info($e->getMessage());
+            return errorMessage();
         }
     }
 
@@ -120,26 +123,24 @@ class UserController extends Controller
             'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,' . $id,
         ]);
         try {
+
             $input = $request->all();
             if (!empty($input['password'])) {
                 $input['password'] = Hash::make($input['password']);
             } else {
                 $input = Arr::except($input, array('password'));
             }
+
             $user = User::find($id);
             $user->update($input);
-            $checkIfModelHasRoles = DB::table('model_has_roles')->where('model_id', $id)->get();
-            if (!empty($checkIfModelHasRoles)) {
-                DB::table('model_has_roles')->where('model_id', $id)->delete();
-            }
+            DB::table('model_has_roles')->where('model_id', $id)->delete();
+
             $user->assignRole($request->input('roles'));
+            return successMessage('User updated successfully');
         } catch (Exception $e) {
             Log::info($e->getMessage());
-            return response()->json(errorMessage());
+            return errorMessage();
         }
-
-        // return redirect()->route('users.index')
-        //     ->with('success', 'User updated successfully');
     }
 
     /**
@@ -148,17 +149,20 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id): RedirectResponse
+    public function destroy($id)
     {
-        User::find($id)->forceDelete();
-        return redirect()->route('users.index')
-            ->with('success', 'User deleted successfully');
+        try {
+            User::find($id)->forceDelete();
+            return successMessage('User deleted successfully');
+        } catch (Exception $e) {
+            return errorMessage();
+        }
     }
 
     public function userAjaxDatatable(Request $request)
     {
         if ($request->ajax()) {
-            $users = User::orderBy('id', 'DESC')->get();
+            $users = User::orderBy('id', 'DESC')->withTrashed()->get();
             return DataTables::of($users)
                 ->addIndexColumn()
                 ->addColumn('role', function ($row) {
@@ -201,6 +205,59 @@ class UserController extends Controller
                 })
                 ->rawColumns(['status', 'role', 'devices', 'actions'])
                 ->make(true);
+        }
+    }
+
+    /**
+     * Show the form for account settings.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function accountSettings($id): View
+    {
+        $user = User::find($id);
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name', 'name')->all();
+
+        return view('user_settings.account_settings', compact('user', 'roles', 'userRole'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deactivate(UserDeactivationRequest $request, $id)
+    {
+        try {
+            if ($request->input('accountDeactivation') == 'on') {
+                User::where('id', $id)->update(['status' => User::USER_STATUS['INACTIVE']]);
+                User::find($id)->delete();
+                return successMessage('Loging Out !!');
+            }
+        } catch (Exception $e) {
+            return errorMessage();
+        }
+    }
+
+    /**
+     * Restore the specified resource to storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($id)
+    {
+        try {
+            User::withTrashed()->find($id)->restore();
+            User::where('id', $id)->update(['status' => User::USER_STATUS['ACTIVE']]);
+            return successMessage('User Activated successfully');
+        } catch (Exception $e) {
+            return errorMessage();
         }
     }
 }
