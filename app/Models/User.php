@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     // common user status
     const USER_STATUS = [
@@ -20,7 +20,11 @@ class User extends Authenticatable
         'ACTIVE' => 1,
         'NEWUSER' => 2,
         'NOACTIVEDEVICE' => 3,
+        'FIRSTTIMEPASSWORDCHANGED' => 4,
     ];
+
+    //TERMS AND CONDITIONS :)
+    const TERMS_AND_CONDITIONS = 1;
 
     /**
      * The attributes that are mass assignable.
@@ -37,7 +41,8 @@ class User extends Authenticatable
         'created_at',
         'updated_at',
         'status',
-        'deleted_at'
+        'terms_and_conditions',
+        'deleted_at',
     ];
 
     /**

@@ -28,6 +28,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::any('/account-settings/{id}', [UserController::class, 'accountSettings'])->name('account-settings');
     Route::post('/user-deactivate/{id}', [UserController::class, 'deactivate'])->name('user-deactivate');
     Route::get('/users-restore/{id}', [UserController::class, 'restore'])->name('user-restore');
+    Route::get('/change-password/{id}', [UserController::class, 'chnagePassword'])->name('change-password');
+    Route::post('/change-password/{id}', [UserController::class, 'chnagePasswordRequest'])->name('users.password-change');
+    Route::post('/terms-and-conditions', [UserController::class, 'termsandconditions'])->name('users.terms-and-conditions');
 
 
     Route::get('/api-connections', [ApiManagerController::class, 'index'])->name('api-connections');

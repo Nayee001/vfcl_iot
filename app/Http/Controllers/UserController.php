@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Datatables;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UserDeactivationRequest;
@@ -256,6 +257,70 @@ class UserController extends Controller
             User::withTrashed()->find($id)->restore();
             User::where('id', $id)->update(['status' => User::USER_STATUS['ACTIVE']]);
             return successMessage('User Activated successfully');
+        } catch (Exception $e) {
+            return errorMessage();
+        }
+    }
+
+    /**
+     * Show the form for account settings.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function chnagePassword($id): View
+    {
+        $user = User::find($id);
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name', 'name')->all();
+
+        return view('user_settings.change-password', compact('user', 'roles', 'userRole'));
+    }
+
+
+    /**
+     * Chnage Password Request.
+     *
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function chnagePasswordRequest(ChangePasswordRequest $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            if (Hash::check($request->oldpassword, $user->password)) {
+                $input['status'] = User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
+                $input['password'] = Hash::make($request->password);
+                $user->update($input);
+                return successMessage('Password Changed successfully');
+            }
+        } catch (Exception $e) {
+            return errorMessage();
+        }
+    }
+
+    /**
+     * Chnage Password Request.
+     *
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function termsandconditions(Request $request)
+    {
+        $this->validate($request, [
+            'terms_and_conditions' => 'required',
+        ]);
+        try {
+            if ($request->terms_and_conditions) {
+                $user = User::findOrFail(Auth::user()->id);
+                $input['status'] = User::USER_STATUS['ACTIVE'];
+                $input['terms_and_conditions'] = User::TERMS_AND_CONDITIONS;
+                $user->update($input);
+                return successMessage('Please Wait ...');
+            }
         } catch (Exception $e) {
             return errorMessage();
         }

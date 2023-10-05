@@ -14,7 +14,7 @@
                             <a class="nav-link active" href="javascript:void(0);"><i class="bx bx-user me-1"></i> Account</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('api-connections') }}"><i class='bx bxs-lock-open'></i>
+                            <a class="nav-link" href="{{ route('change-password',Auth::user()->id) }}"><i class='bx bxs-lock-open'></i>
                                 Change Password</a>
                         </li>
                         <li class="nav-item">
@@ -25,7 +25,7 @@
                     <div class="card mb-4">
                         <h5 class="card-header">Profile Details</h5>
                         <!-- Account -->
-                        <div class="card-body">
+                        {{-- <div class="card-body">
                             <div class="d-flex align-items-start align-items-sm-center gap-4">
                                 <img src="../assets/img/avatars/1.png" alt="user-avatar" class="d-block rounded"
                                     height="100" width="100" id="uploadedAvatar" />
@@ -44,7 +44,7 @@
                                     <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <hr class="my-0" />
                         <div class="card-body">
                             <form id="form-users-edit" method="post">
@@ -97,36 +97,6 @@
                                             'id' => 'roles',
                                             'placeholder' => 'Select Role',
                                         ]) !!}
-                                    </div>
-
-                                    <div class="mb-3 col-md-6">
-                                        <div class="form-password-toggle">
-                                            <label class="form-label" for="password">Password</label>
-                                            <div class="input-group input-group-merge">
-                                                <span class="input-group-text" title="Generate Random Password"><a
-                                                        href="javascript:void(0);" title="Generate Random Password"
-                                                        id="generatePassword"
-                                                        class="btn rounded-pill btn-icon-generate_password btn-outline-primary __web-inspector-hide-shortcut__"><span
-                                                            class="tf-icons bx bx-refresh"></span></a></span>
-                                                {!! Form::password('password', ['placeholder' => 'Password', 'id' => 'password', 'class' => 'form-control']) !!}
-                                                <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                        class="bx bx-hide"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-6">
-                                        <div class="form-password-toggle">
-                                            <label class="form-label" for="confirm-password">Confirm Password</label>
-                                            <div class="input-group input-group-merge">
-                                                {!! Form::password('confirm-password', [
-                                                    'placeholder' => 'Confirm Password',
-                                                    'id' => 'confirm_password',
-                                                    'class' => 'form-control',
-                                                ]) !!}
-                                                <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                        class="bx bx-hide"></i></span>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="mt-2">
@@ -222,6 +192,52 @@
                             $(ele).addClass('errors');
                             $('<label class="error">' + value + '</label>')
                                 .insertAfter(ele);
+                        });
+                    }
+                });
+            });
+
+            $('#form-users-edit').on('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('submit').attr('disabled', true);
+                var formData = new FormData($('#form-users-edit')[0]);
+                $.ajax({
+                    method: 'POST',
+                    url: '{{ route('users.update', $user->id) }}',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function(resp) {
+                        if (resp.code == '{{ __('statuscode.CODE200') }}') {
+                            toastr.success(resp.Message);
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1900);
+                        } else {
+                            toastr.error(resp.Message);
+                        }
+                    },
+                    error: function(data) {
+                        $(".submit").attr("disabled", false);
+                        var errors = data.responseJSON;
+                        $.each(errors.errors, function(key, value) {
+                            var ele = "#" + key;
+                            $(ele).addClass('errors');
+                            var parentInputGroup = $(ele).closest('.input-group-merge');
+
+                            if (parentInputGroup.length > 0) {
+                                $('<label class="error">' + value + '</label>')
+                                    .insertAfter(
+                                        parentInputGroup);
+                            } else {
+                                $('<label class="error">' + value + '</label>')
+                                    .insertAfter(ele);
+                            }
                         });
                     }
                 });
