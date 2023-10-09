@@ -64,6 +64,14 @@
             </a>
         </li>
 
+        {{-- Menus --}}
+        <li class="menu-item {{ request()->is('home') ? 'active' : '' }}">
+            <a href="{{ route('menus.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Menus</div>
+            </a>
+        </li>
+
         <!-- Layouts -->
         <li class="menu-item {{  request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
             <a href="#" class="menu-link menu-toggle">

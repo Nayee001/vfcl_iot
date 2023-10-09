@@ -7,6 +7,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ApiManagerController;
+use App\Http\Controllers\MenuController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,8 +30,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::any('/account-settings/{id}', [UserController::class, 'accountSettings'])->name('account-settings');
     Route::post('/user-deactivate/{id}', [UserController::class, 'deactivate'])->name('user-deactivate');
     Route::get('/users-restore/{id}', [UserController::class, 'restore'])->name('user-restore');
-    Route::get('/change-password/{id}', [UserController::class, 'chnagePassword'])->name('change-password');
-    Route::post('/change-password/{id}', [UserController::class, 'chnagePasswordRequest'])->name('users.password-change');
+    Route::get('/change-password/{id}', [UserController::class, 'changepassword'])->name('change-password');
+    Route::post('/change-password/{id}', [UserController::class, 'changePasswordRequest'])->name('users.password-change');
     Route::post('/terms-and-conditions', [UserController::class, 'termsandconditions'])->name('users.terms-and-conditions');
 
 
@@ -39,4 +41,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
+    Route::resource('menus', MenuController::class);
+
 });

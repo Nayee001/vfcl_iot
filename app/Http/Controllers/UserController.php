@@ -268,7 +268,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function chnagePassword($id): View
+    public function changepassword($id): View
     {
         $user = User::find($id);
         $roles = Role::pluck('name', 'name')->all();
@@ -286,7 +286,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function chnagePasswordRequest(ChangePasswordRequest $request, $id)
+    public function changePasswordRequest(ChangePasswordRequest $request, $id)
     {
         try {
             $user = User::findOrFail($id);
