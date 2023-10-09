@@ -2,44 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreMenuRequest;
 use Illuminate\Http\Request;
-use App\Models\Menus;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
+use Exception;
 use Spatie\Permission\Models\Permission;
 
-class MenuController extends Controller
+class PermissionController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    function __construct()
+    public function index()
     {
-        $this->middleware('permission:menu-list', ['only' => ['index', 'store']]);
-        $this->middleware('permission:menu-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:menu-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:menu-delete', ['only' => ['destroy']]);
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request): View
-    {
-        $menus = Menus::get();
-        $permission = Permission::pluck('name', 'id');
-        return view('menus.manage_menus', compact('permission'));
+        //
     }
 
     /**
      * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('permissions.create');
     }
 
     /**
@@ -48,9 +34,21 @@ class MenuController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreMenuRequest $request)
+    public function store(Request $request)
     {
-        dd($request);
+        $this->validate($request, [
+            'name' => 'required|unique:permissions,name',
+        ]);
+        try {
+            $attributes['name'] = [];
+            foreach (Permission::permissionNamesArray as $key => $value) {
+                $attributes['name'] = strtolower($request->name) . '-' . $value;
+                $permission = Permission::create($attributes);
+            }
+            return successMessage('Permissions Created !!');
+        } catch (Exception $e) {
+            return exceptionMessage($e->getMessage());
+        }
     }
 
     /**

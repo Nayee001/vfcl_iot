@@ -64,6 +64,7 @@
                         var errors = data.responseJSON;
                         $.each(errors.errors, function(key, value) {
                             var ele = "#" + key;
+                            $(ele).removeClass('errors');
                             $(ele).addClass('error');
                             $('<label class="error">' + value + '</label>').insertAfter(
                                 ele);

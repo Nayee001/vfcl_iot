@@ -57,48 +57,43 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
+        @can('dashboard')
         <li class="menu-item {{ request()->is('home') ? 'active' : '' }}">
             <a href="{{ route('home') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Dashboard</div>
             </a>
         </li>
-
-        {{-- Menus --}}
-        <li class="menu-item {{ request()->is('home') ? 'active' : '' }}">
-            <a href="{{ route('menus.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Menus</div>
-            </a>
-        </li>
-
+        @endcan
         <!-- Layouts -->
-        <li class="menu-item {{  request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
+        <li
+            class="menu-item {{ request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-dock-top"></i>
                 <div data-i18n="Account Settings">Account Settings</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
-                    <a href="{{ route('account-settings',Auth::user()->id)}}" class="menu-link">
+                    <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
                         <div data-i18n="Account">Account</div>
                     </a>
                 </li>
                 @can('api-connection')
-                <li class="menu-item">
-                    <a href="{{route('api-connections')}}" class="menu-link">
-                        <div data-i18n="Notifications">API Connections</div>
-                    </a>
-                </li>
+                    <li class="menu-item">
+                        <a href="{{ route('api-connections') }}" class="menu-link">
+                            <div data-i18n="Notifications">Api Connections</div>
+                        </a>
+                    </li>
                 @endcan
 
             </ul>
         </li>
 
-        <!-- Components -->
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Modules</span></li>
+        {{-- <!-- Components -->
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Modules</span></li> --}}
         <!-- Cards -->
         <!-- User interface -->
+        @can('device-list')
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-box"></i>
@@ -117,39 +112,44 @@
                 </li>
             </ul>
         </li>
+        @endcan
 
         <!-- Device components -->
-        {{-- @can('edit users') --}}
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-copy"></i>
                 <div data-i18n="Extended UI">User Management</div>
             </a>
+            @can('user-list')
             <ul class="menu-sub">
                 <li class="menu-item">
                     <a href="{{ route('users.index') }}" class="menu-link">
                         <div data-i18n="Perfect Scrollbar">View All Users</div>
                     </a>
                 </li>
+                @can('user-create')
                 <li class="menu-item">
                     <a href="{{ route('users.create') }}" class="menu-link">
                         <div data-i18n="Text Divider">Create New User</div>
                     </a>
                 </li>
+                @endcan
             </ul>
+            @endcan
         </li>
-        {{-- @endcan --}}
-        {{-- @can('edit roles') --}}
         <!-- User interface -->
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-box"></i>
-                <div data-i18n="User interface">Roles</div>
+                <div data-i18n="User interface">Roles & Permission</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
                     <a href="{{ route('roles.index') }}" class="menu-link">
-                        <div data-i18n="Accordion">Manage Roles</div>
+                        <div data-i18n="Accordion">Roles</div>
+                    </a>
+                    <a href="{{ route('menus.index') }}" class="menu-link">
+                        <div data-i18n="Dynamic Menus">Menus</div>
                     </a>
                 </li>
             </ul>
@@ -157,20 +157,20 @@
         {{-- @endcan --}}
 
         @can('edit permisssions')
-        <!-- Device components -->
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-copy"></i>
-                <div data-i18n="Extended UI">Permissions</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-                        <div data-i18n="Perfect Scrollbar">Manage Permissions</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+            <!-- Device components -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-copy"></i>
+                    <div data-i18n="Extended UI">Permissions</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
+                            <div data-i18n="Perfect Scrollbar">Manage Permissions</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
         @endcan
 
     </ul>

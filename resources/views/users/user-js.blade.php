@@ -75,6 +75,7 @@
                     var errors = data.responseJSON;
                     $.each(errors.errors, function(key, value) {
                         var ele = "#" + key;
+                        $(ele).removeClass('errors');
                         $(ele).addClass('errors');
                         var parentInputGroup = $(ele).closest('.input-group-merge');
 

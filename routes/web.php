@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\HomeController;
+// use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ApiManagerController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,13 +35,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/change-password/{id}', [UserController::class, 'changePasswordRequest'])->name('users.password-change');
     Route::post('/terms-and-conditions', [UserController::class, 'termsandconditions'])->name('users.terms-and-conditions');
 
-
     Route::get('/api-connections', [ApiManagerController::class, 'index'])->name('api-connections');
     Route::get('/roles-ajax-datatable', [RoleController::class, 'roleAjaxDatatable'])->name('roles-ajax-datatables');
     Route::get('/users-ajax-datatable', [UserController::class, 'userAjaxDatatable'])->name('users-ajax-datatables');
 
     Route::resource('roles', RoleController::class);
+    Route::resource('permissions', PermissionController::class);
     Route::resource('users', UserController::class);
     Route::resource('menus', MenuController::class);
-
 });

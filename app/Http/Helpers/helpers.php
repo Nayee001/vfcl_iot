@@ -72,6 +72,12 @@ if (!function_exists("successMessage")) {
         return response()->json(['code' => statusMessage(200), 'Message' => $message]);
     }
 }
+if (!function_exists("exceptionMessage")) {
+    function exceptionMessage($message)
+    {
+        return response()->json(['code' => statusMessage(500), 'Message' => $message]);
+    }
+}
 
 if(!function_exists("generateRandomPassword")){
     function generateRandomPassword($length)
