@@ -7,24 +7,15 @@
                 ajax: "{{ route('roles-ajax-datatables') }}",
                 columns: [{
                         data: 'id',
-                        name: 'id',
-                        width: '20px'
+                        name: 'id'
                     },
                     {
                         data: 'name',
-                        name: 'name',
-                        width: '20px'
+                        name: 'name'
                     },
                     {
                         data: 'guard',
                         name: 'guard',
-                        orderable: false,
-                        searchable: false,
-                        width: '20px'
-                    },
-                    {
-                        data: 'permissions',
-                        name: 'permissions',
                         orderable: false,
                         searchable: false
                     },
@@ -53,7 +44,7 @@
                         if (resp.code == '{{ __('statuscode.CODE200') }}') {
                             toastr.success(resp.Message);
                             setTimeout(function() {
-                                location.reload();
+                                window.location.href = "{{ route('roles.index') }}";
                             }, 1900);
                         } else {
                             toastr.error(resp.Message);
@@ -120,6 +111,18 @@
                 success: function(res) {
                     $("#editModel").html(res);
                     $("#editModel").modal('show');
+                }
+            });
+        }
+
+
+        function getPermissionForm() {
+            $.ajax({
+                url: '{{ route('permissions.create') }}',
+                method: 'GET',
+                success: function(res) {
+                    $("#createPermissionModel").html(res);
+                    $("#createPermissionModel").modal('show');
                 }
             });
         }

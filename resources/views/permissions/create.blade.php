@@ -9,12 +9,20 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="nameBasic" class="form-label">Permission Name</label>
+                        <label for="name" class="form-label">Permission Name</label>
                         {!! Form::text('name', null, ['placeholder' => 'eg: User', 'id' => 'name', 'class' => 'form-control']) !!}
                     </div>
-                    <div class="form-text ">It will Automatically create other needed permission using this name. <br>
-                        Example: users-list | users-create | users-edit | users-delete.
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label><input id="permission" class="form-check-input" name="isNotSingle" type="checkbox">
+                            Create With Group ?</label>
                     </div>
+                </div>
+                <div class="form-text" id="other-info">When you check the checkbox, It will Automatically create other
+                    needed permission using
+                    this name. <br>
+                    Example: users-list | users-create | users-edit | users-delete.
                 </div>
             </div>
             <div class="modal-footer">

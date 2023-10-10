@@ -58,12 +58,12 @@
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
         @can('dashboard')
-        <li class="menu-item {{ request()->is('home') ? 'active' : '' }}">
-            <a href="{{ route('home') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Dashboard</div>
-            </a>
-        </li>
+            <li class="menu-item {{ request()->is('home') ? 'active' : '' }}">
+                <a href="{{ route('home') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <div data-i18n="Analytics">Dashboard</div>
+                </a>
+            </li>
         @endcan
         <!-- Layouts -->
         <li
@@ -94,66 +94,75 @@
         <!-- Cards -->
         <!-- User interface -->
         @can('device-list')
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-box"></i>
-                <div data-i18n="User interface">Device Management</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="ui-accordion.html" class="menu-link">
-                        <div data-i18n="Accordion">View All Devices</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-alerts.html" class="menu-link">
-                        <div data-i18n="Alerts">Create Device</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <div data-i18n="User interface">Device Management</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="ui-accordion.html" class="menu-link">
+                            <div data-i18n="Accordion">View All Devices</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="ui-alerts.html" class="menu-link">
+                            <div data-i18n="Alerts">Create Device</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
         @endcan
 
         <!-- Device components -->
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-copy"></i>
-                <div data-i18n="Extended UI">User Management</div>
-            </a>
-            @can('user-list')
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('users.index') }}" class="menu-link">
-                        <div data-i18n="Perfect Scrollbar">View All Users</div>
-                    </a>
-                </li>
-                @can('user-create')
-                <li class="menu-item">
-                    <a href="{{ route('users.create') }}" class="menu-link">
-                        <div data-i18n="Text Divider">Create New User</div>
-                    </a>
-                </li>
+        @can('device-list')
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-copy"></i>
+                    <div data-i18n="Extended UI">User Management</div>
+                </a>
+                @can('user-list')
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="{{ route('users.index') }}" class="menu-link">
+                                <div data-i18n="Perfect Scrollbar">View All Users</div>
+                            </a>
+                        </li>
+                        @can('user-create')
+                            <li class="menu-item">
+                                <a href="{{ route('users.create') }}" class="menu-link">
+                                    <div data-i18n="Text Divider">Create New User</div>
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
                 @endcan
-            </ul>
-            @endcan
-        </li>
+            </li>
+        @endcan
         <!-- User interface -->
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-box"></i>
-                <div data-i18n="User interface">Roles & Permission</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('roles.index') }}" class="menu-link">
-                        <div data-i18n="Accordion">Roles</div>
-                    </a>
-                    <a href="{{ route('menus.index') }}" class="menu-link">
-                        <div data-i18n="Dynamic Menus">Menus</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+        @can('role-list')
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <div data-i18n="User interface">Roles & Permission</div>
+                </a>
+
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        @can('role-list')
+                            <a href="{{ route('roles.index') }}" class="menu-link">
+                                <div data-i18n="Accordion">Roles</div>
+                            </a>
+                        @endcan
+                        @can('menu-list')
+                            <a href="{{ route('menus.index') }}" class="menu-link">
+                                <div data-i18n="Dynamic Menus">Menus</div>
+                            </a>
+                        @endcan
+                    </li>
+                </ul>
+            </li>
+        @endcan
         {{-- @endcan --}}
 
         @can('edit permisssions')

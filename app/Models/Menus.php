@@ -9,8 +9,11 @@ class Menus extends Model
 {
     use HasFactory;
     protected $table = 'menus';
-
-
+    // common user status
+    const STATUS = [
+        'ISPUBLISHED' => 1,
+        'ISNOTPUBLISHED' => 2,
+    ];
     protected $fillable = [
         'permission_id',
         'submenu',

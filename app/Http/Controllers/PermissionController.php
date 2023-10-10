@@ -41,11 +41,16 @@ class PermissionController extends Controller
         ]);
         try {
             $attributes['name'] = [];
-            foreach (Permission::permissionNamesArray as $key => $value) {
-                $attributes['name'] = strtolower($request->name) . '-' . $value;
+            if (array_key_exists('isNotSingle', $request->all())) {
+                foreach (Permission::permissionNamesArray as $key => $value) {
+                    $attributes['name'] = strtolower($request->name) . '-' . $value;
+                    $permission = Permission::create($attributes);
+                }
+            } else {
+                $attributes['name'] = strtolower($request->name);
                 $permission = Permission::create($attributes);
             }
-            return successMessage('Permissions Created !!');
+            return successMessage('Permission Created !!');
         } catch (Exception $e) {
             return exceptionMessage($e->getMessage());
         }

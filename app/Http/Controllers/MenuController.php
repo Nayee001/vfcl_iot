@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Permission;
 
 class MenuController extends Controller
 {
+    private $defaultRepository;
     /**
      * Display a listing of the resource.
      *
@@ -50,7 +51,12 @@ class MenuController extends Controller
      */
     public function store(StoreMenuRequest $request)
     {
-        dd($request);
+        $data = $request->all();
+        $data['status'] = Menus::STATUS['ISNOTPUBLISHED'];
+        if($request->status){
+            $data['status'] = Menus::STATUS['ISPUBLISHED'];
+        }
+
     }
 
     /**

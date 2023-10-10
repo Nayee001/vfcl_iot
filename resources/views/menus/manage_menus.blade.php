@@ -81,8 +81,7 @@
                                 </div>
 
                                 <div class="form-check form-switch mb-3">
-                                    <input class="form-check-input" type="checkbox" name="status" id="status"
-                                        checked="">
+                                    <input class="form-check-input" type="checkbox" name="status" id="status">
                                     <label class="form-check-label" for="status">Publish Menu</label>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>

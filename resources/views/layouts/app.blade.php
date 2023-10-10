@@ -161,6 +161,17 @@
             },
             buttonsStyling: false
         });
+
+        function getPermissionForm() {
+            $.ajax({
+                url: '{{ route('permissions.create') }}',
+                method: 'GET',
+                success: function(res) {
+                    $("#createPermissionModel").html(res);
+                    $("#createPermissionModel").modal('show');
+                }
+            });
+        }
     </script>
 </body>
 

@@ -12,6 +12,7 @@ use Illuminate\View\View;
 use Yajra\DataTables\Datatables;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 class RoleController extends Controller
 {
@@ -22,10 +23,10 @@ class RoleController extends Controller
      */
     function __construct()
     {
-        $this->middleware('permission:role-list', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+        // $this->middleware('permission:role-list', ['only' => ['index', 'store']]);
+        // $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
+        // $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
+        // $this->middleware('permission:role-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -70,7 +71,7 @@ class RoleController extends Controller
             $role->syncPermissions($request->input('permission'));
             return successMessage('Role Created !!');
         } catch (Exception $e) {
-            return errorMessage();
+            return exceptionMessage($e->getMessage());
         }
     }
     /**
@@ -130,7 +131,7 @@ class RoleController extends Controller
             $role->syncPermissions($request->input('permission'));
             return successMessage('Role Updated !!');
         } catch (Exception $e) {
-            return errorMessage();
+            return exceptionMessage($e->getMessage());
         }
     }
     /**
@@ -145,7 +146,7 @@ class RoleController extends Controller
             Role::where('id', $id)->forceDelete();
             return successMessage('Role Deleted !!');
         } catch (Exception $e) {
-            return errorMessage();
+            return exceptionMessage($e->getMessage());
         }
     }
 
@@ -158,23 +159,17 @@ class RoleController extends Controller
                 ->addColumn('guard', function ($row) {
                     $btn = '<span class="badge bg-label-primary me-1">' . $row->guard_name . '</span>';
                     return $btn;
-                })
-                ->addColumn('permissions', function ($row) {
-                    $permissions = '';
-                    if (isset($row->permissions)) {
-                        foreach ($row->permissions as $permission) {
-                            $permissions .= '<span class="badge rounded-pill bg-label-primary me-1">' . $permission->name . '</span>';
-                        }
-                    }
-                    return $permissions;
                 })->addColumn('actions', function ($row) {
                     $actions = '';
                     if ($row->deleted_at == null) {
-                        $actions .= '<div class="row"><a title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" onClick="getEditForm(\'' . route('roles.edit', $row->id) . '\')"
-                        id="' . $row->id . '" href="javascript:void(0);"><i
+                        if (Gate::allows('role-edit', $row)) {
+                            $actions .= '<div class="row"><a href="' . route('roles.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
                             class="bx bx-edit-alt"></i></a>';
-                        $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-role"  title="Delete"  href="javascript:void(0);"
-                        id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
+                        }
+                        if (Gate::allows('role-delete', $row)) {
+                            $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-role"  title="Delete"  href="javascript:void(0);"
+                            id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
+                        }
                     }
                     return $actions;
                 })

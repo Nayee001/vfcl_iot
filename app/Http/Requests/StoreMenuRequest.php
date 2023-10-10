@@ -28,7 +28,7 @@ class StoreMenuRequest extends FormRequest
             'link' => 'required',
             'sort' => 'required',
             'target' => 'required',
-            'status' => 'required',
+            // 'status' => 'required',
             'icon' => 'required',
             'menu_type' => 'required',
         ];
