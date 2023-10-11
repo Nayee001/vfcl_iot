@@ -5,11 +5,12 @@
         <div class="d-flex justify-content-between">
             <div>
                 <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">User Management /</span> User List</h4>
-
             </div>
             <div class="mt-3">
                 <!-- Button trigger modal -->
-                <a href="{{route('users.create')}}" class="btn btn-primary">Create User</a>
+                @can('user-create')
+                    <a href="{{ route('users.create') }}" class="btn btn-primary">Create User</a>
+                @endcan
             </div>
 
         </div>
@@ -27,6 +28,7 @@
                                 <th>Last Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Creater</th>
                                 <th>Devices</th>
                                 <th>Status</th>
                                 <th>Action</th>

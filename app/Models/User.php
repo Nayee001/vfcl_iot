@@ -41,6 +41,7 @@ class User extends Authenticatable
         'created_at',
         'updated_at',
         'status',
+        'created_by',
         'terms_and_conditions',
         'deleted_at',
     ];
@@ -64,4 +65,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // Self Relation
+    public function creater()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

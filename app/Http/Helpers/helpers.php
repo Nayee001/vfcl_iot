@@ -2,6 +2,8 @@
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Write code on Method
@@ -79,10 +81,44 @@ if (!function_exists("exceptionMessage")) {
     }
 }
 
-if(!function_exists("generateRandomPassword")){
+if (!function_exists("generateRandomPassword")) {
     function generateRandomPassword($length)
     {
         $randomString = Str::random($length);
         return $randomString;
+    }
+}
+
+if (!function_exists("role")) {
+    function role()
+    {
+        return implode(', ', Auth::user()->roles->pluck('name')->toArray());
+    }
+}
+
+if (!function_exists("disabledIfNotSuperAdmin")) {
+    function disabledIfNotSuperAdmin()
+    {
+        $disable = '';
+        $targetValue = (int)implode(', ', Auth::user()->roles->pluck('id')->toArray());
+        if ($targetValue ==  Role::ROLES['Manager']) {
+            $disable = 'disabled';
+        } else {
+            $disable = '';
+        }
+        return $disable;
+    }
+}
+
+
+if (!function_exists("roleChecker")) {
+    function roleChecker()
+    {
+        $targetValue = (int)implode(', ', Auth::user()->roles->pluck('id')->toArray());
+        if ($targetValue ==  Role::ROLES['Super Admin']) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

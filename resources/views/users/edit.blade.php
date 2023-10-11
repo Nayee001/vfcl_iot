@@ -57,6 +57,7 @@
                                             'class' => 'form-control',
                                             'id' => 'roles',
                                             'placeholder' => 'Select Role',
+                                            disabledIfNotSuperAdmin(),
                                         ]) !!}
                                     </div>
 

@@ -17,6 +17,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UserDeactivationRequest;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -68,6 +69,7 @@ class UserController extends Controller
             $input = $request->all();
             $input['password'] = Hash::make($input['password']);
             $input['status'] = User::USER_STATUS['NEWUSER'];
+            $input['created_by'] = Auth::id();
             $user = User::create($input);
             $user->assignRole($request->input('role'));
 
@@ -163,7 +165,15 @@ class UserController extends Controller
     public function userAjaxDatatable(Request $request)
     {
         if ($request->ajax()) {
-            $users = User::orderBy('id', 'DESC')->withTrashed()->get();
+            $users = User::orderBy('id', 'DESC')
+                ->with('creater')
+                ->withTrashed();
+            if (roleChecker() == false) {
+                $users->whereHas('creater', function ($query) {
+                    $query->where('id', 'created_by');
+                });
+            }
+            $users = $users->get();
             return DataTables::of($users)
                 ->addIndexColumn()
                 ->addColumn('role', function ($row) {
@@ -174,6 +184,12 @@ class UserController extends Controller
                         }
                     }
                     return $role;
+                })
+                ->addColumn('creater', function ($row) {
+                    $role = $row->creater->roles->pluck('name')->first();
+                    $name = $row->creater->fname;
+                    $creater = '<span class="badge bg-label-secondary me-1">' . $name . '</span>';
+                    return $creater;
                 })
                 ->addColumn('devices', function ($row) {
                     $devices = '<span class="badge bg-label-secondary me-1">--</span>';
@@ -193,18 +209,25 @@ class UserController extends Controller
                     return $status;
                 })->addColumn('actions', function ($row) {
                     $actions = '';
-                    $actions .= '<div class="row"><a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
+                    if (Gate::allows('user-history', $row)) {
+                        $actions .= '<div class="row"><a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-secondary edit-btn" href="javascript:void(0);"><i class="bx bx-history"></i></a>';
+                    }
+                    if (Gate::allows('user-edit', $row)) {
+                        $actions .= '<a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
                     class="bx bx-edit-alt"></i></a>';
-                    if ($row->deleted_at == null) {
-                        $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-user"  title="Delete"  href="javascript:void(0);"
+                    }
+                    if (Gate::allows('user-delete', $row)) {
+                        if ($row->deleted_at == null) {
+                            $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-user"  title="Delete"  href="javascript:void(0);"
                         id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
-                    } else {
-                        $actions .= '<a class="btn rounded-pill btn-icon btn-outline-warning restore-user"  title="Delete"  href="javascript:void(0);"
+                        } else {
+                            $actions .= '<a class="btn rounded-pill btn-icon btn-outline-warning restore-user"  title="Delete"  href="javascript:void(0);"
                         id="' . $row->id . '"><i class="bx bx-undo"></i></a></div>';
+                        }
                     }
                     return $actions;
                 })
-                ->rawColumns(['status', 'role', 'devices', 'actions'])
+                ->rawColumns(['status', 'role', 'creater', 'devices', 'actions'])
                 ->make(true);
         }
     }

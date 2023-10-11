@@ -17,10 +17,12 @@
                             <a class="nav-link active" href="javascript:void(0)"><i class='bx bxs-lock-open'></i>
                                 Change Password</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('api-connections') }}"><i class="bx bx-link-alt me-1"></i>
-                                Api Connections</a>
-                        </li>
+                        @can('api-connections')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('api-connections') }}"><i class="bx bx-link-alt me-1"></i>
+                                    Api Connections</a>
+                            </li>
+                        @endcan
                     </ul>
                     <div class="card mb-4">
                         <h5 class="card-header">Change Password</h5>

@@ -14,14 +14,18 @@
                             <a class="nav-link active" href="javascript:void(0);"><i class="bx bx-user me-1"></i> Account</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('change-password',Auth::user()->id) }}"><i class='bx bxs-lock-open'></i>
+                            <a class="nav-link" href="{{ route('change-password', Auth::user()->id) }}"><i
+                                    class='bx bxs-lock-open'></i>
                                 Change Password</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('api-connections') }}"><i class="bx bx-link-alt me-1"></i>
-                                Api Connections</a>
-                        </li>
+                        @can('api-connections')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('api-connections') }}"><i class="bx bx-link-alt me-1"></i>
+                                    Api Connections</a>
+                            </li>
+                        @endcan
                     </ul>
+
                     <div class="card mb-4">
                         <h5 class="card-header">Profile Details</h5>
                         <!-- Account -->
@@ -96,6 +100,7 @@
                                             'class' => 'form-control',
                                             'id' => 'roles',
                                             'placeholder' => 'Select Role',
+                                            disabledIfNotSuperAdmin(),
                                         ]) !!}
                                     </div>
                                 </div>
@@ -107,7 +112,8 @@
                         </div>
                         <!-- /Account -->
                     </div>
-                    <div class="card">
+
+                    {{-- <div class="card">
                         <h5 class="card-header">Delete Account</h5>
                         <div class="card-body">
                             <div class="mb-3 col-12 mb-0">
@@ -131,6 +137,7 @@
                             </form>
                         </div>
                     </div>
+                     --}}
                 </div>
             </div>
         </div>
@@ -139,7 +146,7 @@
     <!-- Content wrapper -->
 @endsection
 @section('script')
-<script src="{{asset('assets/js/pages-account-settings-account.js')}}"></script>
+    <script src="{{ asset('assets/js/pages-account-settings-account.js') }}"></script>
     <script>
         // User deactivation
         $(document).ready(function() {

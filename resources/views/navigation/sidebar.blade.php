@@ -75,7 +75,7 @@
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
                     <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
-                        <div data-i18n="Account">Account</div>
+                        <div data-i18n="Account">My Account</div>
                     </a>
                 </li>
                 @can('api-connection')

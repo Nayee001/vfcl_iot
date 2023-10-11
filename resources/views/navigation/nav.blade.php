@@ -30,11 +30,7 @@
                                           <div class="flex-grow-1">
                                               <span class="fw-semibold d-block"> {{ Auth::user()->name }}</span>
                                               <small class="text-muted">
-                                                  @hasrole(1)
-                                                      Admin
-                                                  @else
-                                                      Super Admin
-                                                  @endhasrole
+                                                  {{role()}}
                                               </small>
                                           </div>
                                       </div>
