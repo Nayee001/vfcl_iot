@@ -60,6 +60,15 @@
         <h2 class="mb-2 mx-2">@yield('code')</h2>
         <p class="mb-4 mx-2"> @yield('message')</p>
         <a href="{{ redirect()->getUrlGenerator()->previous() }}" class="btn btn-primary">Go Back</a>
+        <a class="dropdown-item" href="{{ route('logout') }}"
+        onclick="event.preventDefault();
+                       document.getElementById('logout-form').submit();">
+        <i class="bx bx-power-off me-2"></i><span
+            class="align-middle">{{ __('Logout') }}</span>
+    </a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
         <div class="mt-3">
           <img
             src="{{asset('assets/img/illustrations/man-with-laptop-light.png')}}"

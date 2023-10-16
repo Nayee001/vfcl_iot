@@ -89,7 +89,9 @@ class UserController extends Controller
     public function show($id): View
     {
         $user = User::find($id);
-        return view('users.show', compact('user'));
+        $userCount = User::where('created_by', '=', (int)$id)->count();
+        $deviceCount = 0;
+        return view('users.show', compact('user', 'userCount', 'deviceCount'));
     }
 
     /**
@@ -162,6 +164,12 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Ajax Call For showing All the users.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function userAjaxDatatable(Request $request)
     {
         if ($request->ajax()) {
@@ -169,9 +177,7 @@ class UserController extends Controller
                 ->with('creater')
                 ->withTrashed();
             if (roleChecker() == false) {
-                $users->whereHas('creater', function ($query) {
-                    $query->where('id', 'created_by');
-                });
+                $users->where('created_by', '=', Auth::user()->id);
             }
             $users = $users->get();
             return DataTables::of($users)
@@ -186,9 +192,15 @@ class UserController extends Controller
                     return $role;
                 })
                 ->addColumn('creater', function ($row) {
-                    $role = $row->creater->roles->pluck('name')->first();
-                    $name = $row->creater->fname;
-                    $creater = '<span class="badge bg-label-secondary me-1">' . $name . '</span>';
+                    $creater = '';
+                    if ($row->creater) {
+                        $role = $row->creater->roles->pluck('name')->first();
+                        $name = $row->creater->fname;
+                        $creater = '<span class="badge bg-label-secondary me-1">' . $name . '</span>';
+                    } else {
+                        $creater = '<span class="badge bg-label-secondary me-1">--</span>';
+                    }
+
                     return $creater;
                 })
                 ->addColumn('devices', function ($row) {
@@ -210,7 +222,7 @@ class UserController extends Controller
                 })->addColumn('actions', function ($row) {
                     $actions = '';
                     if (Gate::allows('user-history', $row)) {
-                        $actions .= '<div class="row"><a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-secondary edit-btn" href="javascript:void(0);"><i class="bx bx-history"></i></a>';
+                        $actions .= '<div class="row"><a href="' . route('users.show', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-secondary edit-btn" href="javascript:void(0);"><i class="bx bx-history"></i></a>';
                     }
                     if (Gate::allows('user-edit', $row)) {
                         $actions .= '<a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
@@ -346,6 +358,73 @@ class UserController extends Controller
             }
         } catch (Exception $e) {
             return errorMessage();
+        }
+    }
+
+
+
+    /**
+     * Ajax Call For showing All the users.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function userShowHierarchyAjaxDatatable(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $users = User::orderBy('id', 'DESC')
+                ->with('creater')
+                ->withTrashed()->where('created_by', '=', (int)$id);
+            $users = $users->get();
+            return DataTables::of($users)
+                ->addIndexColumn()
+                ->addColumn('role', function ($row) {
+                    $role = '<span class="badge bg-label-secondary me-1">--</span>';
+                    if (!empty($row->getRoleNames())) {
+                        foreach ($row->getRoleNames() as $v) {
+                            $role = '<span class="badge bg-label-primary me-1">' . $v . '</span>';
+                        }
+                    }
+                    return $role;
+                })
+                ->addColumn('creater', function ($row) {
+                    $creater = '';
+                    if ($row->creater) {
+                        $role = $row->creater->roles->pluck('name')->first();
+                        $name = $row->creater->fname;
+                        $creater = '<span class="badge bg-label-secondary me-1">' . $name . '</span>';
+                    } else {
+                        $creater = '<span class="badge bg-label-secondary me-1">--</span>';
+                    }
+
+                    return $creater;
+                })
+                ->addColumn('devices', function ($row) {
+                    $devices = '<span class="badge bg-label-secondary me-1">--</span>';
+                    return $devices;
+                })
+                ->addColumn('status', function ($row) {
+                    $status = '';
+                    if ($row->status == User::USER_STATUS['ACTIVE']) {
+                        $status .= '<span class="badge rounded-pill bg-label-success me-1">Active</span>';
+                    } elseif ($row->status == User::USER_STATUS['NEWUSER']) {
+                        $status .= '<span class="badge rounded-pill bg-label-primary me-1">New User</span>';
+                    } elseif ($row->status == User::USER_STATUS['NOACTIVEDEVICE']) {
+                        $status .= '<span class="badge rounded-pill bg-label-warning me-1">No Active Devices</span>';
+                    } elseif ($row->status == User::USER_STATUS['INACTIVE']) {
+                        $status .= '<span class="badge rounded-pill bg-label-danger me-1">In Active</span>';
+                    }
+                    return $status;
+                })->addColumn('actions', function ($row) {
+                    $actions = '';
+                    if (Gate::allows('user-edit', $row)) {
+                        $actions .= '<a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
+                    class="bx bx-edit-alt"></i></a>';
+                    }
+                    return $actions;
+                })
+                ->rawColumns(['status', 'role', 'creater', 'devices', 'actions'])
+                ->make(true);
         }
     }
 }

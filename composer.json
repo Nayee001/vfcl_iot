@@ -1,7 +1,7 @@
 {
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "The Laravel Web Based Iot web command center project.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
