@@ -104,18 +104,6 @@
             })
         });
 
-        function getEditForm(url) {
-            $.ajax({
-                url: url,
-                method: 'GET',
-                success: function(res) {
-                    $("#editModel").html(res);
-                    $("#editModel").modal('show');
-                }
-            });
-        }
-
-
         function getPermissionForm() {
             $.ajax({
                 url: '{{ route('permissions.create') }}',

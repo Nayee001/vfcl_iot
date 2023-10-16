@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 // use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ApiManagerController;
 use App\Http\Controllers\DeviceManagementController;
+use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
 
@@ -47,4 +48,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);
     Route::resource('menus', MenuController::class);
     Route::resource('devices', DeviceManagementController::class);
+    Route::resource('devices-type', DeviceTypeController::class);
+
 });

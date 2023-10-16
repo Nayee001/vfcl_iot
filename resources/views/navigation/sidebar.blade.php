@@ -100,16 +100,24 @@
                     <div data-i18n="User interface">Device Management</div>
                 </a>
                 <ul class="menu-sub">
+
                     <li class="menu-item">
                         <a href="{{ route('devices.index') }}" class="menu-link">
-                            <div data-i18n="Accordion">View All Devices</div>
+                            <div data-i18n="Accordion">Device Dashboard</div>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="ui-alerts.html" class="menu-link">
-                            <div data-i18n="Alerts">Create Device</div>
+                            <div data-i18n="Alerts">View All Devices</div>
                         </a>
                     </li>
+                    @can('device-type-list')
+                    <li class="menu-item">
+                        <a href="{{ route('devices-type.index') }}" class="menu-link">
+                            <div data-i18n="Accordion">Device Type</div>
+                        </a>
+                    </li>
+                    @endcan
                 </ul>
             </li>
         @endcan
