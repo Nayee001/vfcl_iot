@@ -7,17 +7,16 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\DeviceType;
+use App\Repositories\DeviceTypeRepository;
 
 class DeviceTypeController extends Controller
 {
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    function __construct()
+    protected $deviceTypeRepository;
+
+    function __construct(DeviceTypeRepository $deviceTypeRepository)
     {
+        $this->deviceTypeRepository = $deviceTypeRepository;
         $this->middleware('permission:device-type-list', ['only' => ['index', 'store']]);
         $this->middleware('permission:device-type-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:device-type-edit', ['only' => ['edit', 'update']]);
@@ -47,11 +46,11 @@ class DeviceTypeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(DeviceTypeStoreRequest $request)
+    public function store(Request $request)
     {
         try {
             $input = $request->all();
-            $data = DeviceType::create($input);
+            $data = $this->deviceTypeRepository->store($input);
             if ($data) {
                 return successMessage('Device Type Created !!');
             }
@@ -89,6 +88,19 @@ class DeviceTypeController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            return $this->deviceTypeRepository->destroy($id);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function deviceTypeAjaxDatatable(Request $request)
+    {
+        try {
+            return $this->deviceTypeRepository->dataTable($request);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
     }
 }

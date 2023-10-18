@@ -29,7 +29,11 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "Services\\": "app/Services",
+            "Repositories\\": "app/Repositories",
+            "Interfaces\\": "app/Interfaces"
+
         },
         "files": [
             "app/Http/Helpers/helpers.php"

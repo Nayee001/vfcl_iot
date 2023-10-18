@@ -36,11 +36,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/change-password/{id}', [UserController::class, 'changepassword'])->name('change-password');
     Route::post('/change-password/{id}', [UserController::class, 'changePasswordRequest'])->name('users.password-change');
     Route::post('/terms-and-conditions', [UserController::class, 'termsandconditions'])->name('users.terms-and-conditions');
-
-    Route::get('/api-connections', [ApiManagerController::class, 'index'])->name('api-connections');
-    Route::get('/roles-ajax-datatable', [RoleController::class, 'roleAjaxDatatable'])->name('roles-ajax-datatables');
     Route::get('/users-ajax-datatable', [UserController::class, 'userAjaxDatatable'])->name('users-ajax-datatables');
     Route::get('/users-show-hierarchy-ajax-datatables/{id}', [UserController::class, 'userShowHierarchyAjaxDatatable'])->name('users-show-hierarchy-ajax-datatables');
+    Route::get('/api-connections', [ApiManagerController::class, 'index'])->name('api-connections');
+    Route::get('/roles-ajax-datatable', [RoleController::class, 'roleAjaxDatatable'])->name('roles-ajax-datatables');
+
+    //DeviceType
+    Route::get('/device-type-ajax-datatable', [DeviceTypeController::class, 'deviceTypeAjaxDatatable'])->name('device-type-ajax-datatables');
+
 
 
     Route::resource('roles', RoleController::class);

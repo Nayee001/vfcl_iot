@@ -122,3 +122,18 @@ if (!function_exists("roleChecker")) {
         }
     }
 }
+
+if (!function_exists('dynamicRedAsterisk')) {
+    /**
+     * Generate a dynamic red asterisk string based on a specified length.
+     *
+     * @param int $length
+     * @return string
+     */
+    function dynamicRedAsterisk($length = 1)
+    {
+        $redAsterisk = '<span style="color: red;">' . str_repeat('*', $length) . '</span>';
+        return $redAsterisk;
+    }
+}
+

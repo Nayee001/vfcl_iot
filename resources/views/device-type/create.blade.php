@@ -30,12 +30,7 @@
                         ]) !!}
                     </div>
                 </div>
-                {{-- <div class="row">
-                    <div class="col-md-6">
-                        <label><input id="permission" class="form-check-input" name="isNotSingle" type="checkbox">
-                            Create With Group ?</label>
-                    </div>
-                </div> --}}
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -63,7 +58,7 @@
                 if (resp.code == '{{ __('statuscode.CODE200') }}') {
                     toastr.success(resp.Message);
                     setTimeout(function() {
-                        window.location.href = "{{ route('roles.index') }}";
+                        window.location.reload(true);
                     }, 1900);
                 } else {
                     toastr.error(resp.Message);

@@ -19,7 +19,7 @@
             <h5 class="card-header">Device Type Management</h5>
             <div class="table-responsive text-nowrap">
                 <div class="container">
-                    <table class="table device-type-datatable">
+                    <table class="table device-type-ajax-datatables">
                         <thead>
                             <tr>
                                 <th>#</th>

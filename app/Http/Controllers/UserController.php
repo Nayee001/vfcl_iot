@@ -18,6 +18,7 @@ use App\Http\Requests\UserDeactivationRequest;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
+use App\Repositories\UserRepository;
 
 class UserController extends Controller
 {
@@ -26,8 +27,10 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function __construct()
+    protected $userRepository;
+    function __construct(UserRepository $userRepository)
     {
+        $this->userRepository = $userRepository;
         $this->middleware('permission:user-list', ['only' => ['index', 'store']]);
         $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
@@ -40,10 +43,7 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $data = User::latest()->paginate(5);
-
-        return view('users.index', compact('data'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('users.index');
     }
 
     /**
@@ -70,10 +70,10 @@ class UserController extends Controller
             $input['password'] = Hash::make($input['password']);
             $input['status'] = User::USER_STATUS['NEWUSER'];
             $input['created_by'] = Auth::id();
-            $user = User::create($input);
-            $user->assignRole($request->input('role'));
-
-            return successMessage('User Created successfully');
+            $user = $this->userRepository->store($input, $request);
+            if ($user) {
+                return successMessage('User Created successfully');
+            }
         } catch (Exception $e) {
             Log::info($e->getMessage());
             return errorMessage();
@@ -88,7 +88,7 @@ class UserController extends Controller
      */
     public function show($id): View
     {
-        $user = User::find($id);
+        $user =  $this->userRepository->getUserById($id);
         $userCount = User::where('created_by', '=', (int)$id)->count();
         $deviceCount = 0;
         return view('users.show', compact('user', 'userCount', 'deviceCount'));
