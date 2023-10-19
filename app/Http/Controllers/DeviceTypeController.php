@@ -68,11 +68,17 @@ class DeviceTypeController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form forE Editing a new resource.
+     *
      */
-    public function edit(string $id)
+    public function edit(string $id): view
     {
-        //
+        try {
+            $device_type = $this->deviceTypeRepository->getUserById($id);
+            return view('device-type.edit', compact('device_type'));
+        } catch (Exception $e) {
+            return exceptionMessage($e->getMessage());
+        }
     }
 
     /**
@@ -80,7 +86,16 @@ class DeviceTypeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $this->validate($request, [
+            'device_type' => 'required',
+            'description' => 'required'
+        ]);
+        try {
+            $device_type = $this->deviceTypeRepository->update($request, $id);
+            return $device_type;
+        } catch (Exception $e) {
+            return exceptionMessage($e->getMessage());
+        }
     }
 
     /**
@@ -91,7 +106,7 @@ class DeviceTypeController extends Controller
         try {
             return $this->deviceTypeRepository->destroy($id);
         } catch (Exception $e) {
-            return $e->getMessage();
+            return exceptionMessage($e->getMessage());
         }
     }
 
@@ -100,7 +115,7 @@ class DeviceTypeController extends Controller
         try {
             return $this->deviceTypeRepository->dataTable($request);
         } catch (Exception $e) {
-            return $e->getMessage();
+            return exceptionMessage($e->getMessage());
         }
     }
 }

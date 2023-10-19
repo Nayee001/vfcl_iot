@@ -27,13 +27,33 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
 
     public function getUserById($id)
     {
+        try {
+            $find = $this->model::find($id);
+            return $find;
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public function update($request, $id){
+        try {
+            $input = ['device_type' => $request->device_type,'description' => $request->description];
+            $device_type = $this->model::where('id', $id)->update($input);
+            if ($device_type) {
+                return successMessage('Device Type Updated Successfully !!');
+            } else {
+                return errorMessage();
+            }
+        } catch (Exception $e) {
+            return exceptionMessage($e->getMessage());
+        }
     }
 
     public function store($input)
     {
         try {
-            $user = $this->model::create($input);
-            return $user;
+            $data = $this->model::create($input);
+            return $data;
         } catch (Exception $e) {
             return $e;
         }
@@ -41,10 +61,14 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
     public function destroy($id)
     {
         try {
-            $device_type = $this->model::where('id', $id)->forceDelete();
-            return $device_type;
+            $device_type = $this->model::where('id', $id)->delete();
+            if ($device_type) {
+                return successMessage('Device Type Deleted !!');
+            } else {
+                return errorMessage();
+            }
         } catch (Exception $e) {
-            return $e;
+            return exceptionMessage($e->getMessage());
         }
     }
 
@@ -55,20 +79,10 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
                 $deviceType = $this->model::orderBy('id', 'DESC')->get();
                 return DataTables::of($deviceType)
                     ->addIndexColumn()
-                    ->addColumn('active_or_not', function ($row) {
-                        $active_or_not = '';
-                        if ($row->status == DeviceType::STATUS['ACTIVE']) {
-                            $active_or_not .= '<span class="badge rounded-pill bg-label-success me-1">Active</span>';
-                        } elseif ($row->status == DeviceType::STATUS['INACTIVE']) {
-                            $active_or_not .= '<span class="badge rounded-pill bg-label-primary me-1">Not Active</span>';
-                        }
-                        return $active_or_not;
-                    })
                     ->addColumn('actions', function ($row) {
                         $actions = '';
                         if (Gate::allows('device-type-edit', $row)) {
-                            $actions .= '<a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
-                        class="bx bx-edit-alt"></i></a>';
+                            $actions .= '<a href="javascript:void(0);" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" onClick="getDeviceTypeEditForm(\'' . route('devices-type.edit', $row->id) . '\')" ><i class="bx bx-edit-alt"></i></a>';
                         }
                         if (Gate::allows('device-type-delete', $row)) {
                             $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-device-type"  title="Delete"  href="javascript:void(0);"

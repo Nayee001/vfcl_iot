@@ -12,6 +12,7 @@ interface DeviceTypeRepositoryInterface
     public function getAllUsers();
     public function getUserById($id);
     public function store($input);
+    public function update($request,$id);
     public function destroy($id);
     public function dataTable($request);
 }

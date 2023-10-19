@@ -73,8 +73,19 @@
                 url: '{{ route('devices-type.create') }}',
                 method: 'GET',
                 success: function(res) {
-                    $("#createDeviceTypeModel").html(res);
-                    $("#createDeviceTypeModel").modal('show');
+                    $("#DeviceTypeModel").html(res);
+                    $("#DeviceTypeModel").modal('show');
+                }
+            });
+        }
+
+        function getDeviceTypeEditForm(url) {
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(res) {
+                    $("#DeviceTypeModel").html(res);
+                    $("#DeviceTypeModel").modal('show');
                 }
             });
         }

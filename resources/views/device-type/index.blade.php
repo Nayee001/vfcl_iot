@@ -35,7 +35,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="createDeviceTypeModel" data-backdrop="static">
+    <div class="modal fade" id="DeviceTypeModel" data-backdrop="static">
     </div>
 @endsection
 @include('device-type.device-type-js')

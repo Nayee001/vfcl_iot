@@ -96,7 +96,7 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id): View
+    public function edit($id)
     {
         try {
             $role = Role::find($id);
