@@ -107,14 +107,21 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="ui-alerts.html" class="menu-link">
+                        <a href="{{ route('devices.index') }}" class="menu-link">
                             <div data-i18n="Alerts">View All Devices</div>
                         </a>
                     </li>
+                    @can('device-create')
+                    <li class="menu-item">
+                        <a href="{{ route('devices.create') }}" class="menu-link">
+                            <div data-i18n="Alerts">Create Device</div>
+                        </a>
+                    </li>
+                    @endcan
                     @can('device-type-list')
                     <li class="menu-item">
                         <a href="{{ route('devices-type.index') }}" class="menu-link">
-                            <div data-i18n="Accordion">Device Type</div>
+                            <div data-i18n="Accordion">Device Types</div>
                         </a>
                     </li>
                     @endcan

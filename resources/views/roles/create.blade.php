@@ -19,7 +19,7 @@
                                 <div class="modal-body">
                                     <div class="row">
                                         <div class="col mb-3 col-md-4">
-                                            <label for="nameBasic" class="form-label">Name</label>
+                                            <label for="nameBasic" class="form-label">Name {!!dynamicRedAsterisk()!!}</label>
                                             {!! Form::text('name', null, ['placeholder' => 'Role Name', 'id' => 'name', 'class' => 'form-control']) !!}
                                         </div>
                                     </div>

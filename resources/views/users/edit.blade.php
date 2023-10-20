@@ -13,7 +13,7 @@
                                 {{ method_field('PUT') }}
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
-                                        <label for="fname" class="form-label">First Name</label>
+                                        <label for="fname" class="form-label">First Name {!!dynamicRedAsterisk()!!}</label>
                                         {!! Form::text('fname', $user['fname'], [
                                             'placeholder' => 'First Name',
                                             'id' => 'fname',
@@ -21,7 +21,7 @@
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="lname" class="form-label">Last Name</label>
+                                        <label for="lname" class="form-label">Last Name {!!dynamicRedAsterisk()!!}</label>
                                         {!! Form::text('lname', $user['lname'], [
                                             'placeholder' => 'Last Name',
                                             'id' => 'lname',
@@ -29,11 +29,11 @@
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="email" class="form-label">E-mail</label>
+                                        <label for="email" class="form-label">E-mail {!!dynamicRedAsterisk()!!}</label>
                                         {!! Form::text('email', $user['email'], ['placeholder' => 'Email', 'id' => 'email', 'class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="title" class="form-label">Title</label>
+                                        <label for="title" class="form-label">Title {!!dynamicRedAsterisk()!!}</label>
                                         {!! Form::text('title', $user['title'], [
                                             'placeholder' => 'Title; Professor, Research Assistant, etc..',
                                             'class' => 'form-control',
@@ -41,7 +41,7 @@
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label" for="phoneNumber">Phone Number</label>
+                                        <label class="form-label" for="phoneNumber">Phone Number {!!dynamicRedAsterisk()!!}</label>
                                         <div class="input-group input-group-merge">
                                             <span class="input-group-text">US (+1)</span>
                                             {!! Form::tel('phonenumber', $user['phonenumber'], [
@@ -52,7 +52,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="role" class="form-label">Role</label>
+                                        <label for="role" class="form-label">Role {!!dynamicRedAsterisk()!!}</label>
                                         {!! Form::select('roles', $roles, $userRole, [
                                             'class' => 'form-control',
                                             'id' => 'roles',

@@ -33,7 +33,7 @@
                                 @csrf
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
-                                        <label for="fname" class="form-label">Old Password</label>
+                                        <label for="fname" class="form-label">Old Password {!!dynamicRedAsterisk()!!}</label>
                                         <div class="input-group input-group-merge">
                                             {!! Form::password('oldpassword', [
                                                 'placeholder' => 'Old Password',
@@ -48,7 +48,7 @@
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
                                         <div class="form-password-toggle">
-                                            <label class="form-label" for="password">Password</label>
+                                            <label class="form-label" for="password">Password {!!dynamicRedAsterisk()!!}</label>
                                             <div class="input-group input-group-merge">
                                                 {!! Form::password('password', ['placeholder' => 'Password', 'id' => 'password', 'class' => 'form-control']) !!}
                                                 <span class="input-group-text cursor-pointer" id="basic-default-password"><i
@@ -60,7 +60,7 @@
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
                                         <div class="form-password-toggle">
-                                            <label class="form-label" for="confirm-password">Confirm Password</label>
+                                            <label class="form-label" for="confirm-password">Confirm Password {!!dynamicRedAsterisk()!!}</label>
                                             <div class="input-group input-group-merge">
                                                 {!! Form::password('confirm-password', [
                                                     'placeholder' => 'Confirm Password',

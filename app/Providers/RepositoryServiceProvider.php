@@ -11,7 +11,7 @@ use App\Models\DeviceType;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
-     * Register services.
+     * Register Repositories to Models (Binding dynamically).
      */
     public function register(): void
     {

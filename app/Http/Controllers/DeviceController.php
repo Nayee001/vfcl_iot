@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class DeviceManagementController extends Controller
+class DeviceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -32,7 +32,7 @@ class DeviceManagementController extends Controller
      */
     public function create()
     {
-        //
+        return view('devices.create');
     }
 
     /**

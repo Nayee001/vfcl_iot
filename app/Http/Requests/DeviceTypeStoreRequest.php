@@ -23,7 +23,7 @@ class DeviceTypeStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'device_type' => 'required|device_type|unique:devices,device_type',
+            'device_type' => 'required|unique:device_types,device_type',
             'description' => 'required',
         ];
     }

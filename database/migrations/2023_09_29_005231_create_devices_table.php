@@ -13,8 +13,18 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-
-            // $table->string('api_key');
+            $table->string('name');
+            $table->unsignedBigInteger('device_type')->nullable();
+            $table->foreign('device_type')
+                ->references('id')
+                ->on('device_types')
+                ->onDelete('cascade');
+            $table->text('description');
+            $table->tinyInteger('owner');
+            $table->enum('health', ['Good', 'Fair', 'Poor', 'New', 'Critical'])->default('New');
+            $table->enum('status', ['Active', 'Inactive', 'Maintenance', 'Repair', 'Lost'])->default('Active');
+            $table->tinyInteger('created_by');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

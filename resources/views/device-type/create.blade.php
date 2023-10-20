@@ -9,7 +9,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="name" class="form-label">Device Type</label>
+                        <label for="name" class="form-label">Device Type {!!dynamicRedAsterisk()!!}</label>
                         {!! Form::text('device_type', null, [
                             'placeholder' => 'Device Type',
                             'id' => 'device_type',
@@ -19,7 +19,7 @@
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="name" class="form-label">Description</label>
+                        <label for="name" class="form-label">Description {!!dynamicRedAsterisk()!!}</label>
                         {!! Form::textarea('description', null, [
                             'placeholder' => 'Description',
                             'id' => 'description',
@@ -69,7 +69,7 @@
                 var errors = data.responseJSON;
                 $.each(errors.errors, function(key, value) {
                     var ele = "#" + key;
-                    $(ele).removeClass('errors');
+                    $(ele).removeClass('error');
                     $(ele).addClass('error');
                     $('<label class="error">' + value + '</label>').insertAfter(
                         ele);
