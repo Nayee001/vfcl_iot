@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Device;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\UserRepository;
 use App\Repositories\DeviceTypeRepository;
 use App\Models\User;
 use App\Models\DeviceType;
+use App\Repositories\DeviceRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,10 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(DeviceTypeRepository::class, function ($app) {
             return new DeviceTypeRepository($app->make(DeviceType::class));
+        });
+
+        $this->app->bind(DeviceRepository::class, function ($app) {
+            return new DeviceRepository($app->make(Device::class));
         });
     }
 

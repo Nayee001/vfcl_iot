@@ -111,8 +111,8 @@ if (!function_exists("disabledIfNotSuperAdmin")) {
 }
 
 
-if (!function_exists("roleChecker")) {
-    function roleChecker()
+if (!function_exists("isSuperAdmin")) {
+    function isSuperAdmin()
     {
         $targetValue = (int)implode(', ', Auth::user()->roles->pluck('id')->toArray());
         if ($targetValue ==  Role::ROLES['Super Admin']) {

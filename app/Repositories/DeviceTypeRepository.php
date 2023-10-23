@@ -21,8 +21,10 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
         $this->model = $model;
     }
 
-    public function getAllUsers()
+    public function getAllDeviceType()
     {
+        $get = $this->model::pluck('device_type','id');
+        return $get;
     }
 
     public function getUserById($id)
@@ -58,6 +60,12 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
             return $e;
         }
     }
+    /**
+     * Undocumented function
+     *
+     * @param int $id
+     * @return void
+     */
     public function destroy($id)
     {
         try {
@@ -90,7 +98,7 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
                         }
                         return $actions;
                     })
-                    ->rawColumns(['active_or_not', 'actions'])
+                    ->rawColumns(['actions'])
                     ->make(true);
             }
         } catch (Exception $e) {

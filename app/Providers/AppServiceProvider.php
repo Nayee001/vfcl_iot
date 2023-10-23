@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
     {
 
         $this->app->bind(
-            \App\Interfaces\UserServiceInterface::class,
+            \App\Repositories\UserRepository::class,
             \App\Services\UserService::class
         );
 
@@ -23,20 +23,20 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\UserRepository::class
         );
 
-		$this->app->bind(
-			\App\Interfaces\DeviceTypeRepositoryInterface::class,
-			\App\Repositories\DeviceTypeRepository::class
-		);
+        $this->app->bind(
+            \App\Interfaces\DeviceTypeRepositoryInterface::class,
+            \App\Repositories\DeviceTypeRepository::class
+        );
 
-		$this->app->bind(
-			\App\Interfaces\DeviceRepositoryInterface::class,
-			\App\Repositories\DeviceRepository::class
-		);
+        $this->app->bind(
+            \App\Interfaces\DeviceRepositoryInterface::class,
+            \App\Repositories\DeviceRepository::class
+        );
 
-		$this->app->bind(
-			\App\Interfaces\DeviceRepositoryInterface::class,
-			\App\Services\DeviceService::class
-		);
+        $this->app->bind(
+           \App\Interfaces\DeviceRepositoryInterface::class,
+            \App\Services\DeviceService::class
+        );
     }
 
     /**

@@ -14,23 +14,30 @@
             </div>
         </div>
         <div class="card">
-            <h5 class="card-header">Devices</h5>
+            <h5 class="card-header">Device List</h5>
 
             <div class="table-responsive text-nowrap">
                 <div class="container">
-                    <div class="tab-pane fade show active" id="navs-pills-justified-profile" role="tabpanel">
-                        <div class="image-container">
-                            <img src="{{ asset('assets/img/illustrations/no-devices.jpg') }}" alt="No Devices"
-                                width="500" class="no-device img-fluid"
-                                data-app-dark-img="illustrations/page-misc-error-dark.png"
-                                data-app-light-img="illustrations/page-misc-error-light.png" />
-                        </div>
-                        <div class="text-container">
-                            No Devices Added for this user
-                        </div>
-                    </div>
+                    <table class="table devices-ajax-datatable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Device Name</th>
+                                <th>Description</th>
+                                <th>Health</th>
+                                <th>Status</th>
+                                <th>Owner</th>
+                                <th>Created By</th>
+                                <th>Created At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+@include('devices.device-js')

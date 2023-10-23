@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 interface DeviceTypeRepositoryInterface
 {
-    public function getAllUsers();
+    public function getAllDeviceType();
     public function getUserById($id);
     public function store($input);
     public function update($request,$id);

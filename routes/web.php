@@ -41,9 +41,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/api-connections', [ApiManagerController::class, 'index'])->name('api-connections');
     Route::get('/roles-ajax-datatable', [RoleController::class, 'roleAjaxDatatable'])->name('roles-ajax-datatables');
 
-    //DeviceType
+    // Device Type Datatable
     Route::get('/device-type-ajax-datatable', [DeviceTypeController::class, 'deviceTypeAjaxDatatable'])->name('device-type-ajax-datatables');
-
+    // Devices Datatable
+    Route::get('/devices-ajax-datatable', [DeviceController::class, 'deviceAjaxDatatable'])->name('devices-ajax-datatable');
 
 
     Route::resource('roles', RoleController::class);

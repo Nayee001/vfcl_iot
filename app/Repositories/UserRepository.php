@@ -24,12 +24,15 @@ class UserRepository implements UserRepositoryInterface
 
     public function getAllUsers()
     {
-        return User::all();
+        return User::get();
     }
 
     public function getUserById($id)
     {
         return User::find($id);
+    }
+    public function getUsersAddedByManagers($userId){
+        return $this->model::where('created_by',$userId)->get();
     }
 
     public function store($inputData,$request)

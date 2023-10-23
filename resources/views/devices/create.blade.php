@@ -3,79 +3,66 @@
     <div class="content-wrapper">
         <!-- Content -->
         <div class="container-xxl flex-grow-1 container-p-y">
-            <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">User Management /</span> Create New User</h4>
+            <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Device Management /</span> Create New Device</h4>
             <div class="row">
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <form id="form-create-users" method="post">
+                            <form id="form-create-device" method="post">
                                 @csrf
-
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
-                                        <label for="fname" class="form-label">First Name {!!dynamicRedAsterisk()!!}</label>
-                                        {!! Form::text('fname', null, ['placeholder' => 'First Name', 'id' => 'fname', 'class' => 'form-control']) !!}
+                                        <label for="name" class="form-label">Device Name {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::text('name', null, ['placeholder' => 'Device Name', 'id' => 'name', 'class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="lname" class="form-label">Last Name {!!dynamicRedAsterisk()!!}</label>
-                                        {!! Form::text('lname', null, ['placeholder' => 'Last Name', 'id' => 'lname', 'class' => 'form-control']) !!}
-                                    </div>
-                                    <div class="mb-3 col-md-6">
-                                        <label for="email" class="form-label">E-mail {!!dynamicRedAsterisk()!!}</label>
-                                        {!! Form::text('email', null, ['placeholder' => 'Email', 'id' => 'email', 'class' => 'form-control']) !!}
-                                    </div>
-                                    <div class="mb-3 col-md-6">
-                                        <label for="title" class="form-label">Title {!!dynamicRedAsterisk()!!}</label>
-                                        {!! Form::text('title', null, [
-                                            'placeholder' => 'Title; Professor, Research Assistant, etc..',
+                                        <label for="device_type" class="form-label">Device Type
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::select('device_type', $device_type, null, [
                                             'class' => 'form-control',
-                                            'id' => 'title',
+                                            'placeholder' => 'Select Device Type',
+                                            'id' => 'device_type',
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label" for="phoneNumber">Phone Number {!!dynamicRedAsterisk()!!}</label>
-                                        <div class="input-group input-group-merge">
-                                            <span class="input-group-text">US (+1)</span>
-                                            {!! Form::tel('phonenumber', null, [
-                                                'placeholder' => '123 456 7890',
+                                        <label for="email" class="form-label">Select Owner
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::select('owner', $transformedOwners, null, [
+                                            'class' => 'form-control',
+                                            'placeholder' => 'Select Owner',
+                                            'id' => 'owner',
+                                        ]) !!}
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label for="health" class="form-label">Health {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::select('health', $health, 'Good', [
+                                            'class' => 'form-control',
+                                            'placeholder' => 'Select health',
+                                            'id' => 'health',
+                                        ]) !!}
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                            <label class="form-label" for="phoneNumber">Status {!! dynamicRedAsterisk() !!}</label>
+                                            {!! Form::select('status', $status, 'Active', [
                                                 'class' => 'form-control',
-                                                'id' => 'phonenumber',
+                                                'placeholder' => 'Select Status',
+                                                'id' => 'status',
                                             ]) !!}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-6">
-                                        <label for="role" class="form-label">Role {!!dynamicRedAsterisk()!!}</label>
-                                        {!! Form::select('role', $roles, [], ['class' => 'form-control', 'id' => 'role']) !!}
-                                    </div>
 
-                                    <div class="mb-3 col-md-6">
-                                        <div class="form-password-toggle">
-                                            <label class="form-label" for="password">Password {!!dynamicRedAsterisk()!!}</label>
-                                            <div class="input-group input-group-merge">
-                                                <span class="input-group-text" title="Generate Random Password"><a
-                                                        href="javascript:void(0);" title="Generate Random Password"
-                                                        id="generatePassword"
-                                                        class="btn rounded-pill btn-icon-generate_password btn-outline-primary __web-inspector-hide-shortcut__"><span
-                                                            class="tf-icons bx bx-refresh"></span></a></span>
-                                                {!! Form::password('password', ['placeholder' => 'Password', 'id' => 'password', 'class' => 'form-control']) !!}
-                                                <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                        class="bx bx-hide"></i></span>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <div class="form-password-toggle">
-                                            <label class="form-label" for="confirm-password">Confirm Password {!!dynamicRedAsterisk()!!}</label>
-                                            <div class="input-group input-group-merge">
-                                                {!! Form::password('confirm-password', [
-                                                    'placeholder' => 'Confirm Password',
-                                                    'id' => 'confirm_password',
-                                                    'class' => 'form-control',
-                                                ]) !!}
-                                                <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                        class="bx bx-hide"></i></span>
-                                            </div>
-                                        </div>
+                                        <label for="description" class="form-label">Description
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::textarea('description', $value = null, [
+                                            'class' => 'form-control',
+                                            'placeholder' => 'Device Description',
+                                            'id' => 'description',
+                                            'rows' => 1,
+                                        ]) !!}
+                                        <div id="floatingInputHelp" class="form-text">
+                                            Description limited to 200 characters !
+                                          </div>
+
                                     </div>
                                 </div>
                                 <div class="mt-2">
@@ -84,20 +71,7 @@
                                 </div>
                             </form>
                         </div>
-                        <!-- /Account -->
-                    </div>
-                    <div class="card">
-                        <h5 class="card-header">Note: </h5>
-                        <div class="card-body">
-                            <div class="mb-3 col-12 mb-0">
-                                <div class="alert alert-primary">
-                                    <h6 class="alert-heading fw-bold mb-1">Next Step:
-                                    </h6>
-                                    <p class="mb-0">After creating a new user, ensure they are
-                                        assigned at least one device before proceeding with additional steps.</p>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- /Form Device Create -->
                     </div>
                 </div>
             </div>
@@ -106,4 +80,45 @@
     </div>
     <!-- Content wrapper -->
 @endsection
-@include('users.user-js')
+@section('script')
+    <script>
+        $('#form-create-device').on('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('submit').attr('disabled', true);
+            var formData = new FormData($('#form-create-device')[0]);
+            $.ajax({
+                method: 'POST',
+                url: '{{ route('devices.store') }}',
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(resp) {
+                    if (resp.code == '{{ __('statuscode.CODE200') }}') {
+                        toastr.success(resp.Message);
+                        setTimeout(function() {
+                            window.location.href = "{{ route('devices.index') }}";
+                        }, 1000);
+                    } else {
+                        toastr.error(resp.Message);
+                    }
+                },
+                error: function(data) {
+                    $(".submit").attr("disabled", false);
+                    $("label.error").remove();
+                    $(".error").removeClass('error');
+                    var errors = data.responseJSON;
+                    $.each(errors.errors, function(key, value) {
+                        var ele = "#" + key;
+                        $(ele).addClass('error');
+                        if (!$(ele + " + label.error").length) {
+                            $('<label class="error">' + value + '</label>').insertAfter(ele);
+                        }
+                    });
+                }
+
+            });
+        });
+    </script>
+@endsection

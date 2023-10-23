@@ -176,7 +176,7 @@ class UserController extends Controller
             $users = User::orderBy('id', 'DESC')
                 ->with('creater')
                 ->withTrashed();
-            if (roleChecker() == false) {
+            if (isSuperAdmin() == false) {
                 $users->where('created_by', '=', Auth::user()->id);
             }
             $users = $users->get();

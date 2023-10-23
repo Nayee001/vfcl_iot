@@ -110,6 +110,17 @@ class DeviceTypeController extends Controller
         }
     }
 
+    /**
+     * Retrieves device types for datatable asynchronously using AJAX.
+     *
+     * This function receives a request and delegates the task of data retrieval
+     * to the deviceTypeRepository's dataTable method. In case of any exception,
+     * it returns an exception message.
+     *
+     * @param Request $request The incoming request object, usually containing query parameters.
+     * @return mixed Returns the datatable data for device types or an exception message.
+     */
+
     public function deviceTypeAjaxDatatable(Request $request)
     {
         try {
