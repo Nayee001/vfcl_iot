@@ -13,4 +13,5 @@ interface UserRepositoryInterface
     public function getUserById($id);
     public function store($inputData,$request);
     public function getUsersAddedByManagers($id);
+    public function getManagersAndAdmin();
 }

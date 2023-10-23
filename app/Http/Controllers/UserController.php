@@ -75,7 +75,7 @@ class UserController extends Controller
                 return successMessage('User Created successfully');
             }
         } catch (Exception $e) {
-            Log::info($e->getMessage());
+            Log::info('Create User Exception:- ' . $e->getMessage());
             return errorMessage();
         }
     }
@@ -143,7 +143,7 @@ class UserController extends Controller
             $user->assignRole($request->input('roles'));
             return successMessage('User updated successfully');
         } catch (Exception $e) {
-            Log::info($e->getMessage());
+            Log::info('Update User Exception:- ' . $e->getMessage());
             return errorMessage();
         }
     }

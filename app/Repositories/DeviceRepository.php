@@ -32,7 +32,11 @@ class DeviceRepository implements DeviceRepositoryInterface
      */
     public function getDevices()
     {
-        return $this->model::with('deviceType', 'deviceOwner', 'createdBy')->get();
+        if (isSuperAdmin()) {
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy')->get();
+        } else {
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy')->where('created_by', Auth::id())->get();
+        }
     }
 
     /**
@@ -110,13 +114,30 @@ class DeviceRepository implements DeviceRepositoryInterface
                         return $createdtime;
                     })->addColumn('actions', function ($row) {
                         $actions = '';
-                        if (Gate::allows('device-edit', $row)) {
-                            $actions .= '<a href="' . route('devices.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn"><i class="bx bx-edit-alt"></i></a>';
+                        if ($row) {
+                            $actions .= '<div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu" style="">';
+                            if (Gate::allows('device-edit', $row)) {
+                                $actions .= '<a class="dropdown-item" href="' . route('devices.edit', $row->id) . '" title="Edit"><i class="bx bx-edit-alt me-1"></i> Edit</a>';
+                            }
+                            if (Gate::allows('device-delete', $row)) {
+                                $actions .= '<a class="dropdown-item delete-device"  title="Delete"  href="javascript:void(0);"
+                                id="' . $row->id . '"><i class="bx bx-trash-alt "></i> Delete</a>';
+                            }
+                            $actions .= '</div>
+                          </div>';
+                            // if (Gate::allows('device-edit', $row)) {
+                            //     $actions .= '<a href="' . route('devices.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn"><i class="bx bx-edit-alt"></i></a>';
+                            // }
+                            // if (Gate::allows('device-delete', $row)) {
+                            //     $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-device"  title="Delete"  href="javascript:void(0);"
+                            // id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
+                            // }
                         }
-                        if (Gate::allows('device-delete', $row)) {
-                            $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-device"  title="Delete"  href="javascript:void(0);"
-                            id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
-                        }
+
                         return $actions;
                     })
                     ->rawColumns(['deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'actions'])
@@ -176,5 +197,4 @@ class DeviceRepository implements DeviceRepositoryInterface
         $device = $this->model->findOrFail($id);  // Find the specific device by ID or fail
         return $device->update($modifiedData);
     }
-
 }

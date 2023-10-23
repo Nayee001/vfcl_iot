@@ -5,15 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Console\Commands\Traits\GenerateDeviceApiToken;
 
 class Device extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, GenerateDeviceApiToken;
     protected $table = "devices";
     protected $fillable = ['name', 'device_type', 'description', 'owner', 'health', 'status', 'created_by'];
 
     const STATUS = ['Active' => 'Active', 'Inactive' => 'Inactive', 'Maintenance' => 'Maintenance', 'Repair' => 'Repair', 'Lost' => 'Lost'];
     const HEALTH = ['Good' => 'Good', 'Fair' => 'Fair', 'Poor' => 'Poor', 'New' => 'New', 'Critical' => 'Critical'];
+
+    /**
+     * Save the generated API key when creating a new device.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($device) {
+            $device->api_key = self::generateApiKey();
+        });
+    }
 
     /**
      * This function establishes an inverse one-to-many (belongsTo) relationship

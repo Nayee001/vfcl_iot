@@ -196,16 +196,5 @@
                 </ul>
             </li>
         @endcan
-
-        <li class="menu-item">
-            <a class="menu-link menu-toggle" href="{{ route('logout') }}"
-                onclick="event.preventDefault();
-                                document.getElementById('logout-form').submit();">
-                <i class="bx bx-power-off me-2"></i><span class="align-middle">{{ __('Logout') }}</span>
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                @csrf
-            </form>
-        </li>
     </ul>
 </aside>

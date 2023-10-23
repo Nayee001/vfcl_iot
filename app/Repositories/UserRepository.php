@@ -24,20 +24,30 @@ class UserRepository implements UserRepositoryInterface
 
     public function getAllUsers()
     {
-        return User::get();
+        return $this->model::get();
+    }
+
+    public function getManagersAndAdmin()
+    {
+        return $this->model::whereHas('roles', function ($query) {
+            $query->whereIn('name', ['Manager', 'Super admin']);
+        })->get();
     }
 
     public function getUserById($id)
     {
-        return User::find($id);
-    }
-    public function getUsersAddedByManagers($userId){
-        return $this->model::where('created_by',$userId)->get();
+        return $this->model::find($id);
     }
 
-    public function store($inputData,$request)
+    public function getUsersAddedByManagers($userId)
+    {
+        return $this->model::where('created_by', $userId)->get();
+    }
+
+    public function store($inputData, $request)
     {
         $user = $this->model::create($inputData);
+        dd($user->assignRole($request->input('role')));
         return $user->assignRole($request->input('role'));
     }
 }

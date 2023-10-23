@@ -14,7 +14,8 @@
                                 <div class="button-wrapper">
                                     <div class="card-title mb-0">
                                         <h5 class="m-0 me-2">{{ $user->fname }} {{ $user->lname }}</h5>
-                                        <small class="text-muted">{{ $user->title }}</small>
+                                        <small class="text-muted">{{ $user->title }}</small> -
+                                        <small class="text-muted">{{ $user->roles[0]->name }}</small>
                                     </div>
                                     <small class="text-muted">Joined on: {{ $user->created_at->format('F j, Y') }}</small>
                                 </div>

@@ -19,6 +19,10 @@ class UserService
     {
         return $this->userRepository->getAllUsers();
     }
+    public function getManagersAndAdmin()
+    {
+        return $this->userRepository->getManagersAndAdmin();
+    }
 
     public function getManagerAddedUsers($id)
     {
@@ -34,7 +38,7 @@ class UserService
     {
         try {
             if (isSuperAdmin()) {
-                return $this->getAllUsers();
+                return $this->getManagersAndAdmin();
             } else {
                 return $this->getManagerAddedUsers(Auth::user()->id);
             }
