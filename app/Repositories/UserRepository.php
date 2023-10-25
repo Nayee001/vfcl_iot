@@ -41,13 +41,12 @@ class UserRepository implements UserRepositoryInterface
 
     public function getUsersAddedByManagers($userId)
     {
-        return $this->model::where('created_by', $userId)->get();
+        return $this->model::where('created_by', $userId)->pluck('fname','id');
     }
 
     public function store($inputData, $request)
     {
         $user = $this->model::create($inputData);
-        dd($user->assignRole($request->input('role')));
         return $user->assignRole($request->input('role'));
     }
 }

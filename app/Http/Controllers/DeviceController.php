@@ -9,8 +9,10 @@ use App\Services\DeviceService;
 use App\Services\UserService;
 use App\Http\Requests\StoreDeviceRequest;
 use App\Exceptions\DeviceCreationException;
+use App\Http\Requests\StoreAssignDevice;
 use App\Http\Requests\UpdateDeviceRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class DeviceController extends Controller
 {
@@ -46,12 +48,9 @@ class DeviceController extends Controller
         $status = $this->deviceService->getAllStatus();
         $health = $this->deviceService->getAllHealth();
         $device_type = $this->deviceService->getAllDeviceTypes();
-        $owners = $this->userService->getOwners();
-        $transformedOwners = [];
-        foreach ($owners as $owner) {
-            $transformedOwners[$owner['id']] = $owner['fname'];
-        }
-        return view('devices.create', compact('status', 'health', 'device_type', 'transformedOwners'));
+        $managers = $this->userService->getOwners();
+
+        return view('devices.create', compact('status', 'health', 'device_type', 'managers'));
     }
 
     /**
@@ -107,18 +106,14 @@ class DeviceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id): view
     {
         $deviceData = $this->deviceService->findorfail($id);
         $status = $this->deviceService->getAllStatus();
         $health = $this->deviceService->getAllHealth();
         $device_type = $this->deviceService->getAllDeviceTypes();
-        $owners = $this->userService->getOwners();
-        $transformedOwners = [];
-        foreach ($owners as $owner) {
-            $transformedOwners[$owner['id']] = $owner['fname'];
-        }
-        return view('devices.edit', compact('status', 'health', 'device_type', 'transformedOwners','deviceData'));
+        $managers = $this->userService->getOwners();
+        return view('devices.edit', compact('status', 'health', 'device_type', 'managers', 'deviceData'));
     }
 
     /**
@@ -133,6 +128,7 @@ class DeviceController extends Controller
             }
             return successMessage('Device Updates !!');
         } catch (DeviceCreationException $e) {
+            Log::error("Device Exception: {$e->getMessage()}");
             return exceptionMessage($e->getMessage());
         } catch (Exception $e) {
             Log::error("Error creating device: {$e->getMessage()}");
@@ -154,4 +150,31 @@ class DeviceController extends Controller
             return exceptionMessage($e->getMessage());
         }
     }
+    /**
+     *
+     */
+    public function showAssignDeviceForm($id): view
+    {
+        $deviceData = $this->deviceService->findorfail($id);
+        $allDevices = $this->deviceService->getPluckedDevices();
+        $customers = $this->userService->getManagerAddedUsers(Auth::id());
+
+        return view('devices.assign-device', compact('customers', 'deviceData','allDevices'));
+    }
+
+    public function assignDevice(StoreAssignDevice $request){
+        try {
+            $data = $this->deviceService->assignDeviceToUser($request->all());
+            if (!$data) {
+                return errorMessage('Failed to Assign.');
+            }
+            return successMessage('Assigned Device !!');
+        } catch (DeviceCreationException $e) {
+            return exceptionMessage($e->getMessage());
+        } catch (Exception $e) {
+            Log::error("Error in Assign Device: {$e->getMessage()}");
+            return exceptionMessage('An unexpected error occurred. Please try again later.');
+        }
+    }
+
 }

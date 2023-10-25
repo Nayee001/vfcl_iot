@@ -8,13 +8,13 @@ use App\Repositories\DeviceTypeRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Datatables;
-use App\Services\UserService;
+use App\Repositories\DeviceAssignRepository;
 use Exception;
 
 class DeviceService
 {
 
-    protected $deviceRepository, $deviceTypeRepository, $userService;
+    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository;
 
     /**
      * Constructor for the class.
@@ -22,13 +22,18 @@ class DeviceService
      *
      * @param DeviceRepository $deviceRepository
      * @param DeviceTypeRepository $deviceTypeRepository
+     * @param DeviceAssignRepository $deviceAssignRepository
+     *
      */
     public function __construct(
         DeviceRepository $deviceRepository,
         DeviceTypeRepository $deviceTypeRepository,
+        DeviceAssignRepository $deviceAssignRepository,
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->deviceTypeRepository = $deviceTypeRepository;
+        $this->deviceAssignRepository = $deviceAssignRepository;
+
     }
     /**
      * Get Device Statuses
@@ -79,6 +84,16 @@ class DeviceService
     }
 
     /**
+     * Puck Data from database for all devices
+     *
+     * @return collection
+     */
+    public function getPluckedDevices()
+    {
+        return $this->deviceRepository->getPluckedDevices();
+    }
+
+    /**
      * Fetches data for a datatable from the device repository.
      *
      * @param mixed $request The request containing data fetch parameters.
@@ -114,5 +129,11 @@ class DeviceService
     public function updateDevice($request, $id)
     {
         return $this->deviceRepository->updateDevice($request, $id);
+    }
+
+    public function assignDeviceToUser($request)
+    {
+        return $this->deviceAssignRepository->assignDeviceToUser($request);
+
     }
 }

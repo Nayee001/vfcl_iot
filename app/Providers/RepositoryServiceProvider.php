@@ -8,6 +8,8 @@ use App\Repositories\UserRepository;
 use App\Repositories\DeviceTypeRepository;
 use App\Models\User;
 use App\Models\DeviceType;
+use App\Models\DeviceAssignment;
+use App\Repositories\DeviceAssignRepository;
 use App\Repositories\DeviceRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -27,6 +29,10 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(DeviceRepository::class, function ($app) {
             return new DeviceRepository($app->make(Device::class));
+        });
+
+        $this->app->bind(DeviceAssignRepository::class, function ($app) {
+            return new DeviceAssignRepository($app->make(DeviceAssignment::class));
         });
     }
 

@@ -35,7 +35,7 @@
                                     <div class="mb-3 col-md-6">
                                         <label for="email" class="form-label">Select Owner
                                             {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::select('owner', $transformedOwners, $deviceData['owner'], [
+                                        {!! Form::select('owner', $managers, $deviceData['owner'], [
                                             'class' => 'form-control',
                                             'placeholder' => 'Select Owner',
                                             'id' => 'owner',
@@ -116,18 +116,16 @@
                     }
                 },
                 error: function(data) {
-                    $(".submit").attr("disabled", false);
-                    $("label.error").remove();
-                    $(".error").removeClass('error');
-                    var errors = data.responseJSON;
-                    $.each(errors.errors, function(key, value) {
-                        var ele = "#" + key;
-                        $(ele).addClass('error');
-                        if (!$(ele + " + label.error").length) {
-                            $('<label class="error">' + value + '</label>').insertAfter(ele);
-                        }
-                    });
-                }
+                $(".submit").attr("disabled", false);
+                var errors = data.responseJSON;
+                $.each(errors.errors, function(key, value) {
+                    var ele = "#" + key;
+                    $(ele).removeClass('errors');
+                    $(ele).addClass('error');
+                    $('<label class="error">' + value + '</label>').insertAfter(
+                        ele);
+                });
+            }
             });
         });
     </script>

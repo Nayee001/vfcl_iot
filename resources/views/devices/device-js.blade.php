@@ -36,6 +36,12 @@
                         name: 'createdBy'
                     },
                     {
+                        data: 'api_key',
+                        name: 'api_key',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
                         data:'createdtime',
                         name:'createdtime'
                     },
@@ -88,24 +94,13 @@
             })
         });
 
-        function getDeviceTypeForm() {
-            $.ajax({
-                url: '{{ route('devices-type.create') }}',
-                method: 'GET',
-                success: function(res) {
-                    $("#DeviceTypeModel").html(res);
-                    $("#DeviceTypeModel").modal('show');
-                }
-            });
-        }
-
-        function getDeviceTypeEditForm(url) {
+        function assignDeviceToUsers(url) {
             $.ajax({
                 url: url,
                 method: 'GET',
                 success: function(res) {
-                    $("#DeviceTypeModel").html(res);
-                    $("#DeviceTypeModel").modal('show');
+                    $("#assignDevice").html(res);
+                    $("#assignDevice").modal('show');
                 }
             });
         }

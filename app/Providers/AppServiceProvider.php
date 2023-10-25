@@ -37,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
            \App\Interfaces\DeviceRepositoryInterface::class,
             \App\Services\DeviceService::class
         );
+
+		$this->app->bind(
+			\App\Interfaces\DeviceAssignRepositoryInterface::class,
+			\App\Repositories\DeviceAssignRepository::class
+		);
     }
 
     /**

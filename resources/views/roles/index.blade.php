@@ -40,7 +40,7 @@
         </div>
     </div>
     </div>
-    <div class="modal fade" id="createDeviceTypeModel" data-backdrop="static">
+    <div class="modal fade" id="createPermissionModel" data-backdrop="static">
     </div>
     <!-- / Content -->
 @endsection

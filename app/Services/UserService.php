@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class UserService
@@ -29,6 +30,11 @@ class UserService
         return $this->userRepository->getUsersAddedByManagers($id);
     }
 
+    public function getSelfManager($id)
+    {
+        return $this->userRepository->getUserById($id);
+    }
+
     /**
      * Get All the users for admin
      *
@@ -37,12 +43,19 @@ class UserService
     public function getOwners()
     {
         try {
+            $transformedOwners = [];
             if (isSuperAdmin()) {
-                return $this->getManagersAndAdmin();
+                $owners = $this->getManagersAndAdmin();
+                foreach ($owners as $owner) {
+                    $transformedOwners[$owner['id']] = $owner['fname'];
+                }
             } else {
-                return $this->getManagerAddedUsers(Auth::user()->id);
+                $owners = $this->getSelfManager(Auth::user()->id);
+                $transformedOwners[$owners->id] = $owners->fname;
             }
+            return $transformedOwners;
         } catch (Exception $e) {
+            Log::error("Error Getting Users: {$e->getMessage()}");
         }
     }
 }

@@ -14,4 +14,5 @@ interface DeviceRepositoryInterface
     public function findorfail($id);
     public function updateDevice($request,$id);
     public function createDevice(array $inputData): Model;
+    public function getPluckedDevices();
 }

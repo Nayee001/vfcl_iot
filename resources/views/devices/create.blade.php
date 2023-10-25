@@ -25,11 +25,11 @@
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="email" class="form-label">Select Owner
+                                        <label for="email" class="form-label">Select Manager
                                             {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::select('owner', $transformedOwners, null, [
+                                        {!! Form::select('owner', $managers, null, [
                                             'class' => 'form-control',
-                                            'placeholder' => 'Select Owner',
+                                            'placeholder' => 'Select Manager',
                                             'id' => 'owner',
                                         ]) !!}
                                     </div>

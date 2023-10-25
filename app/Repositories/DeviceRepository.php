@@ -40,6 +40,22 @@ class DeviceRepository implements DeviceRepositoryInterface
     }
 
     /**
+     * Pluck all device records from the database.
+     *
+     * This function uses the underlying model to fetch all the device entries.
+     *
+     * @return Collection Returns a collection of all device records.
+     */
+    public function getPluckedDevices()
+    {
+        if (isSuperAdmin()) {
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy')->pluck('name', 'id');
+        } else {
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy')->where('created_by', Auth::id())->pluck('name', 'id');
+        }
+    }
+
+    /**
      * Return array of statuss
      *
      * @return Array
@@ -73,6 +89,64 @@ class DeviceRepository implements DeviceRepositoryInterface
         $modifiedData = array_intersect_key($inputdata, array_flip($fillableFields));
         $modifiedData['created_by'] = Auth::id();
         return $this->model->create($modifiedData);
+    }
+
+    /**
+     * Destroy device records from the database.
+     *
+     * This function uses the underlying model to Delete the device entries.
+     *
+     * @param int $id
+     * @return Bool
+     */
+    public function destroy($id)
+    {
+        try {
+            $device = $this->model::where('id', $id)->delete();
+            if ($device) {
+                return successMessage('Device Deleted !!');
+            } else {
+                return errorMessage();
+            }
+        } catch (ModelNotFoundException $e) {
+            return exceptionMessage($e->getMessage());
+        }
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param int $id
+     * @return void
+     */
+    public function findorfail($id)
+    {
+        try {
+            return $this->model::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * Update Devices into Database.
+     *
+     * This function uses the underlying model to Update the device entry.
+     *
+     * @param int $id
+     * @param Request
+     * @return Bool
+     */
+    public function updateDevice($request, $id)
+    {
+        $fillableFields = [
+            'name', 'device_type', 'owner', 'health', 'status', 'description'
+        ];
+
+        $modifiedData = array_intersect_key($request, array_flip($fillableFields));
+        $modifiedData['updated_by'] = Auth::id();
+        $device = $this->model->findOrFail($id);
+        return $device->update($modifiedData);
     }
 
     /**
@@ -127,15 +201,14 @@ class DeviceRepository implements DeviceRepositoryInterface
                                 $actions .= '<a class="dropdown-item delete-device"  title="Delete"  href="javascript:void(0);"
                                 id="' . $row->id . '"><i class="bx bx-trash-alt "></i> Delete</a>';
                             }
+                            if (Gate::allows('device-details', $row)) {
+                                $actions .= '<a class="dropdown-item" title="Delete" href="' . route('devices.show', $row->id) . '"><i class="bx bx-detail"></i> Details</a>';
+                            }
+                            if (Gate::allows('device-assign', $row)) {
+                                $actions .= '<a href="javascript:void(0);" title="Edit" class="dropdown-item" onClick="assignDeviceToUsers(\'' . route('device.assign', $row->id) . '\')" ><i class="bx bx-chip"></i>Assign Device</a>';
+                            }
                             $actions .= '</div>
                           </div>';
-                            // if (Gate::allows('device-edit', $row)) {
-                            //     $actions .= '<a href="' . route('devices.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn"><i class="bx bx-edit-alt"></i></a>';
-                            // }
-                            // if (Gate::allows('device-delete', $row)) {
-                            //     $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-device"  title="Delete"  href="javascript:void(0);"
-                            // id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
-                            // }
                         }
 
                         return $actions;
@@ -146,55 +219,5 @@ class DeviceRepository implements DeviceRepositoryInterface
         } catch (Exception $e) {
             return $e->getMessage();
         }
-    }
-
-    /**
-     * Destroy device records from the database.
-     *
-     * This function uses the underlying model to Delete the device entries.
-     *
-     * @param int $id
-     * @return Bool
-     */
-    public function destroy($id)
-    {
-        try {
-            $device = $this->model::where('id', $id)->delete();
-            if ($device) {
-                return successMessage('Device Deleted !!');
-            } else {
-                return errorMessage();
-            }
-        } catch (ModelNotFoundException $e) {
-            return exceptionMessage($e->getMessage());
-        }
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param int $id
-     * @return void
-     */
-    public function findorfail($id)
-    {
-        try {
-            return $this->model::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            return $e->getMessage();
-        }
-    }
-
-    public function updateDevice($request, $id)
-    {
-        $fillableFields = [
-            'name', 'device_type', 'owner', 'health', 'status', 'description'
-        ];
-
-        $modifiedData = array_intersect_key($request, array_flip($fillableFields));
-        $modifiedData['updated_by'] = Auth::id();  // Assuming you intended to track who updated the record
-
-        $device = $this->model->findOrFail($id);  // Find the specific device by ID or fail
-        return $device->update($modifiedData);
     }
 }

@@ -26,8 +26,9 @@
                                 <th>Description</th>
                                 <th>Health</th>
                                 <th>Status</th>
-                                <th>Owner</th>
+                                <th>Manager</th>
                                 <th>Created By</th>
+                                <th>Api Key</th>
                                 <th>Created At</th>
                                 <th>Action</th>
                             </tr>
@@ -38,6 +39,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="modal fade" id="assignDevice" data-backdrop="static">
     </div>
 @endsection
 @include('devices.device-js')

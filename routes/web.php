@@ -45,7 +45,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device-type-ajax-datatable', [DeviceTypeController::class, 'deviceTypeAjaxDatatable'])->name('device-type-ajax-datatables');
     // Devices Datatable
     Route::get('/devices-ajax-datatable', [DeviceController::class, 'deviceAjaxDatatable'])->name('devices-ajax-datatable');
-
+    Route::get('/device/{id}/assign', [DeviceController::class, 'showAssignDeviceForm'])->name('device.assign');
+    Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
 
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
