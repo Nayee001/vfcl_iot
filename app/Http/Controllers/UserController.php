@@ -19,6 +19,7 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 use App\Repositories\UserRepository;
+use App\Services\DeviceService;
 
 class UserController extends Controller
 {
@@ -27,10 +28,12 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    protected $userRepository;
-    function __construct(UserRepository $userRepository)
+    protected $userRepository, $deviceService;
+
+    function __construct(UserRepository $userRepository,DeviceService $deviceService)
     {
         $this->userRepository = $userRepository;
+        $this->deviceService = $deviceService;
         $this->middleware('permission:user-list', ['only' => ['index', 'store']]);
         $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
@@ -67,6 +70,9 @@ class UserController extends Controller
     {
         try {
             $input = $request->all();
+            $latestUserId = User::max('user_id');
+            $input['user_id'] = $latestUserId ? $latestUserId + 1 : 10000;
+
             $input['password'] = Hash::make($input['password']);
             $input['status'] = User::USER_STATUS['NEWUSER'];
             $input['created_by'] = Auth::id();
@@ -90,7 +96,7 @@ class UserController extends Controller
     {
         $user =  $this->userRepository->getUserById($id);
         $userCount = User::where('created_by', '=', (int)$id)->count();
-        $deviceCount = 0;
+        $deviceCount = $this->deviceService->getCount();
         return view('users.show', compact('user', 'userCount', 'deviceCount'));
     }
 
@@ -330,6 +336,8 @@ class UserController extends Controller
                 $input['password'] = Hash::make($request->password);
                 $user->update($input);
                 return successMessage('Password Changed successfully');
+            }else{
+                return exceptionMessage('Old Password Does Not Match');
             }
         } catch (Exception $e) {
             return errorMessage();

@@ -5,5 +5,5 @@ use Illuminate\Database\Eloquent\Model;
 
 interface DeviceAssignRepositoryInterface
 {
-    public function assignDeviceToUser(array $inputData): Model;
+    public function assignDeviceToUser(array $inputData): Bool;
 }

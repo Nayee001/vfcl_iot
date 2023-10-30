@@ -37,3 +37,28 @@
     };
   }
 })();
+
+$(document).ready(function() {
+    $("#copied").on('click', function(e) {
+        e.preventDefault(); // Prevent the default action
+
+        // Copy the API key to clipboard
+        var apiKey = $(this).text();
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val(apiKey).select();
+        document.execCommand("copy");
+        $temp.remove();
+
+        // Show toast message
+        showToast("API key copied to clipboard!");
+    });
+});
+
+function showToast(message) {
+    var $toast = $('<div class="toast">').text(message);
+    $("body").append($toast);
+    $toast.fadeIn(400).delay(2000).fadeOut(400, function() {
+        $(this).remove();
+    });
+}

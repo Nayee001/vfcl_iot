@@ -10,4 +10,9 @@ class DeviceAssignment extends Model
     use HasFactory;
     protected $table = "device_assignments";
     protected $fillable = ['device_id', 'assign_to', 'assign_by', 'location', 'created_at', 'updated_at'];
+
+    public function assignee()
+    {
+        return $this->belongsTo(User::class, 'assign_to')->select(['id', 'fname', 'lname']);
+    }
 }

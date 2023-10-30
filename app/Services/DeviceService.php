@@ -35,6 +35,10 @@ class DeviceService
         $this->deviceAssignRepository = $deviceAssignRepository;
 
     }
+
+    public function getCount(){
+        return $this->deviceRepository->getCount();
+    }
     /**
      * Get Device Statuses
      *

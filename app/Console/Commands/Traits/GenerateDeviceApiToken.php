@@ -12,6 +12,6 @@ trait GenerateDeviceApiToken
      */
     public static function generateApiKey()
     {
-        return Str::random(50); // You can adjust the length as needed
+        return Str::random(64);
     }
 }

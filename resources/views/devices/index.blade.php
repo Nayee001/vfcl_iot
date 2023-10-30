@@ -23,12 +23,12 @@
                             <tr>
                                 <th>#</th>
                                 <th>Device Name</th>
-                                <th>Description</th>
                                 <th>Health</th>
                                 <th>Status</th>
                                 <th>Manager</th>
-                                <th>Created By</th>
                                 <th>Api Key</th>
+                                <th>Assinged To</th>
+                                <th>Location</th>
                                 <th>Created At</th>
                                 <th>Action</th>
                             </tr>

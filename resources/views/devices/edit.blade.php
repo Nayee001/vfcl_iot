@@ -72,6 +72,20 @@
                                         </div>
 
                                     </div>
+                                    <div class="mb-3 col-md-6">
+                                        <div class="form-password-toggle">
+                                            <label class="form-label" for="password">API KEY</label>
+                                            <div class="input-group input-group-merge">
+                                                <span class="input-group-text" title="Generate Random Password"><a
+                                                        href="javascript:void(0);" title="Generate Random Password"
+                                                        id="generatePassword"
+                                                        class="btn rounded-pill btn-icon-generate_password btn-outline-primary __web-inspector-hide-shortcut__"><span
+                                                            class="tf-icons bx bx-refresh"></span></a></span>
+                                                {!! Form::text('api_key',$deviceData['api_key'], ['placeholder' => 'api_key', 'id' => 'api_key', 'class' => 'form-control']) !!}
+                                                <span class="input-group-text cursor-pointer" id="copied"><i class='bx bx-copy-alt'></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="mt-2">
                                     <button type="submit" id="submit"

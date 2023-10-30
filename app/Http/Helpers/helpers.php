@@ -123,6 +123,19 @@ if (!function_exists("isSuperAdmin")) {
     }
 }
 
+if (!function_exists("isManager")) {
+    function isManager()
+    {
+        $targetValue = (int)implode(', ', Auth::user()->roles->pluck('id')->toArray());
+        if ($targetValue ==  Role::ROLES['Manager']) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+
 if (!function_exists('dynamicRedAsterisk')) {
     /**
      * Generate a dynamic red asterisk string based on a specified length.

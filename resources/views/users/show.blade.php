@@ -107,7 +107,7 @@
                                                     data-app-light-img="illustrations/page-misc-error-light.png" />
                                             </div>
                                             <div class="text-container">
-                                                No Devices Added for this user
+                                                {{ __('messages.no_msg') }}
                                             </div>
                                         </div>
                                     </div>

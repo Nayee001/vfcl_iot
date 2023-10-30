@@ -24,13 +24,17 @@ class DeviceAssignRepository implements DeviceAssignRepositoryInterface
      * @param array $inputdata
      * @return Bool
      */
-    public function assignDeviceToUser(array $inputdata): Model
+    public function assignDeviceToUser(array $inputdata): bool
     {
         $fillableFields = [
             'device_id', 'assign_to', 'location'
         ];
         $modifiedData = array_intersect_key($inputdata, array_flip($fillableFields));
+        if ($this->model->where('device_id', $modifiedData['device_id'])->exists()) {
+            return false;
+        }
         $modifiedData['assign_by'] = Auth::id();
-        return $this->model->create($modifiedData);
+        return (bool) $this->model->create($modifiedData);
     }
+
 }

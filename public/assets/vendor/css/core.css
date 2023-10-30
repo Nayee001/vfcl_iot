@@ -199,7 +199,7 @@ strong {
 }
 
 small, .small {
-  font-size: 85%;
+    font-size: 95% !important;
 }
 
 mark, .mark {

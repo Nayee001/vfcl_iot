@@ -100,7 +100,8 @@ class DeviceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $deviceData = $this->deviceService->findorfail($id);
+        return view('devices.show',compact('deviceData'));
     }
 
     /**
@@ -150,6 +151,7 @@ class DeviceController extends Controller
             return exceptionMessage($e->getMessage());
         }
     }
+
     /**
      *
      */
@@ -159,16 +161,19 @@ class DeviceController extends Controller
         $allDevices = $this->deviceService->getPluckedDevices();
         $customers = $this->userService->getManagerAddedUsers(Auth::id());
 
-        return view('devices.assign-device', compact('customers', 'deviceData','allDevices'));
+        return view('devices.assign-device', compact('customers', 'deviceData', 'allDevices'));
     }
 
-    public function assignDevice(StoreAssignDevice $request){
+    /**
+     *
+     */
+    public function assignDevice(StoreAssignDevice $request)
+    {
         try {
-            $data = $this->deviceService->assignDeviceToUser($request->all());
-            if (!$data) {
-                return errorMessage('Failed to Assign.');
+            if ($this->deviceService->assignDeviceToUser($request->all())) {
+                return successMessage('Assigned Device !!');
             }
-            return successMessage('Assigned Device !!');
+            return exceptionMessage('Device is already assigned !');
         } catch (DeviceCreationException $e) {
             return exceptionMessage($e->getMessage());
         } catch (Exception $e) {
@@ -176,5 +181,4 @@ class DeviceController extends Controller
             return exceptionMessage('An unexpected error occurred. Please try again later.');
         }
     }
-
 }

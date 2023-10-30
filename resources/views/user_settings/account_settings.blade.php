@@ -18,12 +18,12 @@
                                     class='bx bxs-lock-open'></i>
                                 Change Password</a>
                         </li>
-                        @can('api-connections')
+                        {{-- @can('api-connections')
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('api-connections') }}"><i class="bx bx-link-alt me-1"></i>
                                     Api Connections</a>
                             </li>
-                        @endcan
+                        @endcan --}}
                     </ul>
 
                     <div class="card mb-4">

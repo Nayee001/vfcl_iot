@@ -63,4 +63,9 @@ class Device extends Model
     {
         return $this->belongsTo(User::class, 'created_by')->select(['id', 'fname', 'lname']);
     }
+
+    public function deviceAssigned()
+    {
+        return $this->belongsTo(DeviceAssignment::class, 'id', 'device_id');
+    }
 }

@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="role" class="form-label">Role {!!dynamicRedAsterisk()!!}</label>
-                                        {!! Form::select('role', $roles, [], ['class' => 'form-control', 'id' => 'role']) !!}
+                                        {!! Form::select('role', $roles, 1, ['class' => 'form-control', 'id' => 'role']) !!}
                                     </div>
 
                                     <div class="mb-3 col-md-6">

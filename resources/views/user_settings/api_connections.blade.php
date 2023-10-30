@@ -18,10 +18,10 @@
                             <a class="nav-link" href="{{ route('change-password',Auth::user()->id) }}"><i class='bx bxs-lock-open'></i>
                                 Change Password</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link active" href="javascript:void(0);"><i class="bx bx-link-alt me-1"></i>
                                 Api Connections</a>
-                        </li>
+                        </li> --}}
                     </ul>
                     <div class="row">
                         <div class="col-md-6 col-12">

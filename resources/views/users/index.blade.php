@@ -23,6 +23,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>UserID</th>
                                 <th>Title</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>

@@ -14,12 +14,6 @@
                         name: 'name'
                     },
                     {
-                        data: 'description',
-                        name: 'description',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
                         data: 'health',
                         name: 'health'
                     },
@@ -32,12 +26,18 @@
                         name: 'ownedBy'
                     },
                     {
-                        data: 'createdBy',
-                        name: 'createdBy'
-                    },
-                    {
                         data: 'api_key',
                         name: 'api_key',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'assignee',
+                        name: 'assignee',
+                    },
+                    {
+                        data: 'location',
+                        name: 'location',
                         orderable: false,
                         searchable: false
                     },

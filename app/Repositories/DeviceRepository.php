@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use Yajra\DataTables\Datatables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\DeviceAssignment;
 
 class DeviceRepository implements DeviceRepositoryInterface
 {
@@ -23,6 +24,17 @@ class DeviceRepository implements DeviceRepositoryInterface
         $this->model = $model;
     }
 
+    public function getCount()
+    {
+        if (isSuperAdmin()) {
+            return $this->model::count();
+        } elseif (isManager()) {
+            return $this->model::where('created_by', Auth::id())->count();
+        } else {
+            return DeviceAssignment::where('assign_to', Auth::id())
+                ->count();
+        }
+    }
     /**
      * Retrieves all device records from the database.
      *
@@ -33,9 +45,15 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function getDevices()
     {
         if (isSuperAdmin()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy')->get();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee')->get();
+        } elseif (isManager()) {
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee')->where('created_by', Auth::id())->get();
         } else {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy')->where('created_by', Auth::id())->get();
+            return $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee'])
+                ->whereHas('deviceAssigned', function ($query) {
+                    $query->where('assign_to', Auth::id());
+                })
+                ->get();
         }
     }
 
@@ -122,7 +140,7 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function findorfail($id)
     {
         try {
-            return $this->model::findOrFail($id);
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return $e->getMessage();
         }
@@ -159,11 +177,8 @@ class DeviceRepository implements DeviceRepositoryInterface
     {
         try {
             if ($request->ajax()) {
-                $deviceType = $this->getDevices();
-                if (!isSuperAdmin()) {
-                    $deviceType = $this->getDevices();
-                }
-                return DataTables::of($deviceType)
+                $device = $this->getDevices();
+                return DataTables::of($device)
                     ->addIndexColumn()
                     ->addColumn('deviceStatus', function ($row) {
                         if ($row->status == $this->model::STATUS['Active']) {
@@ -182,8 +197,21 @@ class DeviceRepository implements DeviceRepositoryInterface
                     })->addColumn('createdBy', function ($row) {
                         $createdBy = '<a class="secondary" href="' . route('users.show', $row->createdBy->id) . '">' . $row->createdBy->fname . ' ' . $row->createdBy->lname . '</a>';
                         return $createdBy;
-                    })
-                    ->addColumn('createdtime', function ($row) {
+                    })->addColumn('assignee', function ($row) {
+                        if ($row->deviceAssigned) {
+                            $assignee = '<a class="secondary" href="' . route('users.show', $row->deviceAssigned->assignee->id) . '">' . $row->deviceAssigned->assignee->fname . ' ' . $row->deviceAssigned->assignee->lname . '</a>';
+                            return $assignee;
+                        } else {
+                            return '--';
+                        }
+                    })->addColumn('location', function ($row) {
+                        if ($row->deviceAssigned) {
+                            $location = $row->deviceAssigned->location;
+                            return $location;
+                        } else {
+                            return '--';
+                        }
+                    })->addColumn('createdtime', function ($row) {
                         $createdtime = $row->created_at->format('m-d-Y');
                         return $createdtime;
                     })->addColumn('actions', function ($row) {
@@ -204,8 +232,10 @@ class DeviceRepository implements DeviceRepositoryInterface
                             if (Gate::allows('device-details', $row)) {
                                 $actions .= '<a class="dropdown-item" title="Delete" href="' . route('devices.show', $row->id) . '"><i class="bx bx-detail"></i> Details</a>';
                             }
-                            if (Gate::allows('device-assign', $row)) {
-                                $actions .= '<a href="javascript:void(0);" title="Edit" class="dropdown-item" onClick="assignDeviceToUsers(\'' . route('device.assign', $row->id) . '\')" ><i class="bx bx-chip"></i>Assign Device</a>';
+                            if (!$row->deviceAssigned) {
+                                if (Gate::allows('device-assign', $row)) {
+                                    $actions .= '<a href="javascript:void(0);" title="Edit" class="dropdown-item" onClick="assignDeviceToUsers(\'' . route('device.assign', $row->id) . '\')" ><i class="bx bx-chip"></i>Assign Device</a>';
+                                }
                             }
                             $actions .= '</div>
                           </div>';
@@ -213,7 +243,7 @@ class DeviceRepository implements DeviceRepositoryInterface
 
                         return $actions;
                     })
-                    ->rawColumns(['deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'actions'])
+                    ->rawColumns(['deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'assignee', 'location', 'actions'])
                     ->make(true);
             }
         } catch (Exception $e) {

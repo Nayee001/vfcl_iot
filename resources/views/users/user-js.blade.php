@@ -10,6 +10,10 @@
                         name: 'id'
                     },
                     {
+                        data: 'user_id',
+                        name: 'user_id'
+                    },
+                    {
                         data: 'title',
                         name: 'title'
                     },
@@ -30,8 +34,8 @@
                         name: 'role'
                     },
                     {
-                        data:'creater',
-                        name:'creater'
+                        data: 'creater',
+                        name: 'creater'
                     },
                     {
                         data: 'devices',
