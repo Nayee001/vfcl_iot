@@ -5,7 +5,8 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('devices-ajax-datatable') }}",
-                columns: [{
+                columns: [
+                    {
                         data: 'id',
                         name: 'id'
                     },
@@ -26,8 +27,8 @@
                         name: 'ownedBy'
                     },
                     {
-                        data: 'api_key',
-                        name: 'api_key',
+                        data: 'apikey',
+                        name: 'apikey',
                         orderable: false,
                         searchable: false
                     },

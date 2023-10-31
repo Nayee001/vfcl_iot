@@ -175,3 +175,6 @@
     display: none;
     z-index: 1000;
 }
+.cursor-pointer {
+    cursor: pointer;
+}

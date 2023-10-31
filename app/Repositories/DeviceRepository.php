@@ -214,6 +214,15 @@ class DeviceRepository implements DeviceRepositoryInterface
                     })->addColumn('createdtime', function ($row) {
                         $createdtime = $row->created_at->format('m-d-Y');
                         return $createdtime;
+                    })->addColumn('apikey', function ($row) {
+                        $apikey = '';
+                        if($row->api_key){
+                            $apikey .= "<span id='$row->api_key' href='javascript:void()' class='cursor-pointer copy-api-key'><i class='bx bx-copy-alt'></i></span>";
+                        }else{
+                            $apikey .= '--';
+                        }
+
+                        return $apikey;
                     })->addColumn('actions', function ($row) {
                         $actions = '';
                         if ($row) {
@@ -243,7 +252,7 @@ class DeviceRepository implements DeviceRepositoryInterface
 
                         return $actions;
                     })
-                    ->rawColumns(['deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'assignee', 'location', 'actions'])
+                    ->rawColumns(['deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'assignee', 'location', 'actions','apikey'])
                     ->make(true);
             }
         } catch (Exception $e) {

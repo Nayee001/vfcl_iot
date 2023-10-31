@@ -53,6 +53,21 @@ $(document).ready(function() {
         // Show toast message
         showToast("API key copied to clipboard!");
     });
+
+    $('.copy-api-key').click(function() {
+        // Get the API key from the id of the clicked element
+        let apiKey = $(this).attr('id');
+
+        // Create a temporary input to hold the text
+        let $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val(apiKey).select();
+        document.execCommand("copy");
+        $temp.remove();
+
+        // Optionally show a message to the user
+        alert("API Key copied to clipboard!");
+    });
 });
 
 function showToast(message) {

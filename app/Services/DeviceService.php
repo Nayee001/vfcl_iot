@@ -33,10 +33,10 @@ class DeviceService
         $this->deviceRepository = $deviceRepository;
         $this->deviceTypeRepository = $deviceTypeRepository;
         $this->deviceAssignRepository = $deviceAssignRepository;
-
     }
 
-    public function getCount(){
+    public function getCount()
+    {
         return $this->deviceRepository->getCount();
     }
     /**
@@ -138,6 +138,5 @@ class DeviceService
     public function assignDeviceToUser($request)
     {
         return $this->deviceAssignRepository->assignDeviceToUser($request);
-
     }
 }

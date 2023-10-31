@@ -11,6 +11,8 @@ use App\Models\DeviceType;
 use App\Models\DeviceAssignment;
 use App\Repositories\DeviceAssignRepository;
 use App\Repositories\DeviceRepository;
+use App\Models\Location;
+use App\Repositories\LocationRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -33,6 +35,10 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(DeviceAssignRepository::class, function ($app) {
             return new DeviceAssignRepository($app->make(DeviceAssignment::class));
+        });
+
+        $this->app->bind(LocationRepository::class, function ($app) {
+            return new LocationRepository($app->make(Location::class));
         });
     }
 
