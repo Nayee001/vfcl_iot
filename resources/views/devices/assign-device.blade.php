@@ -20,16 +20,6 @@
                         {!! Form::select('assign_to', $customers, null,['placeholder' => 'Select Customer', 'id' => 'assign_to', 'class' => 'form-control']) !!}
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col mb-3">
-                        <label for="location" class="form-label">Enter Assingment Location {!!dynamicRedAsterisk()!!}</label>
-                        {!! Form::text('location', null, [
-                            'placeholder' => '109 University Square, Erie, PA 16541',
-                            'id' => 'location',
-                            'class' => 'form-control',
-                        ]) !!}
-                    </div>
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">

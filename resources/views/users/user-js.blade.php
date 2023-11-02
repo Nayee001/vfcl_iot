@@ -38,10 +38,6 @@
                         name: 'creater'
                     },
                     {
-                        data: 'devices',
-                        name: 'devices'
-                    },
-                    {
                         data: 'status',
                         name: 'status',
                         orderable: false,

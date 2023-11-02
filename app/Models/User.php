@@ -74,6 +74,11 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function locations()
+    {
+        return $this->belongsTo(Location::class, 'id','user_id');
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'model_has_roles', 'model_id', 'role_id', 'id', 'id');

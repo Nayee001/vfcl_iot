@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Datatables;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UserDeactivationRequest;
+use App\Repositories\LocationRepository;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
@@ -28,12 +29,17 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    protected $userRepository, $deviceService;
+    protected $userRepository, $deviceService, $locationRepository;
 
-    function __construct(UserRepository $userRepository,DeviceService $deviceService)
-    {
+    function __construct(
+        UserRepository $userRepository,
+        DeviceService $deviceService,
+        LocationRepository $locationRepository
+    ) {
         $this->userRepository = $userRepository;
         $this->deviceService = $deviceService;
+        $this->locationRepository = $locationRepository;
+
         $this->middleware('permission:user-list', ['only' => ['index', 'store']]);
         $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
@@ -57,7 +63,9 @@ class UserController extends Controller
     public function create(): View
     {
         $roles = Role::pluck('name', 'name')->all();
-        return view('users.create', compact('roles'));
+        $locationTypes = $this->userRepository->getLocationTypes();
+
+        return view('users.create', compact('roles', 'locationTypes'));
     }
 
     /**
@@ -78,6 +86,7 @@ class UserController extends Controller
             $input['created_by'] = Auth::id();
             $user = $this->userRepository->store($input, $request);
             if ($user) {
+                $this->locationRepository->create($user, $input);
                 return successMessage('User Created successfully');
             }
         } catch (Exception $e) {
@@ -108,11 +117,11 @@ class UserController extends Controller
      */
     public function edit($id): View
     {
-        $user = User::find($id);
+        $user =  $this->userRepository->getUserById($id);
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name', 'name')->all();
-
-        return view('users.edit', compact('user', 'roles', 'userRole'));
+        $locationTypes = $this->userRepository->getLocationTypes();
+        return view('users.edit', compact('user', 'roles', 'userRole','locationTypes'));
     }
 
     /**
@@ -132,6 +141,12 @@ class UserController extends Controller
             'password' => 'same:confirm-password',
             'email' => 'required|email|unique:users,email,' . $id,
             'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,' . $id,
+            'location_type' => 'required',
+            'address' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'country' => 'required',
+            'postal_code' => 'required|numeric',
         ]);
         try {
 
@@ -144,6 +159,7 @@ class UserController extends Controller
 
             $user = User::find($id);
             $user->update($input);
+            $this->locationRepository->update($id, $input);
             DB::table('model_has_roles')->where('model_id', $id)->delete();
 
             $user->assignRole($request->input('roles'));
@@ -209,10 +225,6 @@ class UserController extends Controller
 
                     return $creater;
                 })
-                ->addColumn('devices', function ($row) {
-                    $devices = '<span class="badge bg-label-secondary me-1">--</span>';
-                    return $devices;
-                })
                 ->addColumn('status', function ($row) {
                     $status = '';
                     if ($row->status == User::USER_STATUS['ACTIVE']) {
@@ -227,22 +239,31 @@ class UserController extends Controller
                     return $status;
                 })->addColumn('actions', function ($row) {
                     $actions = '';
-                    if (Gate::allows('user-history', $row)) {
-                        $actions .= '<div class="row"><a href="' . route('users.show', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-secondary edit-btn" href="javascript:void(0);"><i class="bx bx-history"></i></a>';
-                    }
-                    if (Gate::allows('user-edit', $row)) {
-                        $actions .= '<a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
-                    class="bx bx-edit-alt"></i></a>';
-                    }
-                    if (Gate::allows('user-delete', $row)) {
-                        if ($row->deleted_at == null) {
-                            $actions .= '<a class="btn rounded-pill btn-icon btn-outline-danger delete-user"  title="Delete"  href="javascript:void(0);"
-                        id="' . $row->id . '"><i class="bx bx-trash-alt "></i></a></div>';
-                        } else {
-                            $actions .= '<a class="btn rounded-pill btn-icon btn-outline-warning restore-user"  title="Delete"  href="javascript:void(0);"
-                        id="' . $row->id . '"><i class="bx bx-undo"></i></a></div>';
+                    if ($row) {
+                        $actions .= '<div class="dropdown">
+                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu" style="">';
+                        if (Gate::allows('user-history', $row)) {
+                            $actions .= '<a class="dropdown-item" href="' . route('users.show', $row->id) . '" title="Edit"><i class="bx bx-history me-1"></i> View Details</a>';
                         }
+                        if (Gate::allows('user-edit', $row)) {
+                            $actions .= '<a class="dropdown-item" title="Edit" href="' . route('users.edit', $row->id) . '"><i class="bx bx-edit-alt"></i> Edit</a>';
+                        }
+                        if (Gate::allows('user-delete', $row)) {
+                            if ($row->deleted_at == null) {
+                                $actions .= '<a class="dropdown-item delete-user"  title="Delete"  href="javascript:void(0);"
+                            id="' . $row->id . '"><i class="bx bx-trash-alt "></i>Delete</a></div>';
+                            } else {
+                                $actions .= '<a class="dropdown-item restore-user"  title="Delete"  href="javascript:void(0);"
+                            id="' . $row->id . '"><i class="bx bx-undo"></i>Restore</a></div>';
+                            }
+                        }
+                        $actions .= '</div>
+                      </div>';
                     }
+
                     return $actions;
                 })
                 ->rawColumns(['status', 'role', 'creater', 'devices', 'actions'])
@@ -336,7 +357,7 @@ class UserController extends Controller
                 $input['password'] = Hash::make($request->password);
                 $user->update($input);
                 return successMessage('Password Changed successfully');
-            }else{
+            } else {
                 return exceptionMessage('Old Password Does Not Match');
             }
         } catch (Exception $e) {

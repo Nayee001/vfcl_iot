@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\User;
+use App\Models\Location;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -36,7 +37,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getUserById($id)
     {
-        return $this->model::find($id);
+        return $this->model::with('locations')->find($id);
     }
 
     public function getUsersAddedByManagers($userId)
@@ -48,5 +49,9 @@ class UserRepository implements UserRepositoryInterface
     {
         $user = $this->model::create($inputData);
         return $user->assignRole($request->input('role'));
+    }
+
+    public function getLocationTypes(){
+        return Location::LOCATIONTYPE;
     }
 }

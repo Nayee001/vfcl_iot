@@ -30,7 +30,6 @@
                                 <th>Email</th>
                                 <th>Role</th>
                                 <th>Creater</th>
-                                <th>Devices</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>

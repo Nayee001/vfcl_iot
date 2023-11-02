@@ -24,7 +24,6 @@ class StoreAssignDevice extends FormRequest
         return [
             'device_id' => 'required',
             'assign_to' => 'required',
-            'location' => 'required|max:90',
         ];
     }
 
@@ -38,7 +37,6 @@ class StoreAssignDevice extends FormRequest
         return [
             'device_id.required' => 'Select Device',
             'assign_to.unique' => 'Select User',
-            'location.required' => 'Enter Location',
         ];
     }
 }

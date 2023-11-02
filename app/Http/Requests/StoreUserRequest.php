@@ -28,7 +28,14 @@ class StoreUserRequest extends FormRequest
             'role' => 'required',
             'password' => 'required|same:confirm-password',
             'email' => 'required|email|unique:users,email',
-            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber',
+            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,',
+            'location_type' => 'required',
+            'address' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'country' => 'required',
+            'postal_code' => 'required|numeric',
+
         ];
     }
 }

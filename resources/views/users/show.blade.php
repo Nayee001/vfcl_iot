@@ -18,6 +18,10 @@
                                         <small class="text-muted">{{ $user->roles[0]->name }}</small>
                                     </div>
                                     <small class="text-muted">Joined on: {{ $user->created_at->format('F j, Y') }}</small>
+                                    @if($user->locations)
+                                    <br>
+                                        <small>Location : {{$user->locations->location_type}}, {{$user->locations->address}}, {{$user->locations->city}}, {{$user->locations->state}}, {{$user->locations->country}}, {{$user->locations->postal_code}}</small>
+                                    @endif
                                 </div>
                                 <div class="ml-auto small-widget">
                                     <!-- Use ml-auto to move the right section to the right side -->
