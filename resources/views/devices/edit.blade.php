@@ -58,6 +58,41 @@
                                         ]) !!}
 
                                     </div>
+                                    <div class="mb-3 col-md-6 form-password-toggle">
+                                        <label class="form-label" for="password">API KEY</label>
+                                        <div class="input-group input-group-merge">
+                                            <span class="input-group-text" title="Generate Api key"><a
+                                                    href="javascript:void(0);" title="Generate Random Password"
+                                                    id="generateApi"
+                                                    class="btn rounded-pill btn-icon-generate_password btn-outline-primary __web-inspector-hide-shortcut__"><span
+                                                        class="tf-icons bx bx-refresh"></span></a></span>
+                                            {!! Form::text('api_key', $deviceData['api_key'], [
+                                                'placeholder' => 'API KEY',
+                                                'id' => 'api_key',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label class="form-label" for="phoneNumber">IP Address
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::text('ip_address', $deviceData['ip_address'], [
+                                            'placeholder' => 'ip_address',
+                                            'id' => 'ip_address',
+                                            'class' => 'form-control',
+                                        ]) !!}
+
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label class="form-label" for="phoneNumber">IMEI Number
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::text('imei', $deviceData['imei'], [
+                                            'placeholder' => 'Device imei',
+                                            'id' => 'imei',
+                                            'class' => 'form-control',
+                                        ]) !!}
+
+                                    </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="description" class="form-label">Description
                                             {!! dynamicRedAsterisk() !!}</label>
@@ -69,21 +104,6 @@
                                         ]) !!}
                                         <div id="floatingInputHelp" class="form-text">
                                             Description limited to 200 characters !
-                                        </div>
-
-                                    </div>
-                                    <div class="mb-3 col-md-6">
-                                        <div class="form-password-toggle">
-                                            <label class="form-label" for="password">API KEY</label>
-                                            <div class="input-group input-group-merge">
-                                                <span class="input-group-text" title="Generate Random Password"><a
-                                                        href="javascript:void(0);" title="Generate Random Password"
-                                                        id="generatePassword"
-                                                        class="btn rounded-pill btn-icon-generate_password btn-outline-primary __web-inspector-hide-shortcut__"><span
-                                                            class="tf-icons bx bx-refresh"></span></a></span>
-                                                {!! Form::text('api_key',$deviceData['api_key'], ['placeholder' => 'api_key', 'id' => 'api_key', 'class' => 'form-control']) !!}
-                                                <span class="input-group-text cursor-pointer" id="copied"><i class='bx bx-copy-alt'></i></span>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -130,17 +150,34 @@
                     }
                 },
                 error: function(data) {
-                $(".submit").attr("disabled", false);
-                var errors = data.responseJSON;
-                $.each(errors.errors, function(key, value) {
-                    var ele = "#" + key;
-                    $(ele).removeClass('errors');
-                    $(ele).addClass('error');
-                    $('<label class="error">' + value + '</label>').insertAfter(
-                        ele);
-                });
-            }
+                    $(".submit").attr("disabled", false);
+                    var errors = data.responseJSON;
+                    $.each(errors.errors, function(key, value) {
+                        var ele = "#" + key;
+                        $(ele).removeClass('errors');
+                        $(ele).addClass('error');
+                        $('<label class="error">' + value + '</label>').insertAfter(
+                            ele);
+                    });
+                }
             });
+        });
+
+        // Function to generate a random API key
+        function generateApiKey() {
+            var apiKey = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for (var i = 0; i < 64; i++) { // Length of API Key is 32 characters
+                apiKey += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return apiKey;
+        }
+
+        // Bind the API key generation to the click event of the button
+        $('#generateApi').click(function() {
+            var newApiKey = generateApiKey();
+            $('#api_key').val(newApiKey);
         });
     </script>
 @endsection

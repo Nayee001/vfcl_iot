@@ -6,9 +6,11 @@
                 serverSide: true,
                 ajax: "{{ route('device-type-ajax-datatables') }}",
                 columns: [{
-                        data: 'id',
-                        name: 'id'
-                    },
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    }, // Index column
                     {
                         data: 'device_type',
                         name: 'device_type'

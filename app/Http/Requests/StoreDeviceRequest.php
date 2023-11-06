@@ -28,6 +28,9 @@ class StoreDeviceRequest extends FormRequest
             'health' => 'required',
             'status' => 'required',
             'description' => 'required|max:200',
+            'imei' => 'required',
+            'ip_address' => 'required',
+
         ];
     }
     /**
@@ -46,6 +49,8 @@ class StoreDeviceRequest extends FormRequest
             'status.required' =>  'Select Device Status',
             'description.required' => 'Description Required',
             'description.max' => 'Description can be only 200 characters long',
+            'imei.required' =>  'IMEI Number is Required',
+            'ip_address.required' => 'IP Address is Required',
         ];
     }
 }

@@ -122,6 +122,14 @@ class DeviceService
         }
     }
 
+        public function unAssign($id)
+    {
+        try {
+            return $this->deviceAssignRepository->destroy($id);
+        } catch (Exception $e) {
+        }
+    }
+
     public function findorfail($id)
     {
         try {

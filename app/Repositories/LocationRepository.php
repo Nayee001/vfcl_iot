@@ -43,17 +43,19 @@ class LocationRepository implements LocationRepositoryInterface
     public function update($id, $input)
     {
         $inputData = [
-            'user_id' => $id,
             'location_type' => $input['location_type'],
-            'address' => $input['address'],
-            'city' => $input['city'],
-            'state' => $input['state'],
-            'country' => $input['country'],
-            'postal_code' => $input['postal_code'],
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'address'       => $input['address'],
+            'city'          => $input['city'],
+            'state'         => $input['state'],
+            'country'       => $input['country'],
+            'postal_code'   => $input['postal_code'],
         ];
-        $userLocation = $this->model::where('user_id',$id)->update($inputData);
+
+        $userLocation = $this->model::updateOrCreate(
+            ['user_id' => $id], // Conditions to find the record
+            $inputData
+        );
+
         return $userLocation;
     }
 }

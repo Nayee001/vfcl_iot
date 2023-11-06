@@ -101,7 +101,7 @@ class DeviceController extends Controller
     public function show(string $id)
     {
         $deviceData = $this->deviceService->findorfail($id);
-        return view('devices.show',compact('deviceData'));
+        return view('devices.show', compact('deviceData'));
     }
 
     /**
@@ -153,6 +153,22 @@ class DeviceController extends Controller
     }
 
     /**
+     * Destroy Device
+     *
+     * @param string $id
+     * @return void
+     */
+    public function unAssign(string $id)
+    {
+        try {
+            return $this->deviceService->unAssign($id);
+        } catch (Exception $e) {
+            return exceptionMessage($e->getMessage());
+        }
+    }
+
+
+    /**
      *
      */
     public function showAssignDeviceForm($id): view
@@ -162,6 +178,11 @@ class DeviceController extends Controller
         $customers = $this->userService->getManagerAddedUsers(Auth::id());
 
         return view('devices.assign-device', compact('customers', 'deviceData', 'allDevices'));
+    }
+    public function getApiKey($id): view
+    {
+        $deviceData = $this->deviceService->findorfail($id);
+        return view('devices.getApiKey', compact('deviceData'));
     }
 
     /**

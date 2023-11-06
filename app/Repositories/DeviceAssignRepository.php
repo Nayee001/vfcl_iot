@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Interfaces\DeviceAssignRepositoryInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 
 class DeviceAssignRepository implements DeviceAssignRepositoryInterface
@@ -37,4 +38,17 @@ class DeviceAssignRepository implements DeviceAssignRepositoryInterface
         return (bool) $this->model->create($modifiedData);
     }
 
+    public function destroy($id)
+    {
+        try {
+            $device = $this->model::where('id', $id)->delete();
+            if ($device) {
+                return successMessage('Device UnAssigned !!');
+            } else {
+                return errorMessage();
+            }
+        } catch (ModelNotFoundException $e) {
+            return exceptionMessage($e->getMessage());
+        }
+    }
 }

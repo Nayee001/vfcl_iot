@@ -26,10 +26,10 @@
                                 <th>Health</th>
                                 <th>Status</th>
                                 <th>Manager</th>
-                                <th>Api Key</th>
                                 <th>Assinged To</th>
                                 <th>Location</th>
                                 <th>Created At</th>
+                                <th>Api Key</th>
                                 <th>Action</th>
                             </tr>
                         </thead>

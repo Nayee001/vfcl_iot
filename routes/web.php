@@ -48,6 +48,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device/{id}/assign', [DeviceController::class, 'showAssignDeviceForm'])->name('device.assign');
     Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
 
+    Route::get('/device/{id}/api-key', [DeviceController::class, 'getApiKey'])->name('device.getApiKey');
+    Route::delete('/unassign-device/{id}', [DeviceController::class, 'unAssign'])->name('device.unAssign');
+
+
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
     Route::resource('users', UserController::class);

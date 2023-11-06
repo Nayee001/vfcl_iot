@@ -45,11 +45,11 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function getDevices()
     {
         if (isSuperAdmin()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee')->get();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.assignee.locations')->get();
         } elseif (isManager()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee')->where('created_by', Auth::id())->get();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->get();
         } else {
-            return $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee'])
+            return $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.assignee.locations'])
                 ->whereHas('deviceAssigned', function ($query) {
                     $query->where('assign_to', Auth::id());
                 })
@@ -140,7 +140,7 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function findorfail($id)
     {
         try {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee')->findOrFail($id);
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.assignee.locations')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return $e->getMessage();
         }
@@ -158,9 +158,8 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function updateDevice($request, $id)
     {
         $fillableFields = [
-            'name', 'device_type', 'owner', 'health', 'status', 'description'
+            'name', 'device_type', 'owner', 'health', 'status', 'api_key ','description','imei','ip_address'
         ];
-
         $modifiedData = array_intersect_key($request, array_flip($fillableFields));
         $modifiedData['updated_by'] = Auth::id();
         $device = $this->model->findOrFail($id);
@@ -181,16 +180,19 @@ class DeviceRepository implements DeviceRepositoryInterface
                 return DataTables::of($device)
                     ->addIndexColumn()
                     ->addColumn('deviceStatus', function ($row) {
-                        if ($row->status == $this->model::STATUS['Active']) {
-                            $status = '<span class="badge bg-label-primary me-1">' . $row->status . '</span>';
-                            return $status;
-                        } elseif ($row->status == $this->model::STATUS['Inactive']) {
-                            $status = '<span class="badge bg-label-danger me-1">' . $row->status . '</span>';
-                            return $status;
-                        } else {
-                            $status = '<span class="badge bg-label-warning me-1">' . $row->status . '</span>';
-                            return $status;
+                        switch ($row->status) {
+                            case $this->model::STATUS['Active']:
+                                $badgeClass = 'primary';
+                                break;
+                            case $this->model::STATUS['Inactive']:
+                                $badgeClass = 'danger';
+                                break;
+                            default:
+                                $badgeClass = 'warning';
+                                break;
                         }
+                        $status = '<span class="badge bg-label-' . $badgeClass . ' me-1">' . e($row->status) . '</span>';
+                        return $status;
                     })->addColumn('ownedBy', function ($row) {
                         $ownedBy = '<a class="primary" href="' . route('users.show', $row->deviceOwner->id) . '">' . $row->deviceOwner->fname . ' ' . $row->deviceOwner->lname . '</a>';
                         return $ownedBy;
@@ -198,61 +200,67 @@ class DeviceRepository implements DeviceRepositoryInterface
                         $createdBy = '<a class="secondary" href="' . route('users.show', $row->createdBy->id) . '">' . $row->createdBy->fname . ' ' . $row->createdBy->lname . '</a>';
                         return $createdBy;
                     })->addColumn('assignee', function ($row) {
-                        if ($row->deviceAssigned) {
-                            $assignee = '<a class="secondary" href="' . route('users.show', $row->deviceAssigned->assignee->id) . '">' . $row->deviceAssigned->assignee->fname . ' ' . $row->deviceAssigned->assignee->lname . '</a>';
-                            return $assignee;
-                        } else {
-                            return '--';
-                        }
+                        $assigneeLink = $row->deviceAssigned
+                            ? '<a class="secondary" href="' . route('users.show', $row->deviceAssigned->assignee->id) . '">'
+                            . e($row->deviceAssigned->assignee->fname)
+                            . ' '
+                            . e($row->deviceAssigned->assignee->lname) . '</a>'
+                            : '--';
+                        return $assigneeLink;
                     })->addColumn('location', function ($row) {
-                        if ($row->deviceAssigned) {
-                            $location = $row->deviceAssigned->location;
-                            return $location;
-                        } else {
-                            return '--';
-                        }
+                        $location = optional(optional(optional($row->deviceAssigned)->assignee)->locations, function ($locations) {
+                            return $locations->address . ' <br>' . $locations->city . ' ' . $locations->state;
+                        });
+
+                        return $location ?? '--';
                     })->addColumn('createdtime', function ($row) {
                         $createdtime = $row->created_at->format('m-d-Y');
                         return $createdtime;
                     })->addColumn('apikey', function ($row) {
-                        $apikey = '';
-                        if($row->api_key){
-                            $apikey .= "<span id='$row->api_key' href='javascript:void()' class='cursor-pointer copy-api-key'><i class='bx bx-copy-alt'></i></span>";
-                        }else{
-                            $apikey .= '--';
-                        }
+                        $apikey = $row->api_key
+                            ? '<a href="javascript:void(0);" title="Assign Device" class="dropdown-item" onClick="getApiKey(\'' . route('device.getApiKey', $row->id) . '\')"><i class="bx bx-copy-alt"></a'
+                            : '--';
 
                         return $apikey;
                     })->addColumn('actions', function ($row) {
-                        $actions = '';
-                        if ($row) {
-                            $actions .= '<div class="dropdown">
+                        $editAction = Gate::allows('device-edit', $row)
+                            ? '<a class="dropdown-item" href="' . route('devices.edit', $row->id) . '" title="Edit"><i class="bx bx-edit-alt me-1"></i> Edit</a>'
+                            : '';
+
+                        $deleteAction = Gate::allows('device-delete', $row)
+                            ? '<a class="dropdown-item delete-device" title="Delete" href="javascript:void(0);" id="' . $row->id . '"><i class="bx bx-trash-alt "></i> Delete</a>'
+                            : '';
+
+                        $detailsAction = Gate::allows('device-details', $row)
+                            ? '<a class="dropdown-item" title="Delete" href="' . route('devices.show', $row->id) . '"><i class="bx bx-detail"></i> Details</a>'
+                            : '';
+
+                        $assignDeviceAction = !$row->deviceAssigned && Gate::allows('device-assign', $row)
+                            ? '<a href="javascript:void(0);" title="Assign Device" class="dropdown-item" onClick="assignDeviceToUsers(\'' . route('device.assign', $row->id) . '\')"><i class="bx bx-chip"></i>Assign Device</a>'
+                            : '';
+
+                        $unAssignDeviceAction = $row->deviceAssigned
+                            ? '<a href="javascript:void(0);" title="Un-assign Device" class="dropdown-item unassign-device" id="' . $row->deviceAssigned->id . '"><i class="bx bx-chip"></i>Un-assign Device</a>'
+                            : '';
+
+                        $actions = $editAction || $deleteAction || $detailsAction || $assignDeviceAction || $unAssignDeviceAction
+                            ? '<div class="dropdown">
                             <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
                               <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
-                            <div class="dropdown-menu" style="">';
-                            if (Gate::allows('device-edit', $row)) {
-                                $actions .= '<a class="dropdown-item" href="' . route('devices.edit', $row->id) . '" title="Edit"><i class="bx bx-edit-alt me-1"></i> Edit</a>';
-                            }
-                            if (Gate::allows('device-delete', $row)) {
-                                $actions .= '<a class="dropdown-item delete-device"  title="Delete"  href="javascript:void(0);"
-                                id="' . $row->id . '"><i class="bx bx-trash-alt "></i> Delete</a>';
-                            }
-                            if (Gate::allows('device-details', $row)) {
-                                $actions .= '<a class="dropdown-item" title="Delete" href="' . route('devices.show', $row->id) . '"><i class="bx bx-detail"></i> Details</a>';
-                            }
-                            if (!$row->deviceAssigned) {
-                                if (Gate::allows('device-assign', $row)) {
-                                    $actions .= '<a href="javascript:void(0);" title="Edit" class="dropdown-item" onClick="assignDeviceToUsers(\'' . route('device.assign', $row->id) . '\')" ><i class="bx bx-chip"></i>Assign Device</a>';
-                                }
-                            }
-                            $actions .= '</div>
-                          </div>';
-                        }
+                            <div class="dropdown-menu">' .
+                            $editAction .
+                            $deleteAction .
+                            $detailsAction .
+                            $assignDeviceAction .
+                            $unAssignDeviceAction .
+                            '</div>
+                          </div>'
+                            : '';
 
                         return $actions;
                     })
-                    ->rawColumns(['deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'assignee', 'location', 'actions','apikey'])
+                    ->rawColumns(['deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'assignee', 'location', 'actions', 'apikey'])
                     ->make(true);
             }
         } catch (Exception $e) {

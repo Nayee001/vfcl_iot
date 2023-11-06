@@ -13,7 +13,7 @@
                                 {{ method_field('PUT') }}
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
-                                        <label for="fname" class="form-label">First Name {!!dynamicRedAsterisk()!!}</label>
+                                        <label for="fname" class="form-label">First Name {!! dynamicRedAsterisk() !!}</label>
                                         {!! Form::text('fname', $user['fname'], [
                                             'placeholder' => 'First Name',
                                             'id' => 'fname',
@@ -21,7 +21,7 @@
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="lname" class="form-label">Last Name {!!dynamicRedAsterisk()!!}</label>
+                                        <label for="lname" class="form-label">Last Name {!! dynamicRedAsterisk() !!}</label>
                                         {!! Form::text('lname', $user['lname'], [
                                             'placeholder' => 'Last Name',
                                             'id' => 'lname',
@@ -29,11 +29,11 @@
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="email" class="form-label">E-mail {!!dynamicRedAsterisk()!!}</label>
+                                        <label for="email" class="form-label">E-mail {!! dynamicRedAsterisk() !!}</label>
                                         {!! Form::text('email', $user['email'], ['placeholder' => 'Email', 'id' => 'email', 'class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="title" class="form-label">Title {!!dynamicRedAsterisk()!!}</label>
+                                        <label for="title" class="form-label">Title {!! dynamicRedAsterisk() !!}</label>
                                         {!! Form::text('title', $user['title'], [
                                             'placeholder' => 'Title; Professor, Research Assistant, etc..',
                                             'class' => 'form-control',
@@ -41,7 +41,8 @@
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label class="form-label" for="phoneNumber">Phone Number {!!dynamicRedAsterisk()!!}</label>
+                                        <label class="form-label" for="phoneNumber">Phone Number
+                                            {!! dynamicRedAsterisk() !!}</label>
                                         <div class="input-group input-group-merge">
                                             <span class="input-group-text">US (+1)</span>
                                             {!! Form::tel('phonenumber', $user['phonenumber'], [
@@ -52,7 +53,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="role" class="form-label">Role {!!dynamicRedAsterisk()!!}</label>
+                                        <label for="role" class="form-label">Role {!! dynamicRedAsterisk() !!}</label>
                                         {!! Form::select('roles', $roles, $userRole, [
                                             'class' => 'form-control',
                                             'id' => 'roles',
@@ -93,40 +94,103 @@
                                 </div>
                                 <div class="row mt-2">
                                     <div class="mb-3 col-md-6">
-                                        <label for="location_type" class="form-label">Location Type {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::select('location_type', $locationTypes, $user->locations->location_type, [
-                                            'class' => 'form-control',
-                                            'placeholder' => 'Select Location Type',
-                                            'id' => 'location_type',
-                                        ]) !!}
+                                        <label for="location_type" class="form-label">Location Type
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                            {!! Form::select('location_type', $locationTypes, $user->locations->location_type, [
+                                                'class' => 'form-control',
+                                                'placeholder' => 'Select Location Type',
+                                                'id' => 'location_type',
+                                            ]) !!}
+                                        @else
+                                            {!! Form::select('location_type', $locationTypes, null, [
+                                                'class' => 'form-control',
+                                                'placeholder' => 'Select Location Type',
+                                                'id' => 'location_type',
+                                            ]) !!}
+                                        @endif
+
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="address" class="form-label">Address {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::text('address', $user->locations->address, ['placeholder' => '109 University Square', 'id' => 'address', 'class' => 'form-control']) !!}
+                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                            {!! Form::text('address', $user->locations->address, [
+                                                'placeholder' => '109 University Square',
+                                                'id' => 'address',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        @else
+                                            {!! Form::text('address', null, [
+                                                'placeholder' => '109 University Square',
+                                                'id' => 'address',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        @endif
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="city" class="form-label">City {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::text('city', $user->locations->city, ['placeholder' => 'Erie', 'id' => 'city', 'class' => 'form-control']) !!}
+                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                            {!! Form::text('city', $user->locations->city, [
+                                                'placeholder' => 'Erie',
+                                                'id' => 'city',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        @else
+                                            {!! Form::text('city', null, [
+                                                'placeholder' => 'Erie',
+                                                'id' => 'city',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        @endif
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="state" class="form-label">State {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::text('state', $user->locations->state, [
-                                            'placeholder' => 'PA',
-                                            'class' => 'form-control',
-                                            'id' => 'state',
-                                        ]) !!}
+                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                            {!! Form::text('state', $user->locations->state, [
+                                                'placeholder' => 'PA',
+                                                'class' => 'form-control',
+                                                'id' => 'state',
+                                            ]) !!}
+                                        @else
+                                            {!! Form::text('state', null, [
+                                                'placeholder' => 'PA',
+                                                'class' => 'form-control',
+                                                'id' => 'state',
+                                            ]) !!}
+                                        @endif
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="country" class="form-label">Country {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::text('country', $user->locations->country, ['placeholder' => 'USA', 'id' => 'country', 'class' => 'form-control']) !!}
+                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                            {!! Form::text('country', $user->locations->country, [
+                                                'placeholder' => 'USA',
+                                                'id' => 'country',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        @else
+                                            {!! Form::text('country', null, [
+                                                'placeholder' => 'USA',
+                                                'id' => 'country',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        @endif
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="postal_code" class="form-label">Postal Code {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::text('postal_code', $user->locations->postal_code, [
-                                            'placeholder' => '16541',
-                                           'class' => 'form-control',
-                                            'id' => 'postal_code',
-                                        ]) !!}
+                                        <label for="postal_code" class="form-label">Postal Code
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                            {!! Form::text('postal_code', $user->locations->postal_code, [
+                                                'placeholder' => '16541',
+                                                'class' => 'form-control',
+                                                'id' => 'postal_code',
+                                            ]) !!}
+                                        @else
+                                            {!! Form::text('postal_code', null, [
+                                                'placeholder' => '16541',
+                                                'class' => 'form-control',
+                                                'id' => 'postal_code',
+                                            ]) !!}
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="mt-2">
