@@ -20,6 +20,9 @@ class UserService
     {
         return $this->userRepository->getAllUsers();
     }
+    public function getUserById($id){
+        return $this->userRepository->getUserById($id);
+    }
     public function getManagersAndAdmin()
     {
         return $this->userRepository->getManagersAndAdmin();

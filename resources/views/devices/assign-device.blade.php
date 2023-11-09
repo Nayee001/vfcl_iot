@@ -10,15 +10,36 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="device_id" class="form-label">Select Your Device {!!dynamicRedAsterisk()!!}</label>
-                        {!! Form::select('device_id', $allDevices, $deviceData->id,['placeholder' => 'Select Device', 'id' => 'device_id', 'class' => 'form-control']) !!}
+                        <label for="device_id" class="form-label">Select Your Device {!! dynamicRedAsterisk() !!}</label>
+                        {!! Form::select('device_id', $allDevices, $deviceData->id, [
+                            'placeholder' => 'Select Device',
+                            'id' => 'device_id',
+                            'class' => 'form-control',
+                        ]) !!}
+                    </div>
+                    <div class="col mb-3">
+                        <label for="assign_to" class="form-label">Select Your Customer {!! dynamicRedAsterisk() !!}</label>
+                        {!! Form::select('assign_to', $customers, null, [
+                            'placeholder' => 'Select Customer',
+                            'id' => 'assign_to',
+                            'class' => 'form-control',
+                        ]) !!}
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col mb-3">
-                        <label for="assign_to" class="form-label">Select Your Customer {!!dynamicRedAsterisk()!!}</label>
-                        {!! Form::select('assign_to', $customers, null,['placeholder' => 'Select Customer', 'id' => 'assign_to', 'class' => 'form-control']) !!}
+
+                {{-- <span><i class='bx bx-location-plus'></i> Device Location</span>
+                <hr> --}}
+                <div class="row no-customer">
+                    <p>No Customer Selected</p>
+                </div>
+                <div id="loading_spinner" style="display:none;">
+                    <!-- Spinner from Bootstrap or custom HTML for spinner -->
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only"></span>
                     </div>
+                </div>
+                <div id="location_radio_buttons">
+                    <!-- Radio buttons will be added here by jQuery -->
                 </div>
             </div>
             <div class="modal-footer">
@@ -66,6 +87,39 @@
                     });
                 }
             });
+        });
+        $('#assign_to').change(function() {
+            var customer_id = $(this).val(); // Get the selected customer id
+            $('#loading_spinner').show();
+
+            if (customer_id) {
+                setTimeout(function() {
+                    $.ajax({
+                        url: '/get-customer-locations/' + customer_id,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#loading_spinner').hide(); // Hide spinner
+                            $('.no-customer').hide();
+                            $('div#location_radio_buttons')
+                                .empty(); // Clear the previous radio buttons
+                            $.each(data.locations, function(key, location) {
+                                $('div#location_radio_buttons').append(
+                                    `<input type="radio" class="form-check-input" name="location_id" id="location_${location.id}" value="${location.id}">
+                                <label class="form-check-label" for="location_${location.id}">${location.location_name}</label><br>`
+                                );
+                            });
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            $('#loading_spinner').hide(); // Hide spinner
+                            $('.no-customer').hide();
+                        }
+                    });
+                }, 1000);
+            } else {
+                $('#loading_spinner').hide(); // Hide spinner immediately if no customer is selected
+                $('div#location_radio_buttons').empty();
+            }
         });
     });
 </script>

@@ -45,11 +45,11 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function getDevices()
     {
         if (isSuperAdmin()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.assignee.locations')->get();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee','deviceAssigned.deviceLocation','deviceAssigned.assignee.locations')->get();
         } elseif (isManager()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->get();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee','deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->get();
         } else {
-            return $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.assignee.locations'])
+            return $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation','deviceAssigned.assignee.locations'])
                 ->whereHas('deviceAssigned', function ($query) {
                     $query->where('assign_to', Auth::id());
                 })
@@ -102,7 +102,7 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function createDevice(array $inputdata): Model
     {
         $fillableFields = [
-            'name', 'device_type', 'owner', 'health', 'status', 'description'
+            'name', 'device_type', 'owner', 'health', 'status', 'description', 'ip_address', 'mac_address'
         ];
         $modifiedData = array_intersect_key($inputdata, array_flip($fillableFields));
         $modifiedData['created_by'] = Auth::id();
@@ -158,11 +158,14 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function updateDevice($request, $id)
     {
         $fillableFields = [
-            'name', 'device_type', 'owner', 'health', 'status', 'api_key ','description','imei','ip_address'
+            'name', 'device_type', 'owner', 'health', 'status', 'description', 'mac_address', 'ip_address'
         ];
         $modifiedData = array_intersect_key($request, array_flip($fillableFields));
         $modifiedData['updated_by'] = Auth::id();
         $device = $this->model->findOrFail($id);
+        if ($request['mac_address'] != $device['mac_address']) {
+            $modifiedData['api_key'] = $this->model::generateApiKey($request['mac_address']);
+        }
         return $device->update($modifiedData);
     }
 
@@ -208,8 +211,8 @@ class DeviceRepository implements DeviceRepositoryInterface
                             : '--';
                         return $assigneeLink;
                     })->addColumn('location', function ($row) {
-                        $location = optional(optional(optional($row->deviceAssigned)->assignee)->locations, function ($locations) {
-                            return $locations->address . ' <br>' . $locations->city . ' ' . $locations->state;
+                        $location = optional(optional($row->deviceAssigned)->deviceLocation, function ($locations) {
+                            return $locations->location_name;
                         });
 
                         return $location ?? '--';

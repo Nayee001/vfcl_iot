@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 use App\Repositories\UserRepository;
 use App\Services\DeviceService;
+use App\Repositories\LocationNameRepository;
 
 class UserController extends Controller
 {
@@ -29,16 +30,18 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    protected $userRepository, $deviceService, $locationRepository;
+    protected $userRepository, $deviceService, $locationRepository, $locationNameRepository;
 
     function __construct(
         UserRepository $userRepository,
         DeviceService $deviceService,
-        LocationRepository $locationRepository
+        LocationRepository $locationRepository,
+        LocationNameRepository $locationNameRepository
     ) {
         $this->userRepository = $userRepository;
         $this->deviceService = $deviceService;
         $this->locationRepository = $locationRepository;
+        $this->locationNameRepository = $locationNameRepository;
 
         $this->middleware('permission:user-list', ['only' => ['index', 'store']]);
         $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
@@ -63,9 +66,8 @@ class UserController extends Controller
     public function create(): View
     {
         $roles = Role::pluck('name', 'name')->all();
-        $locationTypes = $this->userRepository->getLocationTypes();
 
-        return view('users.create', compact('roles', 'locationTypes'));
+        return view('users.create', compact('roles'));
     }
 
     /**
@@ -80,17 +82,20 @@ class UserController extends Controller
             $input = $request->all();
             $latestUserId = User::max('user_id');
             $input['user_id'] = $latestUserId ? $latestUserId + 1 : 10000;
-
             $input['password'] = Hash::make($input['password']);
             $input['status'] = User::USER_STATUS['NEWUSER'];
             $input['created_by'] = Auth::id();
             $user = $this->userRepository->store($input, $request);
-            if ($user) {
-                $this->locationRepository->create($user, $input);
-                return successMessage('User Created successfully');
+            if (!$user) {
+                return errorMessage();
             }
+            $location = $this->locationRepository->create($user, $input);
+            if ($location) {
+                $this->locationNameRepository->create($location, $input);
+            }
+            return successMessage('User Created successfully');
         } catch (Exception $e) {
-            Log::info('Create User Exception:- ' . $e->getMessage());
+            Log::error('Create User Exception: ' . $e->getMessage());
             return errorMessage();
         }
     }
@@ -118,10 +123,10 @@ class UserController extends Controller
     public function edit($id): View
     {
         $user =  $this->userRepository->getUserById($id);
+        // dd($user);
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name', 'name')->all();
-        $locationTypes = $this->userRepository->getLocationTypes();
-        return view('users.edit', compact('user', 'roles', 'userRole','locationTypes'));
+        return view('users.edit', compact('user', 'roles', 'userRole'));
     }
 
     /**
@@ -131,44 +136,46 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        $this->validate($request, [
-            'fname' => 'required',
-            'lname' => 'required',
-            'title' => 'required',
-            'roles' => 'required',
-            'password' => 'same:confirm-password',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,' . $id,
-            'location_type' => 'required',
-            'address' => 'required',
-            'city' => 'required',
-            'state' => 'required',
-            'country' => 'required',
-            'postal_code' => 'required|numeric',
-        ]);
-        try {
+    // Assuming that User and Role models are correctly set up with a relationship in Eloquent.
 
-            $input = $request->all();
-            if (!empty($input['password'])) {
-                $input['password'] = Hash::make($input['password']);
+    public function update(Request $request, User $user) // Route model binding
+    {
+        try {
+            $validatedData = $request->validate([
+                'fname' => 'required',
+                'lname' => 'required',
+                'title' => 'required',
+                'roles' => 'required|array', // Ensure 'roles' is an array
+                'password' => 'nullable|confirmed',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,' . $user->id,
+                'address' => 'required',
+                'city' => 'required',
+                'state' => 'required',
+                'country' => 'required',
+                'postal_code' => 'required|numeric',
+            ]);
+
+            if (!empty($validatedData['password'])) {
+                $validatedData['password'] = Hash::make($validatedData['password']);
             } else {
-                $input = Arr::except($input, array('password'));
+                unset($validatedData['password']);
             }
 
-            $user = User::find($id);
-            $user->update($input);
-            $this->locationRepository->update($id, $input);
-            DB::table('model_has_roles')->where('model_id', $id)->delete();
+            $user->fill($validatedData);
+            $user->save();
 
-            $user->assignRole($request->input('roles'));
+            $user->syncRoles($validatedData['roles']);
+
+            $this->locationRepository->update($user->id, $validatedData);
+
             return successMessage('User updated successfully');
         } catch (Exception $e) {
-            Log::info('Update User Exception:- ' . $e->getMessage());
+            Log::error('Create User Exception: ' . $e->getMessage());
             return errorMessage();
         }
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -216,7 +223,6 @@ class UserController extends Controller
                 ->addColumn('creater', function ($row) {
                     $creater = '';
                     if ($row->creater) {
-                        $role = $row->creater->roles->pluck('name')->first();
                         $name = $row->creater->fname;
                         $creater = '<span class="badge bg-label-secondary me-1">' . $name . '</span>';
                     } else {

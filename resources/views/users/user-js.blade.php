@@ -97,7 +97,7 @@
             });
         });
 
-        // Delete Users (Tempaery Delete)
+        // Delete Users (Tamporory Delete)
         $(document).on('click', '.delete-user', function(e) {
             var id = this.id;
             swalWithBootstrapButtons.fire({
@@ -200,5 +200,22 @@
                 document.getElementById("confirm_password").value = randomPassword;
             });
         }
+
+        $(document).ready(function() {
+
+            var i = 1;
+            var length;
+            $("#add").click(function() {
+                i++;
+                $('#dynamic_field').append('<tr id="row' + i +
+                    '"><td class="no-border"><input type="text" name="location_name[]" placeholder="eg; Zurn Science Center" class="form-control name_list"/></td><td class="no-border"><button type="button" name="remove" id="' +
+                    i + '" class="btn rounded-pill btn-icon btn-danger btn_remove"><i class="bx bx-minus"></i></button></td></tr>');
+            });
+            $(document).on('click', '.btn_remove', function() {
+
+                var button_id = $(this).attr("id");
+                $('#row' + button_id + '').remove();
+            });
+        });
     </script>
 @endsection

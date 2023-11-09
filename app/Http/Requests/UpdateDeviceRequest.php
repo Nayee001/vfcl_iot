@@ -28,9 +28,12 @@ class UpdateDeviceRequest extends FormRequest
             'health' => 'required',
             'status' => 'required',
             'description' => 'required|max:200',
-            'imei' => 'required',
+            'mac_address' => [
+                'required',
+                'max:17',
+                'regex:/^(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/'
+            ],
             'ip_address' => 'required',
-            'api_key' => 'required'
         ];
     }
     /**
@@ -49,9 +52,8 @@ class UpdateDeviceRequest extends FormRequest
             'status.required' =>  'Select Device Status',
             'description.required' => 'Description Required',
             'description.max' => 'Description can be only 200 characters long',
-            'imei.required' =>  'IMEI Number is Required',
+            'mac_address.required' =>  'Mac Address is Required',
             'ip_address.required' => 'IP Address is Required',
-            'api_key.required' => 'API KEY is Required',
         ];
     }
 }

@@ -8,13 +8,14 @@ use App\Repositories\DeviceTypeRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Datatables;
+use App\Repositories\LocationRepository;
 use App\Repositories\DeviceAssignRepository;
 use Exception;
 
 class DeviceService
 {
 
-    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository;
+    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository, $locationRepository;
 
     /**
      * Constructor for the class.
@@ -23,16 +24,20 @@ class DeviceService
      * @param DeviceRepository $deviceRepository
      * @param DeviceTypeRepository $deviceTypeRepository
      * @param DeviceAssignRepository $deviceAssignRepository
+     * @param LocationRepository $locationRepository
+     *
      *
      */
     public function __construct(
         DeviceRepository $deviceRepository,
         DeviceTypeRepository $deviceTypeRepository,
         DeviceAssignRepository $deviceAssignRepository,
+        LocationRepository $locationRepository,
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->deviceTypeRepository = $deviceTypeRepository;
         $this->deviceAssignRepository = $deviceAssignRepository;
+        $this->locationRepository = $locationRepository;
     }
 
     public function getCount()
@@ -122,7 +127,7 @@ class DeviceService
         }
     }
 
-        public function unAssign($id)
+    public function unAssign($id)
     {
         try {
             return $this->deviceAssignRepository->destroy($id);
@@ -146,5 +151,10 @@ class DeviceService
     public function assignDeviceToUser($request)
     {
         return $this->deviceAssignRepository->assignDeviceToUser($request);
+    }
+
+    public function deviceLocations($user, $input)
+    {
+        return $this->locationRepository->create($user, $input);
     }
 }

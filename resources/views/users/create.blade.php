@@ -82,16 +82,20 @@
                                 </div>
                                 <div class="row mt-2">
                                     <div class="mb-3 col-md-6">
-                                        <label for="location_type" class="form-label">Location Type {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::select('location_type', $locationTypes, null, [
+                                        <label for="address" class="form-label">Address {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::text('address', null, [
+                                            'placeholder' => '109 University Square',
+                                            'id' => 'address',
                                             'class' => 'form-control',
-                                            'placeholder' => 'Select Location Type',
-                                            'id' => 'location_type',
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="address" class="form-label">Address {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::text('address', null, ['placeholder' => '109 University Square', 'id' => 'address', 'class' => 'form-control']) !!}
+                                        <label for="address" class="form-label">Street Address </label>
+                                        {!! Form::text('address_optional', null, [
+                                            'placeholder' => '109 University Square',
+                                            'id' => 'address',
+                                            'class' => 'form-control',
+                                        ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="city" class="form-label">City {!! dynamicRedAsterisk() !!}</label>
@@ -110,14 +114,34 @@
                                         {!! Form::text('country', null, ['placeholder' => 'USA', 'id' => 'country', 'class' => 'form-control']) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="postal_code" class="form-label">Postal Code {!! dynamicRedAsterisk() !!}</label>
+                                        <label for="postal_code" class="form-label">Postal Code
+                                            {!! dynamicRedAsterisk() !!}</label>
                                         {!! Form::text('postal_code', null, [
                                             'placeholder' => '16541',
-                                           'class' => 'form-control',
+                                            'class' => 'form-control',
                                             'id' => 'postal_code',
                                         ]) !!}
                                     </div>
                                 </div>
+                                <hr>
+                                <div class="row">
+                                    <span>
+                                        <i class='bx bx-map'></i> Add Location Names
+                                    </span>
+                                    <div class="mb-3 col-md-6">
+                                    <table class="table " id="dynamic_field">
+                                        <tr>
+                                          <td class="no-border"><input type="text"  name="location_name[]" placeholder="eg; I Hack Building" class="form-control name_list" /></td>
+                                          <td class="no-border">
+                                            <button title="Add More" type="button" name="add" id="add" class="btn rounded-pill btn-icon btn-primary">
+                                                <i class='bx bx-plus' ></i>
+                                              </button>
+                                            </td>
+                                        </tr>
+                                      </table>
+                                    </div>
+                                </div>
+
                                 <div class="mt-2">
                                     <button type="submit" id="submit"
                                         class="submit btn btn-primary me-2">Submit</button>

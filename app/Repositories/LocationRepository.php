@@ -26,8 +26,8 @@ class LocationRepository implements LocationRepositoryInterface
     {
         $inputData = [
             'user_id' => $users['id'],
-            'location_type' => $input['location_type'],
             'address' => $input['address'],
+            'address_optional' => $input['address_optional'],
             'city' => $input['city'],
             'state' => $input['state'],
             'country' => $input['country'],
@@ -43,8 +43,8 @@ class LocationRepository implements LocationRepositoryInterface
     public function update($id, $input)
     {
         $inputData = [
-            'location_type' => $input['location_type'],
             'address'       => $input['address'],
+            'address_optional'       => $input['address_optional'],
             'city'          => $input['city'],
             'state'         => $input['state'],
             'country'       => $input['country'],
@@ -52,7 +52,7 @@ class LocationRepository implements LocationRepositoryInterface
         ];
 
         $userLocation = $this->model::updateOrCreate(
-            ['user_id' => $id], // Conditions to find the record
+            ['user_id' => $id],
             $inputData
         );
 

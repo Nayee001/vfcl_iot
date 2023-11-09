@@ -32,6 +32,11 @@ class DeviceController extends Controller
         $this->middleware('permission:device-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:device-delete', ['only' => ['destroy']]);
     }
+
+    public function dashboard(): view
+    {
+        return view('devices.dashboard');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -133,7 +138,7 @@ class DeviceController extends Controller
             return exceptionMessage($e->getMessage());
         } catch (Exception $e) {
             Log::error("Error creating device: {$e->getMessage()}");
-            return exceptionMessage('An unexpected error occurred. Please try again later.');
+            return exceptionMessage($e->getMessage());
         }
     }
 
@@ -176,7 +181,6 @@ class DeviceController extends Controller
         $deviceData = $this->deviceService->findorfail($id);
         $allDevices = $this->deviceService->getPluckedDevices();
         $customers = $this->userService->getManagerAddedUsers(Auth::id());
-
         return view('devices.assign-device', compact('customers', 'deviceData', 'allDevices'));
     }
     public function getApiKey($id): view
@@ -191,15 +195,16 @@ class DeviceController extends Controller
     public function assignDevice(StoreAssignDevice $request)
     {
         try {
-            if ($this->deviceService->assignDeviceToUser($request->all())) {
-                return successMessage('Assigned Device !!');
+            if (!$this->deviceService->assignDeviceToUser($request->all())) {
+                return exceptionMessage('Device is already assigned!');
             }
-            return exceptionMessage('Device is already assigned !');
+            return successMessage('Assigned Device!');
         } catch (DeviceCreationException $e) {
             return exceptionMessage($e->getMessage());
         } catch (Exception $e) {
             Log::error("Error in Assign Device: {$e->getMessage()}");
             return exceptionMessage('An unexpected error occurred. Please try again later.');
         }
+
     }
 }

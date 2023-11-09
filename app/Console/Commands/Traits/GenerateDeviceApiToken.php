@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Console\Commands\Traits;
+
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 trait GenerateDeviceApiToken
 {
@@ -10,8 +12,13 @@ trait GenerateDeviceApiToken
      *
      * @return string
      */
-    public static function generateApiKey()
+    public static function generateApiKey($macAddress)
     {
-        return Str::random(64);
+        //$salt = bin2hex(random_bytes(8)); // This will produce a string of 32 hexadecimal characters
+        if ($macAddress) {
+            // Now hash the MAC address with the salt using SHA-256
+            $hashedMacAddress = substr(hash('sha256', $macAddress), 0, 20);
+            return $hashedMacAddress;
+        }
     }
 }

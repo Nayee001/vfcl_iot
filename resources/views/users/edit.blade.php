@@ -93,27 +93,10 @@
                                     </div>
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="mb-3 col-md-6">
-                                        <label for="location_type" class="form-label">Location Type
-                                            {!! dynamicRedAsterisk() !!}</label>
-                                        @if ($user->locations && !is_null($user->locations->location_type))
-                                            {!! Form::select('location_type', $locationTypes, $user->locations->location_type, [
-                                                'class' => 'form-control',
-                                                'placeholder' => 'Select Location Type',
-                                                'id' => 'location_type',
-                                            ]) !!}
-                                        @else
-                                            {!! Form::select('location_type', $locationTypes, null, [
-                                                'class' => 'form-control',
-                                                'placeholder' => 'Select Location Type',
-                                                'id' => 'location_type',
-                                            ]) !!}
-                                        @endif
 
-                                    </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="address" class="form-label">Address {!! dynamicRedAsterisk() !!}</label>
-                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                        @if ($user->locations)
                                             {!! Form::text('address', $user->locations->address, [
                                                 'placeholder' => '109 University Square',
                                                 'id' => 'address',
@@ -127,9 +110,27 @@
                                             ]) !!}
                                         @endif
                                     </div>
+
+                                    <div class="mb-3 col-md-6">
+                                        <label for="address" class="form-label">Street Address </label>
+                                        @if ($user->address_optional)
+                                            {!! Form::text('address_optional', $user->locations->address_optional, [
+                                                'placeholder' => '109 University Square',
+                                                'id' => 'address_optional',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        @else
+                                            {!! Form::text('address_optional', null, [
+                                                'placeholder' => '109 University Square',
+                                                'id' => 'address_optional',
+                                                'class' => 'form-control',
+                                            ]) !!}
+                                        @endif
+
+                                    </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="city" class="form-label">City {!! dynamicRedAsterisk() !!}</label>
-                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                        @if ($user->locations)
                                             {!! Form::text('city', $user->locations->city, [
                                                 'placeholder' => 'Erie',
                                                 'id' => 'city',
@@ -145,7 +146,7 @@
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="state" class="form-label">State {!! dynamicRedAsterisk() !!}</label>
-                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                        @if ($user->locations)
                                             {!! Form::text('state', $user->locations->state, [
                                                 'placeholder' => 'PA',
                                                 'class' => 'form-control',
@@ -161,7 +162,7 @@
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="country" class="form-label">Country {!! dynamicRedAsterisk() !!}</label>
-                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                        @if ($user->locations)
                                             {!! Form::text('country', $user->locations->country, [
                                                 'placeholder' => 'USA',
                                                 'id' => 'country',
@@ -178,7 +179,7 @@
                                     <div class="mb-3 col-md-6">
                                         <label for="postal_code" class="form-label">Postal Code
                                             {!! dynamicRedAsterisk() !!}</label>
-                                        @if ($user->locations && !is_null($user->locations->location_type))
+                                        @if ($user->locations)
                                             {!! Form::text('postal_code', $user->locations->postal_code, [
                                                 'placeholder' => '16541',
                                                 'class' => 'form-control',
@@ -191,6 +192,64 @@
                                                 'id' => 'postal_code',
                                             ]) !!}
                                         @endif
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="row">
+                                    <span>
+                                        <i class='bx bx-map'></i> Add Location Names
+                                    </span>
+                                    <div class="mb-3 col-md-6">
+                                        <table class="table " id="dynamic_field">
+                                            @if ($user->locations && !empty($user->locations->locationsNames))
+                                                @foreach ($user->locations->locationsNames as $names)
+                                                    <tr>
+                                                        <td class="no-border">
+                                                            <input type="text" name="location_name[]"
+                                                                placeholder="eg; I Hack Building"
+                                                                value="{{ $names->location_name }}"
+                                                                class="form-control name_list" />
+                                                        </td>
+                                                        @if ($loop->first)
+                                                            <td class="no-border">
+                                                                <a title="Add More" type="button"
+                                                                    class="btn rounded-pill btn-icon btn-danger delete-location-name"
+                                                                    id="{{ $names->id }}">
+                                                                    <i class='minus-icon bx bx-minus'></i>
+                                                                </a>
+                                                                <button title="Add More" type="button" name="add"
+                                                                    id="add"
+                                                                    class="btn rounded-pill btn-icon btn-primary">
+                                                                    <i class='bx bx-plus'></i>
+                                                                </button>
+                                                            </td>
+                                                        @else
+                                                            <td class="no-border">
+                                                                <a title="Add More" type="button"
+                                                                    class="btn rounded-pill btn-icon btn-danger delete-location-name"
+                                                                    id="{{ $names->id }}">
+                                                                    <i class='minus-icon bx bx-minus'></i>
+                                                                </a>
+                                                            </td>
+                                                        @endif
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td class="no-border"><input type="text" name="location_name[]"
+                                                            placeholder="eg; I Hack Building"
+                                                            class="form-control name_list" />
+                                                    </td>
+                                                    <td class="no-border">
+                                                        <button title="Add More" type="button" name="add"
+                                                            id="add" class="btn rounded-pill btn-icon btn-primary">
+                                                            <i class='bx bx-plus'></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </table>
                                     </div>
                                 </div>
                                 <div class="mt-2">
@@ -277,5 +336,53 @@
                 document.getElementById("confirm_password").value = randomPassword;
             });
         }
+
+
+
+        $(document).on('click', '.delete-location-name', function(e) {
+            var id = this.id;
+            $.ajax({
+                method: 'delete',
+                url: "{{ url('location-name') }}" + "/" + id + "/delete",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(resp) {
+                    if (resp.code == '{{ __('statuscode.CODE200') }}') {
+                        toastr.success(resp.Message);
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        toastr.error(resp.Message);
+                    }
+                },error: function(data){
+                    toastr.error(resp.Message);
+                }
+            });
+
+        });
+
+        $(document).ready(function() {
+
+            var i = 1;
+            var length;
+            $("#add").click(function() {
+                i++;
+                $('#dynamic_field').append('<tr id="row' + i +
+                    '"><td class="no-border"><input type="text" name="location_name[]" placeholder="eg; Zurn Science Center" class="form-control name_list"/></td><td class="no-border"><button type="button" name="remove" id="' +
+                    i +
+                    '" class="btn rounded-pill btn-icon btn-danger btn_remove"><i class="bx bx-minus"></i></button></td></tr>'
+                    );
+            });
+            $(document).on('click', '.btn_remove', function() {
+
+                var button_id = $(this).attr("id");
+                $('#row' + button_id + '').remove();
+            });
+        });
     </script>
 @endsection

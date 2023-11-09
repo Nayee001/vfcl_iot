@@ -13,7 +13,12 @@
                                 <div class="row">
                                     <div class="mb-3 col-md-6">
                                         <label for="name" class="form-label">Device Name {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::text('name', null, ['placeholder' => 'Device Name', 'id' => 'name', 'class' => 'form-control']) !!}
+
+                                        {!! Form::text('name', null, [
+                                            'placeholder' => 'Device Name',
+                                            'id' => 'name',
+                                            'class' => 'form-control',
+                                        ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="device_type" class="form-label">Device Type
@@ -25,35 +30,55 @@
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                        <label for="email" class="form-label">Select Manager
+                                        <label for="email" class="form-label">Select Owner
                                             {!! dynamicRedAsterisk() !!}</label>
                                         {!! Form::select('owner', $managers, null, [
                                             'class' => 'form-control',
-                                            'placeholder' => 'Select Manager',
+                                            'placeholder' => 'Select Owner',
                                             'id' => 'owner',
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="health" class="form-label">Health {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::select('health', $health, 'Good', [
+                                        {!! Form::select('health', $health, null, [
                                             'class' => 'form-control',
                                             'placeholder' => 'Select health',
                                             'id' => 'health',
                                         ]) !!}
                                     </div>
                                     <div class="mb-3 col-md-6">
-                                            <label class="form-label" for="phoneNumber">Status {!! dynamicRedAsterisk() !!}</label>
-                                            {!! Form::select('status', $status, 'Active', [
-                                                'class' => 'form-control',
-                                                'placeholder' => 'Select Status',
-                                                'id' => 'status',
-                                            ]) !!}
+                                        <label class="form-label" for="phoneNumber">Status {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::select('status', $status, null, [
+                                            'class' => 'form-control',
+                                            'placeholder' => 'Select Status',
+                                            'id' => 'status',
+                                        ]) !!}
+
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label class="form-label" for="phoneNumber">IP Address
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::text('ip_address', null, [
+                                            'placeholder' => 'ip_address',
+                                            'id' => 'ip_address',
+                                            'class' => 'form-control',
+                                        ]) !!}
+
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label class="form-label" for="phoneNumber">Mac Address
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        {!! Form::text('mac_address', null, [
+                                            'placeholder' => 'Mac Address',
+                                            'id' => 'mac_address',
+                                            'class' => 'form-control',
+                                        ]) !!}
 
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label for="description" class="form-label">Description
                                             {!! dynamicRedAsterisk() !!}</label>
-                                        {!! Form::textarea('description', $value = null, [
+                                        {!! Form::textarea('description', null, [
                                             'class' => 'form-control',
                                             'placeholder' => 'Device Description',
                                             'id' => 'description',
@@ -61,8 +86,7 @@
                                         ]) !!}
                                         <div id="floatingInputHelp" class="form-text">
                                             Description limited to 200 characters !
-                                          </div>
-
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="mt-2">

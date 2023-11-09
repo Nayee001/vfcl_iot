@@ -37,7 +37,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getUserById($id)
     {
-        return $this->model::with('locations')->find($id);
+        return $this->model::with('locations','locations.locationsNames')->find($id);
     }
 
     public function getUsersAddedByManagers($userId)
@@ -49,9 +49,5 @@ class UserRepository implements UserRepositoryInterface
     {
         $user = $this->model::create($inputData);
         return $user->assignRole($request->input('role'));
-    }
-
-    public function getLocationTypes(){
-        return Location::LOCATIONTYPE;
     }
 }

@@ -11,7 +11,7 @@ class Device extends Model
 {
     use HasFactory, SoftDeletes, GenerateDeviceApiToken;
     protected $table = "devices";
-    protected $fillable = ['name', 'device_type', 'description', 'owner', 'health', 'status','api_key','created_by', 'ip_address', 'imei'];
+    protected $fillable = ['name', 'device_type', 'description', 'owner', 'health', 'status', 'api_key', 'created_by', 'ip_address', 'mac_address'];
 
     const STATUS = ['Active' => 'Active', 'Inactive' => 'Inactive', 'Maintenance' => 'Maintenance', 'Repair' => 'Repair', 'Lost' => 'Lost'];
     const HEALTH = ['Good' => 'Good', 'Fair' => 'Fair', 'Poor' => 'Poor', 'New' => 'New', 'Critical' => 'Critical'];
@@ -24,7 +24,7 @@ class Device extends Model
         parent::boot();
 
         static::creating(function ($device) {
-            $device->api_key = self::generateApiKey();
+            $device->api_key = self::generateApiKey($device->mac_address);
         });
     }
 

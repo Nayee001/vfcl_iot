@@ -178,3 +178,9 @@
 .cursor-pointer {
     cursor: pointer;
 }
+.no-border {
+    border-style: none; /* This will remove the border style for elements with 'no-border' class */
+}
+.minus-icon{
+    color:#fff !important;
+}

@@ -102,13 +102,13 @@
                 <ul class="menu-sub">
 
                     <li class="menu-item">
-                        <a href="{{ route('devices.index') }}" class="menu-link">
+                        <a href="{{ route('devices.dashboard') }}" class="menu-link">
                             <div data-i18n="Accordion">Device Dashboard</div>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('devices.index') }}" class="menu-link">
-                            <div data-i18n="Alerts">View All Devices</div>
+                            <div data-i18n="Alerts">Device List</div>
                         </a>
                     </li>
                     @can('device-create')
@@ -196,5 +196,22 @@
                 </ul>
             </li>
         @endcan
+
+        @can('general-settings-list')
+        <!-- Device components -->
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class='menu-icon bx bxs-cog' ></i>
+                <div data-i18n="Extended UI">Web Settings</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
+                        <div data-i18n="Perfect Scrollbar">Site Settings</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    @endcan
     </ul>
 </aside>

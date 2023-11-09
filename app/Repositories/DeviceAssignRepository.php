@@ -28,8 +28,9 @@ class DeviceAssignRepository implements DeviceAssignRepositoryInterface
     public function assignDeviceToUser(array $inputdata): bool
     {
         $fillableFields = [
-            'device_id', 'assign_to'
+            'device_id','assign_to','location_id'
         ];
+
         $modifiedData = array_intersect_key($inputdata, array_flip($fillableFields));
         if ($this->model->where('device_id', $modifiedData['device_id'])->exists()) {
             return false;

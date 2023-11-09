@@ -47,6 +47,11 @@ class AppServiceProvider extends ServiceProvider
 			\App\Interfaces\LocationRepositoryInterface::class,
 			\App\Repositories\LocationRepository::class
 		);
+
+		$this->app->bind(
+			\App\Interfaces\LocationNameRepositoryInterface::class,
+			\App\Repositories\LocationNameRepository::class
+		);
     }
 
     /**
