@@ -10,10 +10,10 @@ class Location extends Model
 {
     use HasFactory;
     protected $table = "locations";
-    protected $fillable = ['user_id', 'device_id', 'latitude', 'longitude', 'address', 'city', 'state', 'country', 'postal_code'];
+    protected $fillable = ['user_id', 'device_id', 'latitude', 'longitude', 'address', 'address_optional', 'city', 'state', 'country', 'postal_code'];
 
     public function locationsNames()
     {
-        return $this->hasMany(LocationName::class, 'location_id', 'id')->select('id','location_id','location_name');
+        return $this->hasMany(LocationName::class, 'location_id', 'id')->select('id', 'location_id', 'location_name');
     }
 }

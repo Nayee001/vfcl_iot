@@ -129,49 +129,42 @@ class UserController extends Controller
         return view('users.edit', compact('user', 'roles', 'userRole'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    // Assuming that User and Role models are correctly set up with a relationship in Eloquent.
 
-    public function update(Request $request, User $user) // Route model binding
+    public function update(Request $request, $id) // Route model binding
     {
+        $validatedData = $request->validate([
+            'fname' => 'required',
+            'lname' => 'required',
+            'title' => 'required',
+            'roles' => 'required', // Ensure 'roles' is an array
+            'password' => 'same:confirm-password',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,' . $id,
+            'address' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'country' => 'required',
+            'postal_code' => 'required|numeric',
+        ]);
         try {
-            $validatedData = $request->validate([
-                'fname' => 'required',
-                'lname' => 'required',
-                'title' => 'required',
-                'roles' => 'required|array', // Ensure 'roles' is an array
-                'password' => 'nullable|confirmed',
-                'email' => 'required|email|unique:users,email,' . $user->id,
-                'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,' . $user->id,
-                'address' => 'required',
-                'city' => 'required',
-                'state' => 'required',
-                'country' => 'required',
-                'postal_code' => 'required|numeric',
-            ]);
-
             if (!empty($validatedData['password'])) {
                 $validatedData['password'] = Hash::make($validatedData['password']);
             } else {
                 unset($validatedData['password']);
             }
-
-            $user->fill($validatedData);
-            $user->save();
-
-            $user->syncRoles($validatedData['roles']);
-
-            $this->locationRepository->update($user->id, $validatedData);
-
+            if (!empty($request['address_optional'])) {
+                $validatedData['address_optional'] = $request['address_optional'];
+            } else {
+                $validatedData['address_optional'] = null;
+            }
+            $user = $this->userRepository->update($id, $validatedData);
+            if ($user) {
+                $userAddress = $this->locationRepository->update($id, $validatedData);
+                $locations = $this->locationNameRepository->update($userAddress,$request->all());
+            }
             return successMessage('User updated successfully');
         } catch (Exception $e) {
-            Log::error('Create User Exception: ' . $e->getMessage());
+            Log::error("Error Updating User: {$e->getMessage()}");
             return errorMessage();
         }
     }

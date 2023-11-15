@@ -55,7 +55,6 @@ class LocationRepository implements LocationRepositoryInterface
             ['user_id' => $id],
             $inputData
         );
-
         return $userLocation;
     }
 }

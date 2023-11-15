@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
-
+use Illuminate\Support\Facades\DB;
 class LocationNameRepository implements LocationNameRepositoryInterface
 {
     /**
@@ -35,14 +35,42 @@ class LocationNameRepository implements LocationNameRepositoryInterface
                 'updated_at' => Carbon::now(),
             ];
         }
-
         if (!empty($locationNames)) {
             $userLocations = $this->model::insert($locationNames);
             return $userLocations;
         }
-
         return null;
     }
+    public function update($userAddress, $request)
+    {
+        // Use a transaction to ensure data integrity
+        DB::transaction(function () use ($userAddress, $request) {
+            // First, delete existing names for the user
+            $deleteCount = $this->model::where('user_id', $userAddress['user_id'])->delete();
+
+            // Check if delete operation was successful or necessary
+            if ($deleteCount > 0 || $this->model::where('user_id', $userAddress['user_id'])->doesntExist()) {
+                $locationData = collect($request['location_name'])->map(function ($name) use ($userAddress) {
+                    return [
+                        'user_id' => $userAddress['user_id'],
+                        'location_id' => $userAddress['id'],
+                        'device_id' => null,
+                        'location_name' => $name,
+                        'updated_at' => now(), // Laravel helper for Carbon::now()
+                    ];
+                });
+                // Insert new location data
+                if ($locationData->isNotEmpty()) {
+                    $this->model::insert($locationData->toArray());
+                }
+            }
+        });
+
+        // Check if the user has locations after the transaction
+        return $this->model::where('user_id', $userAddress['user_id'])->exists();
+    }
+
+
 
     /**
      * Destroy Location records from the database.
