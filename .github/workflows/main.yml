@@ -11,10 +11,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: nayee001/checkout@v2
+      uses: vfcl_iot_dhse/checkout@v2
 
     - name: Set up PHP
-      uses: nayee001/setup-php@v2
+      uses: vfcl_iot_dhse/setup-php@v2
       with:
         php-version: '8.1'
 
