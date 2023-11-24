@@ -3,7 +3,7 @@
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
-            <div class="col-lg-8 mb-4 order-0">
+            {{-- <div class="col-lg-8 mb-4 order-0">
                 <div class="card">
                     <div class="d-flex align-items-end row">
                         <div class="col-sm-7">
@@ -43,10 +43,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             @if (Auth::user()->status == App\Models\User::USER_STATUS['ACTIVE'])
-                <div class="col-lg-4 col-md-4 order-1">
+            <p>Admin Dashboard</p>
+                {{-- <div class="col-lg-4 col-md-4 order-1">
                     <div class="row">
                         @hasanyrole('Manager|Super Admin')
                             <div class="col-lg-6 col-md-12 col-6 mb-4">
@@ -99,14 +100,14 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <!-- Total Revenue -->
                 <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
                     <div class="card">
                         <div class="row row-bordered g-0">
                             <div class="col-md-8">
                                 <h5 class="card-header m-0 me-2 pb-3">All Devices Running</h5>
-                                {{-- <div id="totalRevenueChart" class="px-2"></div> --}}
+                                <div id="totalRevenueChart" class="px-2"></div>
                                 <div class="tab-pane fade show active" id="navs-pills-justified-profile" role="tabpanel">
                                     <div class="image-container">
                                         <img src="{{ asset('assets/img/illustrations/no-devices.jpg') }}" alt="No Devices"
@@ -122,7 +123,7 @@
                             <div class="col-md-4">
                                 <div class="card-body">
                                     <div class="text-center">
-                                        {{-- <div class="dropdown">
+                                        <div class="dropdown">
                                             <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
                                                 id="growthReportId" data-bs-toggle="dropdown" aria-haspopup="true"
                                                 aria-expanded="false">
@@ -133,13 +134,13 @@
                                                 <a class="dropdown-item" href="javascript:void(0);">2020</a>
                                                 <a class="dropdown-item" href="javascript:void(0);">2019</a>
                                             </div>
-                                        </div> --}}
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="growthChart"></div>
-                                <div class="text-center fw-semibold pt-3 mb-2">62% Company Growth</div>
+                                {{-- <div class="text-center fw-semibold pt-3 mb-2">62% Company Growth</div> --}}
 
-                                <div class="d-flex px-xxl-4 px-lg-2 p-4 gap-xxl-3 gap-lg-1 gap-3 justify-content-between">
+                                {{-- <div class="d-flex px-xxl-4 px-lg-2 p-4 gap-xxl-3 gap-lg-1 gap-3 justify-content-between">
                                     <div class="d-flex">
                                         <div class="me-2">
                                             <span class="badge bg-label-primary p-2"><i
@@ -160,7 +161,7 @@
                                             <h6 class="mb-0">$41.2k</h6>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
