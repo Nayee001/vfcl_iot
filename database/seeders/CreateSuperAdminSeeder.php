@@ -16,6 +16,7 @@ class CreateSuperAdminSeeder extends Seeder
     public function run(): void
     {
         $user = User::create([
+            'user_id' => 1000,
             'fname' => 'Akshay',
             'lname' => 'Nayee',
             'title' => 'Student',
