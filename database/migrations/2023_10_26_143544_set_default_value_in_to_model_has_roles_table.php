@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('model_has_roles', function (Blueprint $table) {
-            // $table->string('model_type')->default('App\Models\User')->change();
+            $table->string('model_type')->default('App\Models\User')->change();
         });
     }
 

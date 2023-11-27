@@ -16,13 +16,13 @@ class CreateSuperAdminSeeder extends Seeder
     public function run(): void
     {
         $user = User::create([
-            'user_id' => 1000,
+            'user_id'=>1000,
             'fname' => 'Akshay',
             'lname' => 'Nayee',
             'title' => 'Student',
             'status' => 1,
-            'phonenumber' => '8145047471',
-            'email' => 'naye001@gannon.edu',
+            'phonenumber' => '8145047499',
+            'email' => 'avi003@gannon.edu',
             'password' => bcrypt('Gannon')
         ]);
 
