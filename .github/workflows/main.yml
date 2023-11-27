@@ -27,4 +27,4 @@ jobs:
     - name: Deploy to production
       if: github.ref == 'refs/heads/main'
       run: |
-        ssh ubuntu@172.20.122.194 "cd /var/www/html/vfcl_iot_dhse && git pull origin main && composer install && php artisan migrate --force"
+        ssh ubuntu@172.20.122.194 "cd /var/www/html/vfcl_iot_dhse && sudo git pull origin main && php artisan migrate"
