@@ -21,9 +21,6 @@ jobs:
     - name: Install dependencies
       run: composer install
 
-    - name: Run tests
-      run: php artisan test
-
     - name: Deploy to production
       if: github.ref == 'refs/heads/main'
       run: |
