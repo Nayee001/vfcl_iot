@@ -1,0 +1,30 @@
+name: Laravel CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/vfcl_iot_dhse
+
+    - name: Set up PHP
+      uses: nayee001/vfcl_iot_dhse
+      with:
+        php-version: '8.1'
+
+    - name: Install dependencies
+      run: composer install
+
+    - name: Run tests
+      run: php artisan test
+
+    - name: Deploy to production
+      if: github.ref == 'refs/heads/main'
+      run: |
+        ssh ubuntu@172.20.122.194 "cd /var/www/html/vfcl_iot_dhse && git pull origin main && composer install && php artisan migrate --force"
