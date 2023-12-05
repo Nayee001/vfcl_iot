@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6670bc15f6cc023543864bb448c52434",
+    "content-hash": "df9b5fc7dac89dba3c9a6d6f59ac47ce",
     "packages": [
         {
             "name": "brick/math",
@@ -2583,21 +2583,21 @@
         },
         {
             "name": "php-mqtt/client",
-            "version": "v1.8.1",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-mqtt/client.git",
-                "reference": "92e348db89c8362947e2efb8df9ba819cea428f2"
+                "reference": "458afc0bf33075ed8a1ffad72af5e10f2b516220"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-mqtt/client/zipball/92e348db89c8362947e2efb8df9ba819cea428f2",
-                "reference": "92e348db89c8362947e2efb8df9ba819cea428f2",
+                "url": "https://api.github.com/repos/php-mqtt/client/zipball/458afc0bf33075ed8a1ffad72af5e10f2b516220",
+                "reference": "458afc0bf33075ed8a1ffad72af5e10f2b516220",
                 "shasum": ""
             },
             "require": {
                 "myclabs/php-enum": "^1.7",
-                "php": "^7.4|^8.0",
+                "php": "^8.0",
                 "psr/log": "^1.1|^2.0|^3.0"
             },
             "require-dev": {
@@ -2634,9 +2634,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-mqtt/client/issues",
-                "source": "https://github.com/php-mqtt/client/tree/v1.8.1"
+                "source": "https://github.com/php-mqtt/client/tree/v2.0.0"
             },
-            "time": "2023-08-10T16:18:24+00:00"
+            "time": "2023-11-25T20:53:47+00:00"
         },
         {
             "name": "phpoption/phpoption",

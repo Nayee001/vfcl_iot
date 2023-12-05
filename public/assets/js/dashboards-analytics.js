@@ -18,11 +18,11 @@
     totalRevenueChartOptions = {
       series: [
         {
-          name: '2021',
+          name: 'New Device',
           data: [18, 7, 15, 29, 18, 12, 9]
         },
         {
-          name: '2020',
+          name: 'vFCL Device',
           data: [-13, -18, -9, -14, -5, -17, -15]
         }
       ],
@@ -78,7 +78,7 @@
         }
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        categories: ['1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM'],
         labels: {
           style: {
             fontSize: '13px',

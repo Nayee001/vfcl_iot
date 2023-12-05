@@ -52,6 +52,11 @@ class AppServiceProvider extends ServiceProvider
 			\App\Interfaces\LocationNameRepositoryInterface::class,
 			\App\Repositories\LocationNameRepository::class
 		);
+
+		$this->app->bind(
+			\App\Interfaces\MqttServiceInterface::class,
+			\App\Services\MqttService::class
+		);
     }
 
     /**
