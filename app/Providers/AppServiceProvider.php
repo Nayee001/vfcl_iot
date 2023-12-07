@@ -57,6 +57,21 @@ class AppServiceProvider extends ServiceProvider
 			\App\Interfaces\MqttServiceInterface::class,
 			\App\Services\MqttService::class
 		);
+
+		$this->app->bind(
+			\App\Interfaces\MqttConnectionRepositoryInterface::class,
+			\App\Repositories\MqttConnectionRepository::class
+		);
+
+		$this->app->bind(
+			\App\Interfaces\DeviceLogsRepositoryInterface::class,
+			\App\Repositories\DeviceLogsRepository::class
+		);
+
+		$this->app->bind(
+			\App\Interfaces\DeviceDataRepositoryInterface::class,
+			\App\Repositories\DeviceDataRepository::class
+		);
     }
 
     /**

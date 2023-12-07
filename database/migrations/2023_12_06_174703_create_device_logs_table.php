@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('device_id')->nullable();
             $table->foreign('device_id')->references('id')->on('devices')->onDelete('cascade');
-            $table->json('json_column_name')->nullable();
+            $table->json('json_response')->nullable();
             $table->timestamps();
         });
     }

@@ -8,69 +8,67 @@ use App\Interfaces\MqttServiceInterface;
 
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
+use App\Repositories\DeviceLogsRepository;
+use App\Repositories\DeviceDataRepository;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Carbon;
+use Exception;
 
 class MqttService implements MqttServiceInterface
 {
-    private $mqttClient;
+    protected $mqttClient;
+    protected $connectionSettings;
+
+    protected $server = '172.20.122.191';
+    protected $port = 1883;
+    protected $username = 'ubuntu';
+    protected $password = 'Mqtt001';
+    protected $cleanSession = true;
+
+    protected $deviceDataRepository;
+    protected $deviceLogsRepository;
 
 
-    public function __construct()
-    {
-        $this->mqttClient = new MqttClient("172.20.122.191", 1883, 'Web Command Center');
+    /**
+     * Constructor for the class.
+     * Initializes the device data and device logs repositories.
+     *
+     * @param DeviceDataRepository $deviceDataRepository
+     * @param DeviceLogsRepository $deviceLogsRepository
+     *
+     *
+     */
+    public function __construct(
+        DeviceDataRepository $deviceDataRepository,
+        DeviceLogsRepository $deviceLogsRepository
+    ) {
+        $this->deviceDataRepository = $deviceDataRepository;
+        $this->deviceLogsRepository = $deviceLogsRepository;
+        $this->mqttClient = new MqttClient($this->server, $this->port, uniqid());
+        $this->connectionSettings = (new ConnectionSettings())
+            ->setUsername($this->username)
+            ->setPassword($this->password);
     }
+
 
     public function connectAndSubscribe($topic)
     {
-        // $connectionSettings = (new ConnectionSettings())
-        //     ->setUsername('ubuntu') // optional
-        //     ->setPassword('Mqtt001'); // optional
+        try {
+            $connection  = $this->mqttClient->connect($this->connectionSettings, true);
 
-        // $this->mqttClient->connect($connectionSettings, true);
+            $this->mqttClient->subscribe("weather", function ($topic, $message) {
+                // printf("Received message on topic [%s]: %s\n", $topic, $message);
+                // Save the message to the database
 
-        // // $this->mqttClient->subscribe($topic, function ($topic, $message) {
-        // //     $this->handleMessage($message);
-        // // }, 0);
+                //storing Device Logs
+                // Log::channel('mqttlogs')->error("MQTT - Somthing went wrong:");
+                $associativeArray = json_decode($message, true);
+                $deviceLogs = $this->deviceLogsRepository->create($associativeArray);
+            }, 0);
 
-        // // $this->mqttClient->loopForever();
-
-        // $this->mqttClient->subscribe($topic, function ($topic, $message) {
-        //     echo $message; // for testing
-        //     echo sprintf("Received message on topic [%s]: %s\n", $topic, $message);
-        // }, 0);
-        // $this->mqttClient->loop(true);
-        // $this->mqttClient->disconnect();
-        $server = '172.20.122.191';
-        $port = 1883;
-        $clientId = "4dfadf3277db7b6ee784";
-        $username = 'ubuntu';
-        $password = 'Mqtt001';
-        $clean_session = True;
-        $mqtt_version = MqttClient::MQTT_3_1_1; // Assuming your library supports this constant for MQTT protocol version 3.1.1
-
-        $connectionSettings = (new ConnectionSettings)
-            ->setUsername($username)
-            ->setPassword($password)
-            ->setKeepAliveInterval(60)
-            ->setLastWillTopic('weather/#')
-            ->setLastWillMessage('client disconnect')
-            ->setLastWillQualityOfService(1);
-        $mqtt = new MqttClient($server, $port);
-
-        $mqtt->connect($connectionSettings, $clean_session);
-        printf("client connected\n");
-        $mqtt->subscribe('weather', function ($topic, $message) {
-            printf("Received message on topic [%s]: %s\n", $topic, $message);
-        }, 0);
-        $mqtt->loop(true);
-
+            $this->mqttClient->loop();
+        } catch (Exception $e) {
+            Log::channel('mqttlogs')->error("MQTT - Somthing went wrong: {$e->getMessage()}");
+        }
     }
-
-    // private function handleMessage($message)
-    // {
-    //     // Decode the JSON message
-    //     $data = json_decode($message, true);
-
-    //     // Save to database
-    //     SensorData::create($data);
-    // }
 }

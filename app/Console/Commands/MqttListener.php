@@ -7,7 +7,8 @@ use App\Services\MqttService;
 
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
-
+use App\Repositories\DeviceDataRepository;
+use App\Repositories\DeviceLogsRepository;
 
 class MqttListener extends Command
 {
@@ -26,48 +27,18 @@ class MqttListener extends Command
      */
     protected $description = 'Listen to MQTT topics';
 
-    /**
-     * Execute the console command.
-     */
+    protected $deviceDataRepository;
+    protected $deviceLogsRepository;
+
+    public function __construct(DeviceDataRepository $deviceDataRepository, DeviceLogsRepository $deviceLogsRepository) {
+        parent::__construct();
+        $this->deviceDataRepository = $deviceDataRepository;
+        $this->deviceLogsRepository = $deviceLogsRepository;
+    }
     public function handle()
     {
-        // $mqttService = new MqttService();
-        // $mqttService->connectAndSubscribe('weather/#'); // Replace with your topic
-
-        $server = "172.20.122.191";
-        $port = 1883;
-        $clientId = "4dfadf3277db7b6ee784";
-        $username = "ubuntu";
-        $password = "Mqtt001";
-        $clean_session = True;
-        $mqtt_version = MqttClient::MQTT_3_1;
-
-        $connectionSettings = (new ConnectionSettings)
-            ->setUsername($username)
-            ->setPassword($password);
-
-        $mqtt = new MqttClient($server, $port);
-
-        $mqtt->connect($connectionSettings, $clean_session);
-        printf("client connected\n");
-        $result = [];
-
-        $mqtt->subscribe("weather", function ($topic, $message) {
-            printf("Received message on topic [%s]: %s\n", $topic, $message);
-            // Save the message to the database
-        }, 0);
-
-        $mqtt->loop();
-
-
-        // $mqtt->subscribe('weather/#', function (string $topic, string $message) use ($mqtt, &$result) {
-        //     $result['topic'] = $topic;
-        //     $result['message'] = $message;
-
-        //     $mqtt->interrupt();
-        // }, 1);
-        // $mqtt->loop(true);
-        return response()->json($result, 200);
+        $mqttService = new MqttService($this->deviceDataRepository, $this->deviceLogsRepository);
+        $mqttService->connectAndSubscribe('weather/#'); // Replace with your topic
 
     }
 }
