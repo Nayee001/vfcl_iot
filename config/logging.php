@@ -52,6 +52,7 @@ return [
     */
 
     'channels' => [
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],
@@ -125,6 +126,9 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+        'mqttlogs' => [
+            'path' => storage_path('logs/mqtt_logs.log'),
         ],
     ],
 

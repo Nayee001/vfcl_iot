@@ -61,6 +61,20 @@ if (!function_exists('statusMessage')) {
     }
 }
 
+if (!function_exists('interval')) {
+    function interval($interval = null)
+    {
+        $threshold = match ($interval) {
+            10 => 10, // 10 minutes
+            15 => 15, // 15 minutes
+            30 => 30, // 30 minutes
+            60 => 60, // 1 hour
+            default => 1, // Default to 1 minute
+        };
+        return $threshold;
+    }
+}
+
 if (!function_exists("errorMessage")) {
     function errorMessage()
     {
@@ -149,4 +163,3 @@ if (!function_exists('dynamicRedAsterisk')) {
         return $redAsterisk;
     }
 }
-
