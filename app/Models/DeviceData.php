@@ -11,13 +11,11 @@ class DeviceData extends Model
     protected $table = 'device_data';
 
     protected $fillable = [
-        'id',
         'device_id',
+        'fault_status',
         'topic',
         'device_status',
         'health_status',
         'timestamp',
-        'created_at',
-        'updated_at'
     ];
 }
