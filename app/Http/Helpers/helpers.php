@@ -110,12 +110,23 @@ if (!function_exists("role")) {
     }
 }
 
+if (!function_exists("roleChecker")) {
+    function roleChecker()
+    {
+        $ROLES = [
+            'Super Admin' => 1,
+            'Manager' => 2,
+            'Customer' => 3,
+        ];
+        return $ROLES;
+    }
+}
 if (!function_exists("disabledIfNotSuperAdmin")) {
     function disabledIfNotSuperAdmin()
     {
         $disable = '';
         $targetValue = (int)implode(', ', Auth::user()->roles->pluck('id')->toArray());
-        if ($targetValue ==  Role::ROLES['Manager']) {
+        if ($targetValue == roleChecker()['Manager']) {
             $disable = 'disabled';
         } else {
             $disable = '';
@@ -129,7 +140,7 @@ if (!function_exists("isSuperAdmin")) {
     function isSuperAdmin()
     {
         $targetValue = (int)implode(', ', Auth::user()->roles->pluck('id')->toArray());
-        if ($targetValue ==  Role::ROLES['Super Admin']) {
+        if ($targetValue ==  roleChecker()['Super Admin']) {
             return true;
         } else {
             return false;
@@ -141,7 +152,7 @@ if (!function_exists("isManager")) {
     function isManager()
     {
         $targetValue = (int)implode(', ', Auth::user()->roles->pluck('id')->toArray());
-        if ($targetValue ==  Role::ROLES['Manager']) {
+        if ($targetValue ==  roleChecker()['Manager']) {
             return true;
         } else {
             return false;
@@ -149,6 +160,19 @@ if (!function_exists("isManager")) {
     }
 }
 
+if (!function_exists("permissionChecker")) {
+    function permissionChecker()
+    {
+        $permissionNamesArray = [
+            1 => 'list',
+            2 => 'create',
+            3 => 'edit',
+            4 => 'delete',
+        ];
+
+        return $permissionNamesArray;
+    }
+}
 
 if (!function_exists('dynamicRedAsterisk')) {
     /**

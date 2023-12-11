@@ -72,6 +72,11 @@ class AppServiceProvider extends ServiceProvider
 			\App\Interfaces\DeviceDataRepositoryInterface::class,
 			\App\Repositories\DeviceDataRepository::class
 		);
+
+		$this->app->bind(
+			\App\Interfaces\DashboardServiceInterface::class,
+			\App\Services\DashboardService::class
+		);
     }
 
     /**

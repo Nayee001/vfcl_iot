@@ -57,9 +57,6 @@ class MqttService implements MqttServiceInterface
         try {
             $this->mqttClient->subscribe("weather", function ($topic, $message) {
                 // dump("Received message on topic [%s]: %s\n", $topic, $message);
-                // Save the message to the database
-                //storing Device Logs
-                //Log::channel('mqttlogs')->info("MQTT - Somthing went wrong:");
                 $associativeArray = json_decode($message, true);
                 $this->deviceDataRepository->update_device_data($associativeArray);
                 $this->deviceLogsRepository->create($associativeArray);
