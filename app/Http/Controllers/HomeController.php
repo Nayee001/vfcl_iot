@@ -19,7 +19,7 @@ class HomeController extends Controller
 
     protected $dashboardService;
 
-    public function __construct(DeviceService $dashboardService)
+    public function __construct(DashboardService $dashboardService)
     {
         $this->dashboardService = $dashboardService;
         $this->middleware('permission:dashboard', ['only' => ['index']]);
@@ -32,9 +32,21 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $userCount = User::where('created_by', '=', Auth::user()->id)->count();
-        $deviceCount = $this->dashboardService->getCount();
-        $deviceList = $this->dashboardService->getDevices();
-        return view('home', compact('userCount', 'deviceCount', 'deviceList'));
+        if(isSuperAdmin()){
+            // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
+            $managerCount = $this->dashboardService->getManagerCount();
+            $userCount = $this->dashboardService->getUserCount();
+            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
+            return view('dashboard.admin-dashboard', compact('managerCount','userCount','deviceTypesWithDeviceCount'));
+        }elseif(isManager()){
+
+            // return view('manager-home', compact('userCount', 'deviceCount', 'deviceList'));
+        }else{
+            // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
+            // $deviceCount = $this->dashboardService->getCount();
+            // $deviceList = $this->dashboardService->getDevices();
+            // return view('customer-home', compact('userCount', 'deviceCount', 'deviceList'));
+        }
+
     }
 }

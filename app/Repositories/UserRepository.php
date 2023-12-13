@@ -36,6 +36,20 @@ class UserRepository implements UserRepositoryInterface
         })->get();
     }
 
+    public function getManagerCount()
+    {
+        return $this->model::whereHas('roles', function ($query) {
+            $query->whereIn('name', ['Manager']);
+        })->count();
+    }
+
+    public function getUserCount()
+    {
+        return $this->model::whereHas('roles', function ($query) {
+            $query->whereIn('name', ['Customer']);
+        })->count();
+    }
+
     public function getUserById($id)
     {
         return $this->model::with('locations', 'locations.locationsNames')->find($id);

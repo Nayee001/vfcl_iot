@@ -12,10 +12,7 @@
                                 @if (Auth::user()->status == App\Models\User::USER_STATUS['NEWUSER'] ||
                                         Auth::user()->status == App\Models\User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED']
                                 )
-                                    <p class="mb-4">
-                                        Welcome to the Iot Web Command Center. Please Complete your profile settings ,
-                                        chnage password and
-                                        agree to the terms and conditions.
+                                    <p class="mb-4" id="greetings">
                                     </p>
                                     @if (Auth::user()->status != App\Models\User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'])
                                         <a href="{{ route('change-password', Auth::user()->id) }}"
@@ -28,9 +25,8 @@
                                         </a>
                                     @endif
                                 @else
-                                    <p class="mb-4">Welcome to our IoT-enabled platform, where data meets innovation.
-                                        Explore the future of connected devices and smart solutions.<br>
-                                    </p>
+                                <h6 class="card-title text-primary" id="greetings"></h6>
+
                                 @endif
                             </div>
                         </div>
@@ -50,16 +46,16 @@
                 <div class="col-lg-6 col-md-4 order-1">
                     <div class="row">
                         @hasanyrole('Manager|Super Admin')
-                        <div class="col-lg-4 col-md-6 col-6 mb-4">
+                        <div class="col-lg-4 col-md-6 col-12 mb-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="card-title d-flex align-items-start justify-content-between">
+                                    <div class="d-flex justify-content-between align-items-center">
                                         <span class="badge bg-info rounded-circle p-3">
-                                            <i class='bx bx-user'></i>
+                                            <i class='bx bxs-user-detail'></i>
                                         </span>
                                         <div class="dropdown">
-                                            <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn btn-link p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
@@ -68,8 +64,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <span class="fw-semibold d-block mb-1">Managers</span>
-                                    <h3 class="card-title mb-2">4</h3>
+                                    <div class="mt-3">
+                                        <span class="fw-bold d-block mb-1">All Managers</span>
+                                        <h3 class="card-title mb-0">4</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -435,4 +433,4 @@
     </div>
 @endsection
 
-@include('home-js')
+@include('dashboard.admin-dashboard-js')

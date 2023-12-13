@@ -45,7 +45,7 @@
                     </g>
                 </svg>
             </span>
-            <span class="app-brand-text demo menu-text fw-bolder ms-2">vfcl iot web</span>
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">{{env('APP_SHORT_NAME')}}</span>
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">

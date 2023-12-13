@@ -157,4 +157,7 @@ class DeviceService
     {
         return $this->locationRepository->create($user, $input);
     }
+    public function getAllDeviceTypeWithCounts(){
+        return $this->deviceTypeRepository->getAllDeviceTypeWithCounts();
+    }
 }

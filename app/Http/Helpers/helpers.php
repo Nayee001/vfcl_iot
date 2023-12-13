@@ -187,3 +187,16 @@ if (!function_exists('dynamicRedAsterisk')) {
         return $redAsterisk;
     }
 }
+
+if (!function_exists('getRandomBackgroundColor')) {
+    function getRandomBackgroundColor()
+    {
+        $backgroundColors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-dark'];
+
+        // Get a random index from the array
+        $randomIndex = array_rand($backgroundColors);
+
+        // Return the selected background color class
+        return $backgroundColors[$randomIndex];
+    }
+}

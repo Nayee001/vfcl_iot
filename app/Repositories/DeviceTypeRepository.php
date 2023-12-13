@@ -27,6 +27,15 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
         return $get;
     }
 
+    public function getAllDeviceTypeWithCounts()
+{
+    $deviceTypesWithCounts = $this->model::select('device_types.id', 'device_types.device_type', \DB::raw('COUNT(devices.id) as device_count'))
+        ->leftJoin('devices', 'device_types.id', '=', 'devices.device_type')
+        ->groupBy('device_types.id', 'device_types.device_type')
+        ->pluck('device_count', 'device_types.device_type');
+
+    return $deviceTypesWithCounts;
+}
     public function getUserById($id)
     {
         try {
