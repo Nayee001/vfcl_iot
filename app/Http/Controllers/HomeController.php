@@ -36,17 +36,24 @@ class HomeController extends Controller
             // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
             $managerCount = $this->dashboardService->getManagerCount();
             $userCount = $this->dashboardService->getUserCount();
-            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
-            return view('dashboard.admin-dashboard', compact('managerCount','userCount','deviceTypesWithDeviceCount'));
-        }elseif(isManager()){
+            $deviceCount = $this->dashboardService->getDeviceCount();
 
-            // return view('manager-home', compact('userCount', 'deviceCount', 'deviceList'));
+            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
+            return view('dashboard.admin-dashboard', compact('managerCount','userCount','deviceTypesWithDeviceCount','deviceCount'));
+        }elseif(isManager()){
         }else{
             // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
-            // $deviceCount = $this->dashboardService->getCount();
             // $deviceList = $this->dashboardService->getDevices();
             // return view('customer-home', compact('userCount', 'deviceCount', 'deviceList'));
         }
 
+    }
+    public function getDeviceDataCounts()
+    {
+        return $this->dashboardService->getDeviceDataCount();
+    }
+
+    public function getDeviceData(){
+        return $this->dashboardService->getDeviceData();
     }
 }

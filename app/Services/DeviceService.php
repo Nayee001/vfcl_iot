@@ -8,6 +8,7 @@ use App\Repositories\DeviceTypeRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Datatables;
+use App\Repositories\DeviceDataRepository;
 use App\Repositories\LocationRepository;
 use App\Repositories\DeviceAssignRepository;
 use Exception;
@@ -15,7 +16,7 @@ use Exception;
 class DeviceService
 {
 
-    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository, $locationRepository;
+    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository, $locationRepository, $deviceDataRepository;
 
     /**
      * Constructor for the class.
@@ -25,6 +26,8 @@ class DeviceService
      * @param DeviceTypeRepository $deviceTypeRepository
      * @param DeviceAssignRepository $deviceAssignRepository
      * @param LocationRepository $locationRepository
+     * @param DeviceDataRepository $deviceDataRepository
+     *
      *
      *
      */
@@ -33,13 +36,30 @@ class DeviceService
         DeviceTypeRepository $deviceTypeRepository,
         DeviceAssignRepository $deviceAssignRepository,
         LocationRepository $locationRepository,
+        DeviceDataRepository $deviceDataRepository
+
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->deviceTypeRepository = $deviceTypeRepository;
         $this->deviceAssignRepository = $deviceAssignRepository;
         $this->locationRepository = $locationRepository;
+        $this->deviceDataRepository = $deviceDataRepository;
     }
 
+    /**
+     * Get Device Data
+     */
+    public function getDeviceData()
+    {
+        return $this->deviceDataRepository->getDeviceData();
+    }
+    /**
+     *Get Device Data Counts
+     */
+    public function getDeviceDataCount()
+    {
+        return $this->deviceDataRepository->getDataCounts();
+    }
     public function getCount()
     {
         return $this->deviceRepository->getCount();
@@ -157,7 +177,8 @@ class DeviceService
     {
         return $this->locationRepository->create($user, $input);
     }
-    public function getAllDeviceTypeWithCounts(){
+    public function getAllDeviceTypeWithCounts()
+    {
         return $this->deviceTypeRepository->getAllDeviceTypeWithCounts();
     }
 }

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use App\Models\Device;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Response;
+
 
 
 class DeviceDataRepository implements DeviceDataRepositoryInterface
@@ -68,6 +71,31 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         } catch (Exception $e) {
             Log::channel('mqttlogs')->error("MQTT - Something Wrong with Device Logs: {$e->getMessage()}");
             return false;
+        }
+    }
+
+    public function getDataCounts()
+    {
+        $count = $this->model::count();
+        return response()->json(['count' => $count]);
+    }
+    public function getDeviceData()
+    {
+        try {
+            $latestRecords = $this->model::select('device_data.*')
+                ->join(DB::raw('(SELECT device_id, MAX(timestamp) as latest_timestamp FROM device_data GROUP BY device_id) as latest_data'), function ($join) {
+                    $join->on('device_data.device_id', '=', 'latest_data.device_id')
+                        ->on('device_data.timestamp', '=', 'latest_data.latest_timestamp');
+                })
+                ->with('device')
+                ->get();
+        // dd(response()->json($latestRecords));
+            return response()->json($latestRecords);
+        } catch (Exception $e) {
+            // Return a generic error message to the user
+            return response()->json([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
