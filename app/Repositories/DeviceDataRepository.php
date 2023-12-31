@@ -79,7 +79,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         $count = $this->model::count();
         return response()->json(['count' => $count]);
     }
-    public function getDeviceData()
+    public function getDeviceAllMessages()
     {
         try {
             $latestRecords = $this->model::select('device_data.*')
@@ -89,13 +89,36 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                 })
                 ->with('device')
                 ->get();
-        // dd(response()->json($latestRecords));
             return response()->json($latestRecords);
         } catch (Exception $e) {
             // Return a generic error message to the user
             return response()->json([
                 'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    /**
+     * Get Device Data by ID
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDeviceData($id)
+    {
+        try {
+            // Assuming $id is already provided as a parameter and should not be hardcoded
+            $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
+
+            // Check if device data is found
+            if (!$deviceData) {
+                return response()->json(['message' => 'Device not found'], 404);
+            }
+
+            return response()->json($deviceData);
+        } catch (\Exception $e) {
+            // Handle general exceptions
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
 }

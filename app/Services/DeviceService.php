@@ -49,9 +49,15 @@ class DeviceService
     /**
      * Get Device Data
      */
-    public function getDeviceData()
+    public function getDeviceAllMessages()
     {
-        return $this->deviceDataRepository->getDeviceData();
+        return $this->deviceDataRepository->getDeviceAllMessages();
+    }
+    /**
+     * Get Device Data by ID
+     */
+    public function getDeviceData($id){
+        return $this->deviceDataRepository->getDeviceData($id);
     }
     /**
      *Get Device Data Counts
@@ -181,4 +187,5 @@ class DeviceService
     {
         return $this->deviceTypeRepository->getAllDeviceTypeWithCounts();
     }
+
 }

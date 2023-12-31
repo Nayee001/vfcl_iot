@@ -32,28 +32,48 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        if(isSuperAdmin()){
+        if (isSuperAdmin()) {
             // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
             $managerCount = $this->dashboardService->getManagerCount();
             $userCount = $this->dashboardService->getUserCount();
             $deviceCount = $this->dashboardService->getDeviceCount();
 
             $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
-            return view('dashboard.admin-dashboard', compact('managerCount','userCount','deviceTypesWithDeviceCount','deviceCount'));
-        }elseif(isManager()){
-        }else{
+            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+        } elseif (isManager()) {
             // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
-            // $deviceList = $this->dashboardService->getDevices();
-            // return view('customer-home', compact('userCount', 'deviceCount', 'deviceList'));
-        }
+            $managerCount = $this->dashboardService->getManagerCount();
+            $userCount = $this->dashboardService->getUserCount();
+            $deviceCount = $this->dashboardService->getDeviceCount();
 
+            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
+            return view('dashboard.manager-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+        } else {
+            // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
+            $managerCount = $this->dashboardService->getManagerCount();
+            $userCount = $this->dashboardService->getUserCount();
+            $deviceCount = $this->dashboardService->getDeviceCount();
+
+            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
+            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+        }
     }
     public function getDeviceDataCounts()
     {
         return $this->dashboardService->getDeviceDataCount();
     }
 
-    public function getDeviceData(){
-        return $this->dashboardService->getDeviceData();
+    public function getDeviceAllMessages()
+    {
+        return $this->dashboardService->getDeviceAllMessages();
+    }
+    public function getDeviceData($id)
+    {
+        return $this->dashboardService->getDeviceData($id);
+    }
+
+    public function getdeviceMessage($id)
+    {
+        return $this->dashboardService->getDeviceData($id);
     }
 }

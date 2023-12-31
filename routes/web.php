@@ -55,8 +55,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('/location-name/{id}/delete', [LocationManagerController::class, 'deleteLocationName'])->name('location-name-delete');
     Route::get('/get-customer-locations/{customer_id}', [LocationManagerController::class, 'getCustomerLocations'])->name('get-customer-locations');
     Route::get('/device-data/count', [App\Http\Controllers\HomeController::class,'getDeviceDataCounts']);
-    Route::get('/device-data/messages', [App\Http\Controllers\HomeController::class,'getDeviceData']);
-
+    Route::get('/device-data/messages', [App\Http\Controllers\HomeController::class,'getDeviceAllMessages']);
+    Route::get('/device-data/{id}',[App\Http\Controllers\HomeController::class,'getdeviceMessage']);
 
 
     Route::resource('roles', RoleController::class);
