@@ -33,7 +33,6 @@ class HomeController extends Controller
     public function index(): View
     {
         if (isSuperAdmin()) {
-            // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
             $managerCount = $this->dashboardService->getManagerCount();
             $userCount = $this->dashboardService->getUserCount();
             $deviceCount = $this->dashboardService->getDeviceCount();
@@ -41,21 +40,16 @@ class HomeController extends Controller
             $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
             return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
         } elseif (isManager()) {
-            // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
-            $managerCount = $this->dashboardService->getManagerCount();
             $userCount = $this->dashboardService->getUserCount();
             $deviceCount = $this->dashboardService->getDeviceCount();
 
             $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
-            return view('dashboard.manager-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+            return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
         } else {
-            // $userCount = User::where('created_by', '=', Auth::user()->id)->count();
-            $managerCount = $this->dashboardService->getManagerCount();
-            $userCount = $this->dashboardService->getUserCount();
             $deviceCount = $this->dashboardService->getDeviceCount();
 
             $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
-            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+            return view('dashboard.admin-dashboard', compact('deviceTypesWithDeviceCount', 'deviceCount'));
         }
     }
     public function getDeviceDataCounts()

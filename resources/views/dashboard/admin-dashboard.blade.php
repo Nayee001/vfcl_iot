@@ -15,8 +15,8 @@
                                         <h2 class="mb-0 me-2">{{ $managerCount }}</h2>
                                         <small class="text-success">Total</small>
                                     </div>
-                                    <a class="widget-lable" href=""><i class='bx bx-list-ol'></i> View All </a>
-                                    <a class="widget-lable" href=""> <i class='bx bx-plus'></i>Create New </a>
+                                    <a class="widget-lable" href="{{route('users.index')}}"><i class='bx bx-list-ol'></i> View All </a>
+                                    <a class="widget-lable" href="{{route('users.create')}}"> <i class='bx bx-plus'></i>Create New </a>
                                 </div>
                             </div>
                         </div>
@@ -43,8 +43,8 @@
                                         <h2 class="mb-0 me-2">{{ $userCount }}</h2>
                                         <small class="text-success">Total</small>
                                     </div>
-                                    <a class="widget-lable" href=""><i class='bx bx-list-ol'></i> View All </a>
-                                    <a class="widget-lable" href=""> <i class='bx bx-plus'></i>Create New </a>
+                                    <a class="widget-lable" href="{{route('users.index')}}"><i class='bx bx-list-ol'></i> View All </a>
+                                    <a class="widget-lable" href="{{route('users.create')}}"> <i class='bx bx-plus'></i>Create New </a>
                                 </div>
                             </div>
                         </div>

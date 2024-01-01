@@ -11,10 +11,10 @@
             , {{env("APP_NAME")}}
             {{-- <a href="#" target="_blank" class="footer-link fw-bolder">{{env("developer")}}</a> --}}
         </div>
-        <div>
+        {{-- <div>
             <a href="#" target="_blank"
                 class="footer-link me-4">Documentation</a>
-        </div>
+        </div> --}}
     </div>
 </footer>
 <!-- / Footer -->

@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Device;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use App\Models\DeviceAssignment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
-
 
 
 class DeviceDataRepository implements DeviceDataRepositoryInterface
@@ -87,9 +88,14 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                     $join->on('device_data.device_id', '=', 'latest_data.device_id')
                         ->on('device_data.timestamp', '=', 'latest_data.latest_timestamp');
                 })
-                ->with('device')
-                ->get();
-            return response()->json($latestRecords);
+                ->join('devices', 'device_data.device_id', '=', 'devices.id') // Assuming 'devices' is the table name and 'id' is the primary key
+                ->with('device');
+
+            if (isManager()) {
+                $latestRecords->where('devices.created_by', Auth::id()); // Apply the filter for managers
+            }
+
+            return response()->json($latestRecords->get());
         } catch (Exception $e) {
             // Return a generic error message to the user
             return response()->json([
