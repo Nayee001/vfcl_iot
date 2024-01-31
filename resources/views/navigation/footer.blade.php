@@ -8,18 +8,12 @@
             <script>
                 document.write(new Date().getFullYear());
             </script>
-            , IoT Web Command Center
-            {{-- <a href="#" target="_blank" class="footer-link fw-bolder">Akshay Nayee</a> --}}
+            , {{env("APP_NAME")}}
+            {{-- <a href="#" target="_blank" class="footer-link fw-bolder">{{env("developer")}}</a> --}}
         </div>
         {{-- <div>
-            <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-            <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
-
-            <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/" target="_blank"
+            <a href="#" target="_blank"
                 class="footer-link me-4">Documentation</a>
-
-            <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank"
-                class="footer-link me-4">Support</a>
         </div> --}}
     </div>
 </footer>

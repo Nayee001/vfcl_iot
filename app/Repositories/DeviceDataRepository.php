@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use App\Models\Device;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use App\Models\DeviceAssignment;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 
 class DeviceDataRepository implements DeviceDataRepositoryInterface
@@ -68,6 +72,59 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         } catch (Exception $e) {
             Log::channel('mqttlogs')->error("MQTT - Something Wrong with Device Logs: {$e->getMessage()}");
             return false;
+        }
+    }
+
+    public function getDataCounts()
+    {
+        $count = $this->model::count();
+        return response()->json(['count' => $count]);
+    }
+    public function getDeviceAllMessages()
+    {
+        try {
+            $latestRecords = $this->model::select('device_data.*')
+                ->join(DB::raw('(SELECT device_id, MAX(timestamp) as latest_timestamp FROM device_data GROUP BY device_id) as latest_data'), function ($join) {
+                    $join->on('device_data.device_id', '=', 'latest_data.device_id')
+                        ->on('device_data.timestamp', '=', 'latest_data.latest_timestamp');
+                })
+                ->join('devices', 'device_data.device_id', '=', 'devices.id') // Assuming 'devices' is the table name and 'id' is the primary key
+                ->with('device');
+
+            if (isManager()) {
+                $latestRecords->where('devices.created_by', Auth::id()); // Apply the filter for managers
+            }
+
+            return response()->json($latestRecords->get());
+        } catch (Exception $e) {
+            // Return a generic error message to the user
+            return response()->json([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    /**
+     * Get Device Data by ID
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDeviceData($id)
+    {
+        try {
+            // Assuming $id is already provided as a parameter and should not be hardcoded
+            $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
+
+            // Check if device data is found
+            if (!$deviceData) {
+                return response()->json(['message' => 'Device not found'], 404);
+            }
+
+            return response()->json($deviceData);
+        } catch (\Exception $e) {
+            // Handle general exceptions
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
 }

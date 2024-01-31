@@ -1,12 +1,8 @@
 # vFCL IOT Device Health Status Ecosystem
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="public\assets\img\illustrations\MQTT Broker.jpg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+
+The project consists of two parts: one is on virtualizing the Fault Current Limiter, and the other is monitoring and tracking the Health Status using an IoT device (Internet of Things Device).  The work reported here focuses on the Ecosystem for the IoT components with sensing ability for health tracking and monitoring. The Department of Electrical and Cyber Engineering owns this project. Creating a software-based fuse cutout (FCL) system is the initial step. This new technology combines sensors, inverters, and control to provide more dynamic control over electricity, replacing traditional physical fuses. However, this report does not focus on creating control for the vFCL.  The work reported focuses on establishing an IoT-enabled Command Center for Device Health Monitoring as the second step. The IoT ecosystem will use various sensors, Raspberry PI as the primary IoT device for interfacing with the vFCL system, and the MQTT security protocol technologies to collect real-time Device health data for secure communication. The collected data will be transmitted to a central hub to be monitored in real-time, examined in the past, and utilized data to send out notifications for any unusual device health concerns. 
 
 ## About Laravel
 

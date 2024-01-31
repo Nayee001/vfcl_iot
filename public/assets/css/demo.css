@@ -184,3 +184,23 @@
 .minus-icon{
     color:#fff !important;
 }
+
+.widget-lable{
+    font-size: 12px;
+}
+.red{
+    color: red;
+}
+.green{
+    color:green
+}
+.fault{
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-left: 10px;
+}
+.fault-img{
+    max-width:50%;
+    border-radius: 8px;
+    display: inline-block;
+}

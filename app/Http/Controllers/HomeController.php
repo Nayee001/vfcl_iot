@@ -1,22 +1,27 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Services\DeviceService;
+use App\Services\DashboardService;
+
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * vFCL IOT Main Dashboard.
      *
      * @return void
      */
-    protected $deviceService;
-    public function __construct(DeviceService $deviceService)
+
+    protected $dashboardService;
+
+    public function __construct(DashboardService $dashboardService)
     {
-        $this->deviceService = $deviceService;
+        $this->dashboardService = $dashboardService;
         $this->middleware('permission:dashboard', ['only' => ['index']]);
     }
 
@@ -27,9 +32,42 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $userCount = User::where('created_by','=',Auth::user()->id)->count();
-        $deviceCount = $this->deviceService->getCount();
-        $deviceList = $this->deviceService->getDevices();
-        return view('home',compact('userCount','deviceCount','deviceList'));
+        if (isSuperAdmin()) {
+            $managerCount = $this->dashboardService->getManagerCount();
+            $userCount = $this->dashboardService->getUserCount();
+            $deviceCount = $this->dashboardService->getDeviceCount();
+
+            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
+            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+        } elseif (isManager()) {
+            $userCount = $this->dashboardService->getUserCount();
+            $deviceCount = $this->dashboardService->getDeviceCount();
+
+            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
+            return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+        } else {
+            $deviceCount = $this->dashboardService->getDeviceCount();
+
+            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
+            return view('dashboard.admin-dashboard', compact('deviceTypesWithDeviceCount', 'deviceCount'));
+        }
+    }
+    public function getDeviceDataCounts()
+    {
+        return $this->dashboardService->getDeviceDataCount();
+    }
+
+    public function getDeviceAllMessages()
+    {
+        return $this->dashboardService->getDeviceAllMessages();
+    }
+    public function getDeviceData($id)
+    {
+        return $this->dashboardService->getDeviceData($id);
+    }
+
+    public function getdeviceMessage($id)
+    {
+        return $this->dashboardService->getDeviceData($id);
     }
 }

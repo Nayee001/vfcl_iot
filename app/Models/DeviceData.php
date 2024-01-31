@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Device;
 
 class DeviceData extends Model
 {
@@ -18,4 +19,17 @@ class DeviceData extends Model
         'health_status',
         'timestamp',
     ];
+
+
+    /**
+     * This function establishes an inverse one-to-many (belongsTo) relationship
+     * with the DeviceType model, using the 'Device' foreign key.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *         Returns an instance of the belongsTo relation.
+     */
+    public function device()
+    {
+        return $this->belongsTo(Device::class, 'device_id');
+    }
 }

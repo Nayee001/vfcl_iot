@@ -42,7 +42,7 @@ class PermissionController extends Controller
         try {
             $attributes['name'] = [];
             if (array_key_exists('isNotSingle', $request->all())) {
-                foreach (Permission::permissionNamesArray as $key => $value) {
+                foreach (permissionChecker() as $key => $value) {
                     $attributes['name'] = strtolower($request->name) . '-' . $value;
                     $permission = Permission::create($attributes);
                 }

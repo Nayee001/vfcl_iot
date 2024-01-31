@@ -20,7 +20,8 @@ class UserService
     {
         return $this->userRepository->getAllUsers();
     }
-    public function getUserById($id){
+    public function getUserById($id)
+    {
         return $this->userRepository->getUserById($id);
     }
     public function getManagersAndAdmin()
@@ -36,6 +37,14 @@ class UserService
     public function getSelfManager($id)
     {
         return $this->userRepository->getUserById($id);
+    }
+    public function getManagerCount()
+    {
+        return $this->userRepository->getManagerCount();
+    }
+    public function getUserCount()
+    {
+        return $this->userRepository->getUserCount();
     }
 
     /**

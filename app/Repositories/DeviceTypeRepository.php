@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 use Yajra\DataTables\Datatables;
+use Illuminate\Support\Facades\Auth;
 use App\Models\DeviceType;
 
 class DeviceTypeRepository implements DeviceTypeRepositoryInterface
@@ -23,10 +24,27 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
 
     public function getAllDeviceType()
     {
-        $get = $this->model::pluck('device_type','id');
+        $get = $this->model::pluck('device_type', 'id');
         return $get;
     }
 
+    public function getAllDeviceTypeWithCounts()
+    {
+        $deviceTypesWithCounts = $this->model::select('device_types.id', 'device_types.device_type', \DB::raw('COUNT(devices.id) as device_count'))
+        ->leftJoin('devices', function($join) {
+            $join->on('device_types.id', '=', 'devices.device_type');
+
+            if (isManager()) {
+                // Apply manager-specific filtering within the join
+                $join->where('devices.created_by', Auth::id());
+            }
+        })
+        ->groupBy('device_types.id', 'device_types.device_type')
+        ->pluck('device_count', 'device_types.device_type');
+
+    return $deviceTypesWithCounts;
+
+    }
     public function getUserById($id)
     {
         try {
@@ -37,9 +55,10 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
         }
     }
 
-    public function update($request, $id){
+    public function update($request, $id)
+    {
         try {
-            $input = ['device_type' => $request->device_type,'description' => $request->description];
+            $input = ['device_type' => $request->device_type, 'description' => $request->description];
             $device_type = $this->model::where('id', $id)->update($input);
             if ($device_type) {
                 return successMessage('Device Type Updated Successfully !!');
