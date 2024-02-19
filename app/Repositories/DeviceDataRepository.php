@@ -40,7 +40,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                         'topic' => $deviceData['topic'],
                         'device_status' => $deviceData['device_status'],
                         'health_status' => $deviceData['health_status'],
-                        'timestamp' => $deviceData['timestamps'],
+                        'timestamp' => $deviceData['timestamp'],
                     ];
 
                     // Find the latest record for the device
@@ -62,15 +62,15 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                         return $this->model->create($data);
                     }
                 } else {
-                    Log::channel('mqttlogs')->error("Device  - Something Wrong with DEVICE in web-command-center", $getDevice);
+                    Log::channel('mqttlogs')->error("Device  - Something Wrong With DEVICE in Web-Command-Center", $getDevice);
                     return false;
                 }
             } else {
-                Log::channel('mqttlogs')->error("Device Data - Something Wrong with Device Data: ", $deviceData);
+                Log::channel('mqttlogs')->error("Device Data - Something Wrong With Device Data: ", $deviceData);
                 return false;
             }
         } catch (Exception $e) {
-            Log::channel('mqttlogs')->error("MQTT - Something Wrong with Device Logs: {$e->getMessage()}");
+            Log::channel('mqttlogs')->error("MQTT - Something Wrong With Device Logs: {$e->getMessage()}");
             return false;
         }
     }

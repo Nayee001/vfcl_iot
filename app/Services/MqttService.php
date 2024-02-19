@@ -19,7 +19,7 @@ class MqttService implements MqttServiceInterface
     protected $mqttClient;
     protected $connectionSettings;
 
-    protected $server = '172.20.122.191';
+    protected $server = '172.20.120.102';
     protected $port = 1883;
     protected $username = 'ubuntu';
     protected $password = 'Mqtt001';
@@ -55,9 +55,10 @@ class MqttService implements MqttServiceInterface
     public function connectAndSubscribe($topic)
     {
         try {
-            $this->mqttClient->subscribe("weather", function ($topic, $message) {
+            $this->mqttClient->subscribe($topic, function ($topic, $message) {
                 // dump("Received message on topic [%s]: %s\n", $topic, $message);
                 $associativeArray = json_decode($message, true);
+                // dd($associativeArray);
                 $this->deviceDataRepository->update_device_data($associativeArray);
                 $this->deviceLogsRepository->create($associativeArray);
             }, 0);
