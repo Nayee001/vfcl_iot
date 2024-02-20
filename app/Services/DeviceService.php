@@ -59,6 +59,10 @@ class DeviceService
     public function getDeviceData($id){
         return $this->deviceDataRepository->getDeviceData($id);
     }
+    public function getDeviceLineChartData($id)
+    {
+        return $this->deviceDataRepository->getDeviceLineChartData($id);
+    }
     /**
      *Get Device Data Counts
      */

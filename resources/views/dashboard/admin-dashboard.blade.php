@@ -100,22 +100,21 @@
                     <div class="card-header pb-1">
                         <div class="d-flex justify-content-between">
                             <h5 class="mb-0">Active Device</h5>
-                            <div class="dropdown">
-                                <button class="btn btn-link p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                    <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                                    <a class="dropdown-item" href="javascript:void(0);">View All</a>
+                            {{-- <div class="avatar">
+                                <div class="avatar-initial rounded shadow">
+                                    <a href="" class="white">
+                                        <i class='bx bx-line-chart'></i>
+                                    </a>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="card-body pt-lg-4 mt-lg-1 device-fault-status-shown" id="device-fault-status-shown">
                         Please Select a Device
                     </div>
-
+                    <div class="card-body pt-lg-4 mt-lg-1 device-fault-line-chart" id="device-fault-line-chart" style="display: none;">
+                        Please Select a Device
+                    </div>
                 </div>
             </div>
             <div class="col-xl-6 col-md-6 ">

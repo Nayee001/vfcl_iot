@@ -58,6 +58,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device-data/messages', [App\Http\Controllers\HomeController::class,'getDeviceAllMessages']);
     Route::get('/device-data/{id}',[App\Http\Controllers\HomeController::class,'getdeviceMessage']);
 
+    Route::get('/get-device-line-chart-data/{id}',[App\Http\Controllers\HomeController::class,'getDeviceLineChartData']);
+
+
 
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);

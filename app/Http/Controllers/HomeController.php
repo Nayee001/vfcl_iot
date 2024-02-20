@@ -56,6 +56,11 @@ class HomeController extends Controller
     {
         return $this->dashboardService->getDeviceDataCount();
     }
+    public function getDeviceLineChartData($id)
+    {
+        return $this->dashboardService->getDeviceLineChartData($id);
+
+    }
 
     public function getDeviceAllMessages()
     {

@@ -35,7 +35,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                 $getDevice = Device::select('id', 'name', 'api_key')->where('api_key', '=', $deviceData['device_api'])->first();
                 // dd($getDevice);
                 if ($getDevice) {
-                    dump('aa');
+                    dump('Data Seeding into Database');
                     $data = [
                         'device_id' => $getDevice->id,
                         'fault_status' => $deviceData['fault_status'],
@@ -87,7 +87,6 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                             return $creation;
                         }
                     }
-
                 } else {
                     Log::channel('mqttlogs')->error("Device  - Something Wrong With DEVICE in Web-Command-Center", $getDevice);
                     return false;
@@ -148,10 +147,54 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                 return response()->json(['message' => 'Device not found'], 404);
             }
 
+            // Assuming 'timestamp' is a DateTime or similar, and we are working with MySQL
+            $targetTimestamp = $deviceData->timestamp;
+
+            $nearestDataBatch = $this->model::select('timestamp', 'device_timestamps', 'valts')
+                // Order by the absolute difference between 'timestamp' and the target timestamp
+                ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // time diff to get nearest data for last data batch
+                ->limit(100) // Limit to the nearest 100 entries
+                ->get();
+
+            // dd($nearestDataBatch);
             return response()->json($deviceData);
         } catch (\Exception $e) {
             // Handle general exceptions
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
+    }
+
+    // In your Laravel Controller
+    public function getDeviceLineChartData($id)
+    {
+        // dd($id);
+        // Simulate data fetching, you should replace this with actual data fetching logic
+        $data = [
+            // Example data, should be replaced with dynamic data from your database or other source
+            ['x' => now()->subMinutes(5)->timestamp * 1000, 'y' => rand(10, 90)],
+            ['x' => now()->subMinutes(4)->timestamp * 1000, 'y' => rand(10, 90)],
+            // Add more points as needed
+        ];
+
+        dd($data);
+
+        // Assuming $id is already provided as a parameter and should not be hardcoded
+        $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
+
+        // Check if device data is found
+        if (!$deviceData) {
+            return response()->json(['message' => 'Device not found'], 404);
+        }
+
+        // Assuming 'timestamp' is a DateTime or similar, and we are working with MySQL
+        $targetTimestamp = $deviceData->timestamp;
+
+        $nearestDataBatch = $this->model::select('timestamp', 'device_timestamps', 'valts')
+            // Order by the absolute difference between 'timestamp' and the target timestamp
+            ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // time diff to get nearest data for last data batch
+            ->limit(100) // Limit to the nearest 100 entries
+            ->get();
+
+        return response()->json($data);
     }
 }
