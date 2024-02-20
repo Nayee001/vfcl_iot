@@ -6,6 +6,7 @@ require('vendor/autoload.php');
 
 use App\Interfaces\MqttServiceInterface;
 
+use App\Models\DeviceLogs;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use App\Repositories\DeviceLogsRepository;
@@ -68,4 +69,20 @@ class MqttService implements MqttServiceInterface
             Log::channel('mqttlogs')->error("MQTT - Somthing went wrong: {$e->getMessage()}");
         }
     }
+
+    // Simulation Completed
+    // public function connectAndSubscribe($topic)
+    // {
+    //     try {
+    //         $data = DeviceLogs::orderBy('id', 'desc')->first()->toArray();
+    //         // dd($data['json_response']);
+    //         $associativeArray = json_decode($data['json_response'], true);
+    //         // dd($associativeArray);
+    //         $dummyData = $this->deviceDataRepository->update_device_data($associativeArray);
+    //         dd($dummyData);
+    //         // $this->mqttClient->loop();
+    //     } catch (Exception $e) {
+    //         Log::channel('mqttlogs')->error("MQTT - Somthing went wrong: {$e->getMessage()}");
+    //     }
+    // }
 }

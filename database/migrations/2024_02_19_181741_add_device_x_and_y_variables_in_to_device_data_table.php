@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('device_data', function (Blueprint $table) {
-            $table->string('entry_timestamps')->nullable()->after('health_status')->comment('Timestamps of data entries');
-            $table->string('measurement_values')->nullable()->after('entry_timestamps')->comment('Values corresponding to the timestamps');
+            $table->string('device_timestamps')->nullable()->after('health_status')->comment('X - Timestamps of data entries');
+            $table->string('valts')->nullable()->after('device_timestamps')->comment('Y - Valts');
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('device_data', function (Blueprint $table) {
-            $table->dropColumn('entry_timestamps')->nullable()->after('health_status')->comment('X - Timestamps of data entries');
-            $table->dropColumn('measurement_values')->nullable()->after('entry_timestamps')->comment('Y - Values corresponding to the timestamps');
+            $table->dropColumn('device_timestamps')->nullable()->after('health_status')->comment('X - Timestamps of data entries');
+            $table->dropColumn('valts')->nullable()->after('entry_timestamps')->comment('Y -  Valts Values corresponding to the timestamps');
         });
     }
 };

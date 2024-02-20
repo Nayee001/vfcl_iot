@@ -30,10 +30,12 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
     public function update_device_data($deviceData)
     {
         try {
+            // dd($deviceData);
             if ($deviceData) {
                 $getDevice = Device::select('id', 'name', 'api_key')->where('api_key', '=', $deviceData['device_api'])->first();
-
+                // dd($getDevice);
                 if ($getDevice) {
+                    dump('aa');
                     $data = [
                         'device_id' => $getDevice->id,
                         'fault_status' => $deviceData['fault_status'],
@@ -52,15 +54,40 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                     // Set the threshold based on the interval
                     $threshold = interval(1);
 
-                    // Check if the latest record is older than the specified threshold
+
                     if ($latestRecord && $timeDifference < $threshold) {
-                        // Update the latest record
-                        $latestRecord->update($data);
+                        // Assuming $data needs to be merged with additional data before updating
+                        if (!empty($deviceData['data'])) {
+                            foreach ($deviceData['data'] as $key => $value) {
+
+                                $updateData = [
+                                    "device_timestamps" => $value['Timestamps'],
+                                    "valts" => $value['output'],
+                                ] + $data;
+
+                                $latestRecord->update($updateData);
+                            }
+                        } else {
+                            // If there's no additional data to merge, update directly
+                            $latestRecord->update($data);
+                        }
                         return $latestRecord;
                     } else {
-                        // Create a new record
-                        return $this->model->create($data);
+                        // Create a new record(s) with optimizations applied from the previous explanation
+                        if (!empty($deviceData['data'])) {
+                            $creation = null;
+                            foreach ($deviceData['data'] as $key => $value) {
+                                $recordData = [
+                                    "device_timestamps" => $value['Timestamps'],
+                                    "valts" => $value['output'],
+                                ] + $data;
+
+                                $creation = $this->model->create($recordData);
+                            }
+                            return $creation;
+                        }
                     }
+
                 } else {
                     Log::channel('mqttlogs')->error("Device  - Something Wrong With DEVICE in Web-Command-Center", $getDevice);
                     return false;
