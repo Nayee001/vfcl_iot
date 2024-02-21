@@ -31,6 +31,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
     {
         try {
             // dd($deviceData);
+            // dd($deviceData['data']);
             if ($deviceData) {
                 $getDevice = Device::select('id', 'name', 'api_key')->where('api_key', '=', $deviceData['device_api'])->first();
                 // dd($getDevice);
@@ -44,10 +45,9 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                         'health_status' => $deviceData['health_status'],
                         'timestamp' => $deviceData['timestamp'],
                     ];
-
                     // Find the latest record for the device
                     $latestRecord = $this->model->where('device_id', $getDevice->id)->latest('created_at')->first();
-
+                    // dd($latestRecord);
                     // Determine the time difference based on the interval
                     $timeDifference = $latestRecord ? now()->diffInMinutes($latestRecord->created_at) : PHP_INT_MAX;
 
@@ -56,13 +56,14 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
 
 
                     if ($latestRecord && $timeDifference < $threshold) {
+                        dump('update Function');
                         // Assuming $data needs to be merged with additional data before updating
                         if (!empty($deviceData['data'])) {
                             foreach ($deviceData['data'] as $key => $value) {
 
                                 $updateData = [
-                                    "device_timestamps" => $value['Timestamps'],
-                                    "valts" => $value['output'],
+                                    "device_timestamps" => $value['device_timestamps'],
+                                    "valts" => $value['valts'],
                                 ] + $data;
 
                                 $latestRecord->update($updateData);
@@ -73,22 +74,27 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                         }
                         return $latestRecord;
                     } else {
+                        dump('create Function');
                         // Create a new record(s) with optimizations applied from the previous explanation
+                        // dd($deviceData);
                         if (!empty($deviceData['data'])) {
                             $creation = null;
                             foreach ($deviceData['data'] as $key => $value) {
                                 $recordData = [
-                                    "device_timestamps" => $value['Timestamps'],
-                                    "valts" => $value['output'],
+                                    "device_timestamps" => $value['device_timestamps'],
+                                    "valts" => $value['valts'],
                                 ] + $data;
 
                                 $creation = $this->model->create($recordData);
                             }
                             return $creation;
+                        } else {
+                            Log::channel('mqttlogs')->error("Device Data - Something Wrong With Device Data: ", $deviceData);
+                            return false;
                         }
                     }
                 } else {
-                    Log::channel('mqttlogs')->error("Device  - Something Wrong With DEVICE in Web-Command-Center", $getDevice);
+                    Log::channel('mqttlogs')->error("Device  - Something Wrong With DEVICE in Web-Command-Center",);
                     return false;
                 }
             } else {
@@ -142,21 +148,6 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
             // Assuming $id is already provided as a parameter and should not be hardcoded
             $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
 
-            // Check if device data is found
-            if (!$deviceData) {
-                return response()->json(['message' => 'Device not found'], 404);
-            }
-
-            // Assuming 'timestamp' is a DateTime or similar, and we are working with MySQL
-            $targetTimestamp = $deviceData->timestamp;
-
-            $nearestDataBatch = $this->model::select('timestamp', 'device_timestamps', 'valts')
-                // Order by the absolute difference between 'timestamp' and the target timestamp
-                ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // time diff to get nearest data for last data batch
-                ->limit(100) // Limit to the nearest 100 entries
-                ->get();
-
-            // dd($nearestDataBatch);
             return response()->json($deviceData);
         } catch (\Exception $e) {
             // Handle general exceptions
@@ -171,30 +162,40 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         // Simulate data fetching, you should replace this with actual data fetching logic
         $data = [
             // Example data, should be replaced with dynamic data from your database or other source
-            ['x' => now()->subMinutes(5)->timestamp * 1000, 'y' => rand(10, 90)],
-            ['x' => now()->subMinutes(4)->timestamp * 1000, 'y' => rand(10, 90)],
+            ['x' => now()->subMinutes(5)->timestamp * 1000, 'y' => rand(1, 10)],
+            ['x' => now()->subMinutes(4)->timestamp * 1000, 'y' => rand(1, 10)],
+            ['x' => now()->subMinutes(3)->timestamp * 1000, 'y' => rand(1, 10)],
+            ['x' => now()->subMinutes(2)->timestamp * 1000, 'y' => rand(1, 10)],
+            ['x' => now()->subMinutes(1)->timestamp * 1000, 'y' => rand(1, 100)],
             // Add more points as needed
         ];
 
-        dd($data);
-
-        // Assuming $id is already provided as a parameter and should not be hardcoded
         $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
 
-        // Check if device data is found
         if (!$deviceData) {
             return response()->json(['message' => 'Device not found'], 404);
         }
-
-        // Assuming 'timestamp' is a DateTime or similar, and we are working with MySQL
         $targetTimestamp = $deviceData->timestamp;
 
         $nearestDataBatch = $this->model::select('timestamp', 'device_timestamps', 'valts')
-            // Order by the absolute difference between 'timestamp' and the target timestamp
             ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // time diff to get nearest data for last data batch
-            ->limit(100) // Limit to the nearest 100 entries
+            ->limit(10) // Limit to the nearest 10 entries
             ->get();
 
-        return response()->json($data);
+        $xyData = $nearestDataBatch->map(function ($item) {
+            $timestampInMilliseconds = \Carbon\Carbon::createFromTimestamp($item->device_timestamps)
+                ->timestamp * 1000;
+            return [
+                'x' => $timestampInMilliseconds,
+                'y' => $item->valts
+            ];
+        });
+        $xyArray = $xyData->toArray();
+        $deviceName = $deviceData->device->name ?? 'Unknown Device';
+        $finalArray = [
+            'data' => $xyArray,
+            'deviceName' => $deviceName
+        ];
+        return response()->json($finalArray);
     }
 }

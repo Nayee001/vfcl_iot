@@ -45,7 +45,7 @@ function getDeviceDataCount() {
         })
         .catch((error) => console.error("Error:", error));
 }
-// setInterval(getDeviceDataCount, 100);
+setInterval(getDeviceDataCount, 100);
 
 // Getting Data
 function fetchAndUpdateData() {
@@ -179,7 +179,7 @@ function showLineChart(deviceId) {
     faultStatus.style.display = "none";
     var lineChart = document.getElementById("device-fault-line-chart");
     lineChart.style.display = "block";
-    fetchChartDataAndUpdateChart(deviceId)
+    fetchChartDataAndUpdateChart(deviceId);
 }
 // setInterval(() => showData(1), 2000);
 // Refresh the data every 2 seconds
@@ -207,70 +207,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchChartDataAndUpdateChart(deviceId) {
         fetch(`/get-device-line-chart-data/${deviceId}`) // Adjust the URL to match your route
-
             .then((response) => response.json())
             .then((newData) => {
-                data = newData.map((item) => ({
+                data = newData.data.map((item) => ({
                     x: new Date(item.x),
                     y: item.y,
                 }));
+                // deviceName = newData.deviceName;
                 chart.updateSeries([
                     {
                         data: data,
                     },
                 ]);
-            })
-            .catch((error) =>
-                console.error("Error fetching chart data:", error)
-            );
+            });
     }
-
     var options = {
         series: [
             {
+                name: "Valts",
                 data: data.slice(),
             },
         ],
         chart: {
-            id: "realtime",
+            type: "area",
+            stacked: false,
             height: 350,
-            type: "line",
-            animations: {
+            zoom: {
+                type: "x",
                 enabled: true,
-                easing: "linear",
-                dynamicAnimation: {
-                    speed: 1000,
-                },
+                autoScaleYaxis: true,
             },
             toolbar: {
-                show: false,
-            },
-            zoom: {
-                enabled: false,
+                autoSelected: "zoom",
             },
         },
         dataLabels: {
             enabled: false,
         },
-        stroke: {
-            curve: "smooth",
-        },
-        title: {
-            text: "Device Name Apperars here !!!",
-            align: "left",
-        },
         markers: {
             size: 0,
         },
-        xaxis: {
-            type: "datetime",
-            range: XAXISRANGE,
+        title: {
+            // text: deviceName.slice(),
+            align: "left",
+        },
+        fill: {
+            type: "gradient",
+            gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.5,
+                opacityTo: 0,
+                stops: [0, 90, 100],
+            },
         },
         yaxis: {
-            max: 100,
+            labels: {
+                formatter: function (val) {
+                    return val;
+                },
+            },
+            title: {
+                text: "Valts",
+            },
         },
-        legend: {
-            show: false,
+        xaxis: {
+            type: "datetime",
+        },
+        tooltip: {
+            shared: false,
+            y: {
+                formatter: function (val) {
+                    return val;
+                },
+            },
         },
     };
 
@@ -283,89 +293,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initially fetch some data to display
     fetchChartDataAndUpdateChart(1);
 
-    // // Then, update the chart every 1 second with new data
-    // window.setInterval(function () {
-    //     fetchChartDataAndUpdateChart();
-    // }, 1000); // Adjust this interval as needed
+    // Then, update the chart every 1 second with new data
+    window.setInterval(function () {
+        fetchChartDataAndUpdateChart(1);
+    }, 1000); // Adjust this interval as needed
 });
-
-//non realtime chart
-// document.addEventListener("DOMContentLoaded", function () {
-//     // Assume data fetching is done once initially to populate the chart
-//     function fetchChartDataAndUpdateChart(chart, url, callback) {
-//         fetch(url) // Adjust the URL to match your route
-//             .then((response) => response.json())
-//             .then((newData) => {
-//                 var data = newData.map((item) => ({
-//                     x: new Date(item.x),
-//                     y: item.y,
-//                 }));
-//                 callback(chart, data); // Update chart data via callback
-//             })
-//             .catch((error) => console.error("Error fetching chart data:", error));
-//     }
-
-//     function updateChartData(chart, data) {
-//         chart.updateSeries([{ data: data }]);
-//     }
-
-//     // Configuration for the first chart (Device Fault Line Chart)
-//     var optionsDeviceFault = {
-//         series: [{ data: [] }], // Initial empty data
-//         chart: {
-//             id: "device-fault-line-chart",
-//             height: 350,
-//             type: "line",
-//             animations: { enabled: false }, // Disable animations
-//             toolbar: { show: false },
-//             zoom: { enabled: false },
-//         },
-//         dataLabels: { enabled: false },
-//         stroke: { curve: "smooth" },
-//         title: { text: "Device Fault Line Chart", align: "left" },
-//         markers: { size: 0 },
-//         xaxis: { type: "datetime" },
-//         yaxis: { max: 100 },
-//         legend: { show: false },
-//     };
-
-//     var chartDeviceFault = new ApexCharts(document.querySelector("#device-fault-line-chart"), optionsDeviceFault);
-//     chartDeviceFault.render();
-
-//     // Configuration for the second chart (Stock Price Movement)
-//     var optionsStockPrice = {
-//         series: [{ name: 'XYZ MOTORS', data: [] }], // Initial empty data
-//         chart: {
-//             type: 'area',
-//             stacked: false,
-//             height: 350,
-//             zoom: { type: 'x', enabled: true, autoScaleYaxis: true },
-//             toolbar: { autoSelected: 'zoom' }
-//         },
-//         dataLabels: { enabled: false },
-//         markers: { size: 0 },
-//         title: { text: 'Stock Price Movement', align: 'left' },
-//         fill: {
-//             type: 'gradient',
-//             gradient: { shadeIntensity: 1, inverseColors: false, opacityFrom: 0.5, opacityTo: 0, stops: [0, 90, 100] },
-//         },
-//         yaxis: {
-//             labels: { formatter: function (val) { return (val / 1000000).toFixed(0); } },
-//             title: { text: 'Price' }
-//         },
-//         xaxis: { type: 'datetime' },
-//         tooltip: {
-//             shared: false,
-//             y: { formatter: function (val) { return (val / 1000000).toFixed(0) } }
-//         }
-//     };
-
-//     var chartStockPrice = new ApexCharts(document.querySelector("#chart"), optionsStockPrice);
-//     chartStockPrice.render();
-
-//     // Fetch and update data for Device Fault Line Chart
-//     fetchChartDataAndUpdateChart(chartDeviceFault, "/get-device-line-chart-data", updateChartData);
-
-//     // Fetch and update data for Stock Price Movement (Adjust URL as needed)
-//     fetchChartDataAndUpdateChart(chartStockPrice, "/get-stock-price-data", updateChartData);
-// });
