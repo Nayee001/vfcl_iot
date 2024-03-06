@@ -3,175 +3,27 @@
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row gy-4">
-            <!-- Ratings -->
-            <div class="col-xl-3 col-sm-6 mt-5">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <h5 class="mb-4 pb-1 text-nowrap"><b>Managers</b></h5>
-                                    <div class="d-flex align-items-end mb-3">
-                                        <h2 class="mb-0 me-2">{{ $managerCount }}</h2>
-                                        <small class="text-success">Total</small>
-                                    </div>
-                                    <a class="widget-lable" href="{{ route('users.index') }}"><i class='bx bx-list-ol'></i>
-                                        View All </a>
-                                    <a class="widget-lable" href="{{ route('users.create') }}"> <i
-                                            class='bx bx-plus'></i>Create New </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="h-100 position-relative">
-                                <img src="{{ asset('assets/img/illustrations/manager.png') }}" alt="Ratings"
-                                    class="position-absolute card-img-position scaleX-n1-rtl bottom-0 w-auto end-0 me-3 me-xl-0 me-xxl-3 pe-1"
-                                    width="95" height="170">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--/ Ratings -->
-            <!-- Sessions -->
-            <div class="col-xl-3 col-sm-6 mt-5">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <h5 class="mb-4 pb-1 text-nowrap"><b>Customers</b></h5>
-                                    <div class="d-flex align-items-end mb-3">
-                                        <h2 class="mb-0 me-2">{{ $userCount }}</h2>
-                                        <small class="text-success">Total</small>
-                                    </div>
-                                    <a class="widget-lable" href="{{ route('users.index') }}"><i class='bx bx-list-ol'></i>
-                                        View All </a>
-                                    <a class="widget-lable" href="{{ route('users.create') }}"> <i
-                                            class='bx bx-plus'></i>Create New </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="h-100 position-relative">
-                                <img src="{{ asset('assets/img/illustrations/users.png') }}" alt="Ratings"
-                                    class="position-absolute card-img-position scaleX-n1-rtl bottom-0 w-auto end-0 me-3 me-xl-0 me-xxl-3 pe-1"
-                                    width="95" height="160">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-xl-6 align-self-end">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <h5 class="card-title m-0 me-2">Device Types </h5>
-                        <div class="dropdown">
-                            <button class="btn btn-link p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                                <a class="dropdown-item" href="javascript:void(0);">View All</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3 mb-xl-2">
-                            @foreach ($deviceTypesWithDeviceCount as $key => $value)
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar">
-                                            <div class="avatar-initial {{ getRandomBackgroundColor() }} rounded shadow">
-                                                <i class='bx bx-devices'></i>
-                                            </div>
-                                        </div>
-                                        <div class="ms-3">
-                                            <div class="small mb-1">{{ $key }}</div>
-                                            <h5 class="mb-0">{{ $value }}</h5> <small>Devices</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-6 col-md-6">
-                <div class="card h-100">
-                    <div class="card-header pb-1">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="mb-0">Active Device</h5>
-                        </div>
-                    </div>
-                    <div class="card-body pt-lg-4 mt-lg-1 device-fault-status-shown" id="device-fault-status-shown">
-                        Please Select a Device
-                    </div>
-                    <div class="card-body pt-lg-4 mt-lg-1 device-fault-line-chart" id="device-fault-line-chart"
-                        style="display: none;">
-                        Please Select a Device
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-6 col-md-6 ">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <h5 class="card-title m-0 me-2">Devices Statistic</h5>
-                        <div class="dropdown">
-                            <button class="btn btn-link p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                                <a class="dropdown-item" href="javascript:void(0);">View All</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-end mb-3" style="position: relative;">
-                            <div class="mb-2">
-                                <h5 class="display-3 mb-0 item-">{{ $deviceCount }}</h5>
-                                <small>Total Devices</small>
-                            </div>
-                            <div class="mb-2">
-                                <h5 class="display-3 mb-0" id="dataCount">Loading...</h5>
-                                <small>Total Data Recieved</small>
-                            </div>
-                            <div class="resize-triggers">
-                                <div class="expand-trigger">
-                                    <div style="width: 409px; height: 100px;"></div>
-                                </div>
-                                <div class="contract-trigger"></div>
-                            </div>
-                        </div>
-                        <div id="deviceDataContainer">
-                            <div class="d-flex align-items-center border-top py-3">
-                                Loding ...
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="row">
-            <div class="col-lg-8 mb-4 order-0">
+            <div class="col-lg-6 mb-4 order-0">
                 <div class="card">
                     <div class="d-flex align-items-end row">
                         <div class="col-sm-7">
                             <div class="card-body">
-                                <h5 class="card-title text-primary">Congratulations John! 🎉</h5>
+                                <h5 class="card-title text-primary">Welcome, {{ Auth::user()->fname }}
+                                    {{ Auth::user()->lname }} 🎉</h5>
                                 <p class="mb-4">
-                                    You have done <span class="fw-bold">72%</span> more sales today. Check your new badge in
-                                    your profile.
+                                    Device Health Status: <span class="fw-bold">72</span> data points received today. View
+                                    all data on the dashboard.
                                 </p>
-
-                                <a href="javascript:;" class="btn btn-sm btn-outline-primary">View Badges</a>
+                                <button type="button"
+                                    class="btn rounded-pill btn-icon btn-outline-primary position-relative">
+                                    <span class="tf-icons bx bx-bell"></span>
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                        title="Unread notifications">
+                                        45
+                                    </span>
+                                </button>
                             </div>
                         </div>
                         <div class="col-sm-5 text-center text-sm-left">
@@ -184,9 +36,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-4 order-1">
+            <div class="col-lg-6 col-md-4 order-1">
                 <div class="row">
-                    <div class="col-lg-6 col-md-12 col-6 mb-4">
+                    <div class="col-lg-4 col-md-12 col-6 mb-4">
                         <div class="card">
                             <div class="card-body">
                                 <div class="card-title d-flex align-items-start justify-content-between">
@@ -200,18 +52,22 @@
                                             <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+
+                                            <a class="dropdown-item" href="{{ route('users.index') }}"><i
+                                                    class='bx bx-list-ol'></i>
+                                                View All </a>
+                                            <a class="dropdown-item" href="{{ route('users.create') }}"> <i
+                                                    class='bx bx-plus'></i>Create New </a>
                                         </div>
                                     </div>
                                 </div>
-                                <span class="fw-semibold d-block mb-1">Profit</span>
-                                <h3 class="card-title mb-2">$12,628</h3>
-                                <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
+                                <span>Managers</span>
+                                <h2 class="mb-0 me-2">{{ $managerCount }}</h2>
+                                <small class="text-success">Total</small>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-12 col-6 mb-4">
+                    <div class="col-lg-4 col-md-12 col-6 mb-4">
                         <div class="card">
                             <div class="card-body">
                                 <div class="card-title d-flex align-items-start justify-content-between">
@@ -224,20 +80,58 @@
                                             aria-haspopup="true" aria-expanded="false">
                                             <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
-                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+
+                                            <a class="dropdown-item" href="{{ route('users.index') }}"><i
+                                                    class='bx bx-list-ol'></i>
+                                                View All </a>
+                                            <a class="dropdown-item" href="{{ route('users.create') }}"> <i
+                                                    class='bx bx-plus'></i>Create New </a>
                                         </div>
                                     </div>
                                 </div>
-                                <span>Sales</span>
-                                <h3 class="card-title text-nowrap mb-1">$4,679</h3>
-                                <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>
+                                <span>Customers</span>
+                                <h2 class="mb-0 me-2">{{ $userCount }}</h2>
+                                <small class="text-success">Total</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12 col-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <div class="avatar flex-shrink-0">
+                                        <img src="../assets/img/icons/unicons/wallet-info.png" alt="Credit Card"
+                                            class="rounded" />
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+
+                                            <a class="dropdown-item" href="{{ route('users.index') }}"><i
+                                                    class='bx bx-list-ol'></i>
+                                                View All </a>
+                                            <a class="dropdown-item" href="{{ route('users.create') }}"> <i
+                                                    class='bx bx-plus'></i>Create New </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span>Device Locations</span>
+                                <h2 class="mb-0 me-2">{{ $userCount }}</h2>
+                                <small class="text-success">Total</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
             <!-- Total Revenue -->
             <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
                 <div class="card">
@@ -297,8 +191,8 @@
                 <div class="card h-100">
                     <div class="card-header d-flex align-items-center justify-content-between pb-0">
                         <div class="card-title mb-0">
-                            <h5 class="m-0 me-2">Order Statistics</h5>
-                            <small class="text-muted">42.82k Total Sales</small>
+                            <h5 class="m-0 me-2">Device Statistics</h5>
+                            <small class="text-muted" id="dataCount">Loading...</small> <small>Total Data Recieved</small>
                         </div>
                         <div class="dropdown">
                             <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
@@ -315,73 +209,32 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex flex-column align-items-center gap-1">
-                                <h2 class="mb-2">8,258</h2>
-                                <span>Total Orders</span>
+                                <h5 class="display-3 mb-0 item-">{{ $deviceCount }}</h5>
+                                <small>Total Devices</small>
                             </div>
                             <div id="orderStatisticsChart"></div>
                         </div>
                         <ul class="p-0 m-0">
-                            <li class="d-flex mb-4 pb-1">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <span class="avatar-initial rounded bg-label-primary"><i
-                                            class="bx bx-mobile-alt"></i></span>
-                                </div>
-                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                    <div class="me-2">
-                                        <h6 class="mb-0">Electronic</h6>
-                                        <small class="text-muted">Mobile, Earbuds, TV</small>
+                            @foreach ($deviceTypesWithDeviceCount as $key => $value)
+                                <li class="d-flex mb-4 pb-1">
+                                    <div class="avatar flex-shrink-0 me-3">
+                                        <div class="avatar-initial {{ getRandomBackgroundColor() }} rounded shadow">
+                                            <i class='bx bx-devices'></i>
+                                        </div>
                                     </div>
-                                    <div class="user-progress">
-                                        <small class="fw-semibold">82.5k</small>
+                                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                        <div class="me-auto">
+                                            <h6 class="mb-0">{{ $key }}</h6>
+                                            <small class="text-muted">{{ $value }}</small>
+                                        </div>
+                                        <div class="user-progress">
+                                            <small class="fw-semibold">{{ $value }} Devices</small>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="d-flex mb-4 pb-1">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <span class="avatar-initial rounded bg-label-success"><i
-                                            class="bx bx-closet"></i></span>
-                                </div>
-                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                    <div class="me-2">
-                                        <h6 class="mb-0">Fashion</h6>
-                                        <small class="text-muted">T-shirt, Jeans, Shoes</small>
-                                    </div>
-                                    <div class="user-progress">
-                                        <small class="fw-semibold">23.8k</small>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="d-flex mb-4 pb-1">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <span class="avatar-initial rounded bg-label-info"><i
-                                            class="bx bx-home-alt"></i></span>
-                                </div>
-                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                    <div class="me-2">
-                                        <h6 class="mb-0">Decor</h6>
-                                        <small class="text-muted">Fine Art, Dining</small>
-                                    </div>
-                                    <div class="user-progress">
-                                        <small class="fw-semibold">849k</small>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="d-flex">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <span class="avatar-initial rounded bg-label-secondary"><i
-                                            class="bx bx-football"></i></span>
-                                </div>
-                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                    <div class="me-2">
-                                        <h6 class="mb-0">Sports</h6>
-                                        <small class="text-muted">Football, Cricket Kit</small>
-                                    </div>
-                                    <div class="user-progress">
-                                        <small class="fw-semibold">99</small>
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
+                            @endforeach
                         </ul>
+
                     </div>
                 </div>
             </div>
