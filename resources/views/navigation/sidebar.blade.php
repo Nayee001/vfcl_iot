@@ -70,12 +70,22 @@
             class="menu-item {{ request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                <div data-i18n="Account Settings">Account Settings</div>
+                <div data-i18n="Account Settings">Settings</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
                     <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
                         <div data-i18n="Account">My Account</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
+                    <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
+                        <div data-i18n="Account">Notification Settings</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
+                    <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
+                        <div data-i18n="Account">Notification Settings</div>
                     </a>
                 </li>
                 @can('api-connection')

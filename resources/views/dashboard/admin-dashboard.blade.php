@@ -12,17 +12,17 @@
                                 <h5 class="card-title text-primary">Welcome, {{ Auth::user()->fname }}
                                     {{ Auth::user()->lname }} 🎉</h5>
                                 <p class="mb-4">
-                                    Device Health Status: <span class="fw-bold">72</span> data points received today. View
+                                    Devices Health Status: <span class="fw-bold">72</span> data points received today. View
                                     all data on the dashboard.
                                 </p>
-                                <button type="button"
-                                    class="btn rounded-pill btn-icon btn-outline-primary position-relative">
+                                <button title="Unread notifications" type="button" class="btn rounded-pill btn-icon btn-outline-primary position-relative notification-button">
                                     <span class="tf-icons bx bx-bell"></span>
-                                    <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                        title="Unread notifications">
-                                        45
-                                    </span>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" title="Unread notifications">45</span>
+                                </button>
+
+                                <button title="Device Alerts" type="button" class="btn rounded-pill btn-icon btn-outline-danger position-relative notification-button">
+                                    <i class='bx bxs-alarm-exclamation'></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success notification-badge" title="Device Alerts">5</span>
                                 </button>
                             </div>
                         </div>
@@ -43,7 +43,7 @@
                             <div class="card-body">
                                 <div class="card-title d-flex align-items-start justify-content-between">
                                     <div class="avatar flex-shrink-0">
-                                        <img src="../assets/img/icons/unicons/chart-success.png" alt="chart success"
+                                        <img src="../assets/img/icons/unicons/manager.png" alt="chart success"
                                             class="rounded" />
                                     </div>
                                     <div class="dropdown">
@@ -72,7 +72,7 @@
                             <div class="card-body">
                                 <div class="card-title d-flex align-items-start justify-content-between">
                                     <div class="avatar flex-shrink-0">
-                                        <img src="../assets/img/icons/unicons/wallet-info.png" alt="Credit Card"
+                                        <img src="../assets/img/icons/unicons/customers.png" alt="Credit Card"
                                             class="rounded" />
                                     </div>
                                     <div class="dropdown">
@@ -101,8 +101,7 @@
                             <div class="card-body">
                                 <div class="card-title d-flex align-items-start justify-content-between">
                                     <div class="avatar flex-shrink-0">
-                                        <img src="../assets/img/icons/unicons/wallet-info.png" alt="Credit Card"
-                                            class="rounded" />
+                                        <img src="../assets/img/icons/unicons/map.png" alt="Credit Card" class="rounded" />
                                     </div>
                                     <div class="dropdown">
                                         <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown"
@@ -119,7 +118,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <span>Device Locations</span>
+                                <span>Locations</span>
                                 <h2 class="mb-0 me-2">{{ $userCount }}</h2>
                                 <small class="text-success">Total</small>
                             </div>
@@ -191,7 +190,7 @@
                 <div class="card h-100">
                     <div class="card-header d-flex align-items-center justify-content-between pb-0">
                         <div class="card-title mb-0">
-                            <h5 class="m-0 me-2">Device Statistics</h5>
+                            <h5 class="m-0 me-2">Device Type Statistics</h5>
                             <small class="text-muted" id="dataCount">Loading...</small> <small>Total Data Recieved</small>
                         </div>
                         <div class="dropdown">
@@ -200,9 +199,8 @@
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
-                                <a class="dropdown-item" href="javascript:void(0);">Select All</a>
+                                <a class="dropdown-item" href="javascript:void(0);">View All</a>
                                 <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                                <a class="dropdown-item" href="javascript:void(0);">Share</a>
                             </div>
                         </div>
                     </div>

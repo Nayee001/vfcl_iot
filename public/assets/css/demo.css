@@ -210,3 +210,11 @@
 .white:hover {
     color: #fff;
   }
+
+  .notification-button {
+    margin-right: 10px; /* Adjust the spacing between buttons */
+}
+
+.notification-badge {
+    padding: 3px 6px; /* Adjust the padding of the badge */
+}
