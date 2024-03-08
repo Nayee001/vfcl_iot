@@ -15,14 +15,20 @@
                                     Devices Health Status: <span class="fw-bold">72</span> data points received today. View
                                     all data on the dashboard.
                                 </p>
-                                <button title="Unread notifications" type="button" class="btn rounded-pill btn-icon btn-outline-primary position-relative notification-button">
+                                <button title="Unread notifications" type="button"
+                                    class="btn rounded-pill btn-icon btn-outline-primary position-relative notification-button">
                                     <span class="tf-icons bx bx-bell"></span>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" title="Unread notifications">45</span>
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge"
+                                        title="Unread notifications">45</span>
                                 </button>
 
-                                <button title="Device Alerts" type="button" class="btn rounded-pill btn-icon btn-outline-danger position-relative notification-button">
+                                <button title="Device Alerts" type="button"
+                                    class="btn rounded-pill btn-icon btn-outline-danger position-relative notification-button">
                                     <i class='bx bxs-alarm-exclamation'></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success notification-badge" title="Device Alerts">5</span>
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success notification-badge"
+                                        title="Device Alerts">5</span>
                                 </button>
                             </div>
                         </div>
@@ -193,7 +199,7 @@
                             <h5 class="m-0 me-2">Device Type Statistics</h5>
                             <small class="text-muted" id="dataCount">Loading...</small> <small>Total Data Recieved</small>
                         </div>
-                        <div class="dropdown">
+                        {{-- <div class="dropdown">
                             <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                                 <i class="bx bx-dots-vertical-rounded"></i>
@@ -202,7 +208,7 @@
                                 <a class="dropdown-item" href="javascript:void(0);">View All</a>
                                 <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -212,27 +218,69 @@
                             </div>
                             <div id="orderStatisticsChart"></div>
                         </div>
-                        <ul class="p-0 m-0">
-                            @foreach ($deviceTypesWithDeviceCount as $key => $value)
-                                <li class="d-flex mb-4 pb-1">
-                                    <div class="avatar flex-shrink-0 me-3">
-                                        <div class="avatar-initial {{ getRandomBackgroundColor() }} rounded shadow">
-                                            <i class='bx bx-devices'></i>
+                        <div class="scroller">
+                            <ul class="p-0 m-0">
+                                @foreach ($deviceTypesWithDeviceCount as $key => $value)
+                                    <li class="d-flex mb-4 pb-1">
+                                        <div class="avatar flex-shrink-0 me-3">
+                                            <div class="avatar-initial {{ getRandomBackgroundColor() }} rounded shadow">
+                                                <i class='bx bx-devices'></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                        <div class="me-auto">
-                                            <h6 class="mb-0">{{ $key }}</h6>
-                                            <small class="text-muted">{{ $value }}</small>
+                                        <div
+                                            class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                            <div class="me-auto">
+                                                <h6 class="mb-0">{{ $key }}</h6>
+                                                <small class="text-muted">{{ $value }}</small>
+                                            </div>
+                                            <div class="user-progress">
+                                                <small class="fw-semibold">{{ $value }} Devices</small>
+                                            </div>
                                         </div>
-                                        <div class="user-progress">
-                                            <small class="fw-semibold">{{ $value }} Devices</small>
-                                        </div>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
 
+                </div>
+            </div>
+        </div>
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="row">
+                <div class="card">
+                    <h5 class="card-header">Devices</h5>
+                    <div class="table-responsive text-nowrap">
+                        <table class="table dashboard-devices-ajax-datatable">
+                            {{-- <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Device Status</th>
+                                    <th>Health Status</th>
+                                    <th>Fault Status</th>
+                                    <th>Timestamps</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                            </tbody> --}}
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Device Name</th>
+                                    <th>Health</th>
+                                    <th>Status</th>
+                                    <th>Manager</th>
+                                    <th>Assinged To</th>
+                                    <th>Location</th>
+                                    <th>Created At</th>
+                                    <th>Api Key</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

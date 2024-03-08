@@ -218,3 +218,14 @@
 .notification-badge {
     padding: 3px 6px; /* Adjust the padding of the badge */
 }
+
+.dashboard-img{
+        margin-left: -28px;
+}
+
+.scroller {
+    max-height: 150px;
+    overflow-y: auto;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+  }

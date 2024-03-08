@@ -55,5 +55,64 @@
                 });
             });
         });
+
+        $(function() {
+            var table = $('.dashboard-devices-ajax-datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('get-dashboard-devices-ajax-datatable') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    }, // Index column
+
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'health',
+                        name: 'health'
+                    },
+                    {
+                        data: 'deviceStatus',
+                        data: 'deviceStatus'
+                    },
+                    {
+                        data: 'ownedBy',
+                        name: 'ownedBy'
+                    },
+
+                    {
+                        data: 'assignee',
+                        name: 'assignee',
+                    },
+                    {
+                        data: 'location',
+                        name: 'location',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'createdtime',
+                        name: 'createdtime'
+                    },
+                    {
+                        data: 'apikey',
+                        name: 'apikey',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+        });
     </script>
 @endsection

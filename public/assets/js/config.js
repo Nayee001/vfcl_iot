@@ -45,7 +45,7 @@ function getDeviceDataCount() {
         })
         .catch((error) => console.error("Error:", error));
 }
-setInterval(getDeviceDataCount, 100);
+// setInterval(getDeviceDataCount, 100);
 
 // Getting Data
 function fetchAndUpdateData() {
@@ -83,7 +83,7 @@ function fetchAndUpdateData() {
 }
 
 // Fetch and update data every 1000 milliseconds
-setInterval(fetchAndUpdateData, 2000);
+// setInterval(fetchAndUpdateData, 2000);
 
 function showData(deviceId) {
     if (deviceId) {
@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchChartDataAndUpdateChart(1);
 
     // Then, update the chart every 1 second with new data
-    window.setInterval(function () {
-        fetchChartDataAndUpdateChart(1);
-    }, 1000); // Adjust this interval as needed
+    // window.setInterval(function () {
+    //     fetchChartDataAndUpdateChart(1);
+    // }, 1000); // Adjust this interval as needed
 });

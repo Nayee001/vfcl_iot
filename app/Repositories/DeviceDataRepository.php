@@ -136,6 +136,15 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         }
     }
 
+    public function dashboarddevicedataTable($request)
+    {
+        try {
+            return $this->deviceRepository->dashboarddevicedataTable($request);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return null;
+        }
+    }
 
     /**
      * Get Device Data by ID
