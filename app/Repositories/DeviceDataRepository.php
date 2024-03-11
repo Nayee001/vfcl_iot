@@ -10,9 +10,10 @@ use App\Models\Device;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Models\DeviceAssignment;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
-
+use Yajra\DataTables\Datatables;
 
 class DeviceDataRepository implements DeviceDataRepositoryInterface
 {
@@ -36,7 +37,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                 $getDevice = Device::select('id', 'name', 'api_key')->where('api_key', '=', $deviceData['device_api'])->first();
                 // dd($getDevice);
                 if ($getDevice) {
-                    dump('Data Seeding into Database');
+                    // dump('Data Seeding into Database');
                     $data = [
                         'device_id' => $getDevice->id,
                         'fault_status' => $deviceData['fault_status'],
@@ -112,20 +113,29 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         $count = $this->model::count();
         return response()->json(['count' => $count]);
     }
+
+
+    private function queryLatestDeviceRecords()
+    {
+        $latestRecords = $this->model::select('device_data.*')
+            ->join(DB::raw('(SELECT device_id, MAX(timestamp) as latest_timestamp FROM device_data GROUP BY device_id) as latest_data'), function ($join) {
+                $join->on('device_data.device_id', '=', 'latest_data.device_id')
+                    ->on('device_data.timestamp', '=', 'latest_data.latest_timestamp');
+            })
+            ->join('devices', 'device_data.device_id', '=', 'devices.id')
+            ->with('device');
+
+        if (isManager()) {
+            $latestRecords->where('devices.created_by', Auth::id());
+        }
+
+        return $latestRecords;
+    }
+
     public function getDeviceAllMessages()
     {
         try {
-            $latestRecords = $this->model::select('device_data.*')
-                ->join(DB::raw('(SELECT device_id, MAX(timestamp) as latest_timestamp FROM device_data GROUP BY device_id) as latest_data'), function ($join) {
-                    $join->on('device_data.device_id', '=', 'latest_data.device_id')
-                        ->on('device_data.timestamp', '=', 'latest_data.latest_timestamp');
-                })
-                ->join('devices', 'device_data.device_id', '=', 'devices.id') // Assuming 'devices' is the table name and 'id' is the primary key
-                ->with('device');
-
-            if (isManager()) {
-                $latestRecords->where('devices.created_by', Auth::id()); // Apply the filter for managers
-            }
+            $latestRecords = $this->queryLatestDeviceRecords();
 
             return response()->json($latestRecords->get());
         } catch (Exception $e) {
@@ -139,10 +149,74 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
     public function dashboarddevicedataTable($request)
     {
         try {
-            return $this->deviceRepository->dashboarddevicedataTable($request);
+            if ($request->ajax()) {
+                $latestRecords = $this->queryLatestDeviceRecords();
+
+                $device =  $latestRecords->get();
+                // dd($device);
+                return DataTables::of($device)
+                    ->addIndexColumn()
+                    ->addColumn('deviceName',function($row) {
+                        $deviceName = '<a class="primary">' . $row->device->name . '</a>';
+                        return $deviceName;
+                    })
+                    ->addColumn('deviceStatus', function ($row) {
+                        switch ($row->device_status) {
+                            case Device::STATUS['Active']:
+                                $badgeClass = 'primary';
+                                break;
+                            case Device::STATUS['Inactive']:
+                                $badgeClass = 'danger';
+                                break;
+                            default:
+                                $badgeClass = 'warning';
+                                break;
+                        }
+                        $status = '<span class="badge bg-label-' . $badgeClass . ' me-1">' . e($row->device_status) . '</span>';
+                        return $status;
+                    })->addColumn('healthStatus', function ($row) {
+                        $healthStatus = '<a class="primary">' . $row->health_status . ' </a>';
+                        return $healthStatus;
+                    })->addColumn('faultStatus', function ($row) {
+                        switch ($row->fault_status) {
+                            case'ON':
+                                $badgeClass = 'success';
+                                break;
+                            case 'OFF':
+                                $badgeClass = 'danger';
+                                break;
+                            default:
+                                $badgeClass = 'warning';
+                                break;
+                        }
+                        $faultStatus = '<span class="badge bg-label-' . $badgeClass . ' me-1">' . e($row->fault_status) . '</span>';
+                        return $faultStatus;
+                    })->addColumn('TimeStamps', function ($row) {
+                        $TimeStamps = Carbon::parse($row->timestamp)->diffForHumans();
+                        return $TimeStamps;
+
+                    })->addColumn('actions', function ($row) {
+                        $deviceDetails = '<a class="dropdown-item" href="' . route('devices.edit', $row->id) . '" title="Device Details"><i class="bx bx-detail"></i> Device Details</a>';
+                        $viewGraph = '<a class="dropdown-item" href="' . route('devices.edit', $row->id) . '" title="View Graph"><i class="bx bx-line-chart"></i> View Graph</a>';
+                        $actions = $deviceDetails || $viewGraph
+                            ? '<div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">' .
+                            $deviceDetails .
+                            $viewGraph .
+                            '</div>
+                          </div>'
+                            : '';
+
+                        return $actions;
+                    })
+                    ->rawColumns(['deviceName','deviceStatus','healthStatus','faultStatus','TimeStamps','actions'])
+                    ->make(true);
+            }
         } catch (Exception $e) {
-            error_log($e->getMessage());
-            return null;
+            return $e->getMessage();
         }
     }
 

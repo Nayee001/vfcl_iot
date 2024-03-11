@@ -45,7 +45,7 @@ function getDeviceDataCount() {
         })
         .catch((error) => console.error("Error:", error));
 }
-// setInterval(getDeviceDataCount, 100);
+setInterval(getDeviceDataCount, 100);
 
 // Getting Data
 function fetchAndUpdateData() {

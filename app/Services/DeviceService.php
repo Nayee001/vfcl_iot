@@ -56,7 +56,8 @@ class DeviceService
     /**
      * Get Device Data by ID
      */
-    public function getDeviceData($id){
+    public function getDeviceData($id)
+    {
         return $this->deviceDataRepository->getDeviceData($id);
     }
     public function getDeviceLineChartData($id)
@@ -192,4 +193,19 @@ class DeviceService
         return $this->deviceTypeRepository->getAllDeviceTypeWithCounts();
     }
 
+    /**
+     * Fetches data for a datatable from the device repository.
+     *
+     * @param mixed $request The request containing data fetch parameters.
+     * @return mixed Data for the datatable or null if an error occurs.
+     */
+    public function dashboarddevicedataTable($request)
+    {
+        try {
+            return $this->deviceDataRepository->dashboarddevicedataTable($request);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return null;
+        }
+    }
 }

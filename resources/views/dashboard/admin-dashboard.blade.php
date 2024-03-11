@@ -142,29 +142,12 @@
                 <div class="card">
                     <div class="row row-bordered g-0">
                         <div class="col-md-8">
-                            <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5>
+                            <h5 class="card-header m-0 me-2 pb-3">Device SignWave</h5>
                             <div id="totalRevenueChart" class="px-2"></div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card-body">
-                                <div class="text-center">
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
-                                            id="growthReportId" data-bs-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">
-                                            2022
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="growthReportId">
-                                            <a class="dropdown-item" href="javascript:void(0);">2021</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">2020</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">2019</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="growthChart"></div>
-                            <div class="text-center fw-semibold pt-3 mb-2">62% Company Growth</div>
-
+                            <div id="growthChart" class="mt-3"></div>
+                            <div class="text-center fw-semibold pt-3 mb-2">Fault Occurs</div>
                             <div class="d-flex px-xxl-4 px-lg-2 p-4 gap-xxl-3 gap-lg-1 gap-3 justify-content-between">
                                 <div class="d-flex">
                                     <div class="me-2">
@@ -250,31 +233,17 @@
             <div class="row">
                 <div class="card">
                     <h5 class="card-header">Devices</h5>
+                    {{-- <small class="card-header">Note: Device will apears here only when data/messages arises !</small> --}}
                     <div class="table-responsive text-nowrap">
                         <table class="table dashboard-devices-ajax-datatable">
-                            {{-- <thead>
-                                <tr>
-                                    <th>Device</th>
-                                    <th>Device Status</th>
-                                    <th>Health Status</th>
-                                    <th>Fault Status</th>
-                                    <th>Timestamps</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                            </tbody> --}}
                             <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Device Name</th>
-                                    <th>Health</th>
-                                    <th>Status</th>
-                                    <th>Manager</th>
-                                    <th>Assinged To</th>
-                                    <th>Location</th>
-                                    <th>Created At</th>
-                                    <th>Api Key</th>
+                                    <th>Device Status</th>
+                                    <th>Health Status</th>
+                                    <th>Fault Status</th>
+                                    <th>Timestamps</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>

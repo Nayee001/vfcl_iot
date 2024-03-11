@@ -66,50 +66,30 @@
                         name: 'DT_RowIndex',
                         orderable: false,
                         searchable: false
-                    }, // Index column
-
-                    {
-                        data: 'name',
-                        name: 'name'
                     },
                     {
-                        data: 'health',
-                        name: 'health'
+                        data: 'deviceName',
+                        name: 'deviceName'
                     },
                     {
                         data: 'deviceStatus',
                         data: 'deviceStatus'
                     },
                     {
-                        data: 'ownedBy',
-                        name: 'ownedBy'
-                    },
-
-                    {
-                        data: 'assignee',
-                        name: 'assignee',
+                        data: 'healthStatus',
+                        name: 'healthStatus'
                     },
                     {
-                        data: 'location',
-                        name: 'location',
-                        orderable: false,
-                        searchable: false
+                        data: 'faultStatus',
+                        data: 'faultStatus'
                     },
                     {
-                        data: 'createdtime',
-                        name: 'createdtime'
-                    },
-                    {
-                        data: 'apikey',
-                        name: 'apikey',
-                        orderable: false,
-                        searchable: false,
+                        data: 'TimeStamps',
+                        data: 'TimeStamps'
                     },
                     {
                         data: 'actions',
-                        name: 'actions',
-                        orderable: false,
-                        searchable: false
+                        data: 'actions'
                     },
                 ]
             });
