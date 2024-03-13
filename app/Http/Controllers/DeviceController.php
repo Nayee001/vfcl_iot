@@ -37,6 +37,7 @@ class DeviceController extends Controller
     {
         return view('devices.dashboard');
     }
+
     /**
      * Display a listing of the resource.
      */

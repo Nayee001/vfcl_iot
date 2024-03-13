@@ -55,5 +55,44 @@
                 });
             });
         });
+
+        $(function() {
+            var table = $('.dashboard-devices-ajax-datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('get-dashboard-devices-ajax-datatable') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'deviceName',
+                        name: 'deviceName'
+                    },
+                    {
+                        data: 'deviceStatus',
+                        data: 'deviceStatus'
+                    },
+                    {
+                        data: 'healthStatus',
+                        name: 'healthStatus'
+                    },
+                    {
+                        data: 'faultStatus',
+                        data: 'faultStatus'
+                    },
+                    {
+                        data: 'TimeStamps',
+                        data: 'TimeStamps'
+                    },
+                    {
+                        data: 'actions',
+                        data: 'actions'
+                    },
+                ]
+            });
+        });
     </script>
 @endsection

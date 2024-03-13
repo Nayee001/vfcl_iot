@@ -181,7 +181,7 @@ function showLineChart(deviceId) {
     lineChart.style.display = "block";
     fetchChartDataAndUpdateChart(deviceId);
 }
-// setInterval(() => showData(1), 2000);
+setInterval(() => showData(1), 2000);
 // Refresh the data every 2 seconds
 
 document.addEventListener("DOMContentLoaded", function () {

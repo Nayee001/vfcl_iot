@@ -278,8 +278,8 @@
   // --------------------------------------------------------------------
   const growthChartEl = document.querySelector('#growthChart'),
     growthChartOptions = {
-      series: [78],
-      labels: ['Growth'],
+      series: [69],
+      labels: ['Device Data'],
       chart: {
         height: 240,
         type: 'radialBar'
@@ -315,13 +315,13 @@
           }
         }
       },
-      colors: [config.colors.primary],
+      colors: [config.colors.success],
       fill: {
         type: 'gradient',
         gradient: {
           shade: 'dark',
           shadeIntensity: 0.5,
-          gradientToColors: [config.colors.primary],
+          gradientToColors: [config.colors.success],
           inverseColors: true,
           opacityFrom: 1,
           opacityTo: 0.6,

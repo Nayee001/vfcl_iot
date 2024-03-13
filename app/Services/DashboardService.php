@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Interfaces\DashboardServiceInterface;
 use App\Services\DeviceService;
+use FFI\Exception;
 use App\Services\UserService;
 
 class DashboardService implements DashboardServiceInterface
@@ -52,12 +53,28 @@ class DashboardService implements DashboardServiceInterface
     {
         return $this->deviceService->getDeviceAllMessages();
     }
-    public function getDeviceData($id){
+    public function getDeviceData($id)
+    {
         return $this->deviceService->getDeviceData($id);
     }
 
     public function getDeviceLineChartData($id)
     {
         return $this->deviceService->getDeviceLineChartData($id);
+    }
+    /**
+     * Fetches data for a datatable from the device repository.
+     *
+     * @param mixed $request The request containing data fetch parameters.
+     * @return mixed Data for the datatable or null if an error occurs.
+     */
+    public function dashboarddevicedataTable($request)
+    {
+        try {
+            return $this->deviceService->dashboarddevicedataTable($request);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return null;
+        }
     }
 }

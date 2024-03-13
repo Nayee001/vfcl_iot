@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Services\DeviceService;
 use App\Services\DashboardService;
-
+use Exception;
+use Illuminate\Support\Facades\Log;
 class HomeController extends Controller
 {
     /**
@@ -59,7 +60,6 @@ class HomeController extends Controller
     public function getDeviceLineChartData($id)
     {
         return $this->dashboardService->getDeviceLineChartData($id);
-
     }
 
     public function getDeviceAllMessages()
@@ -74,5 +74,25 @@ class HomeController extends Controller
     public function getdeviceMessage($id)
     {
         return $this->dashboardService->getDeviceData($id);
+    }
+
+    /**
+     * Retrieves devices for datatable asynchronously using AJAX.
+     *
+     * This function receives a request and delegates the task of data retrieval
+     * to the deviceTypeRepository's dataTable method. In case of any exception,
+     * it returns an exception message.
+     *
+     * @param Request $request The incoming request object, usually containing query parameters.
+     * @return mixed Returns the datatable data for devices or an exception message.
+     */
+    public function getDashboardDevicesAjaxDatatable(Request $request)
+    {
+        try {
+            return $this->dashboardService->dashboarddevicedataTable($request);
+        } catch (Exception $e) {
+            Log::error("Error fetching devices: {$e->getMessage()}");
+            return exceptionMessage($e->getMessage());
+        }
     }
 }
