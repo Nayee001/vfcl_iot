@@ -12,6 +12,7 @@ use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\LocationManagerController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

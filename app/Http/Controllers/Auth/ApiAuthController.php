@@ -14,8 +14,6 @@ class ApiAuthController extends Controller
 
     public function login(Request $request)
     {
-        dd($request->all());
-        dump('ave chr ');
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -29,7 +27,6 @@ class ApiAuthController extends Controller
 
         $user = $request->user();
         $token = $user->createToken('token-name')->plainTextToken;
-
         return response()->json(['token' => $token]);
     }
 
