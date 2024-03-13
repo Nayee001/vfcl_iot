@@ -12,6 +12,7 @@ use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\LocationManagerController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -57,6 +58,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device-data/count', [App\Http\Controllers\HomeController::class,'getDeviceDataCounts']);
     Route::get('/device-data/messages', [App\Http\Controllers\HomeController::class,'getDeviceAllMessages']);
     Route::get('/device-data/{id}',[App\Http\Controllers\HomeController::class,'getdeviceMessage']);
+
+    Route::get('/get-device-line-chart-data/{id}',[App\Http\Controllers\HomeController::class,'getDeviceLineChartData']);
+
 
 
     Route::resource('roles', RoleController::class);

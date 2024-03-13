@@ -38,6 +38,6 @@ class MqttListener extends Command
     public function handle()
     {
         $mqttService = new MqttService($this->deviceDataRepository, $this->deviceLogsRepository);
-        $mqttService->connectAndSubscribe('weather/#');
+        $mqttService->connectAndSubscribe('mqttdevice/#');
     }
 }

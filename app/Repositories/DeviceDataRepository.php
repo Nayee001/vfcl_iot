@@ -30,47 +30,79 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
     public function update_device_data($deviceData)
     {
         try {
+            // dd($deviceData);
+            // dd($deviceData['data']);
             if ($deviceData) {
                 $getDevice = Device::select('id', 'name', 'api_key')->where('api_key', '=', $deviceData['device_api'])->first();
-
+                // dd($getDevice);
                 if ($getDevice) {
+                    dump('Data Seeding into Database');
                     $data = [
                         'device_id' => $getDevice->id,
                         'fault_status' => $deviceData['fault_status'],
                         'topic' => $deviceData['topic'],
                         'device_status' => $deviceData['device_status'],
                         'health_status' => $deviceData['health_status'],
-                        'timestamp' => $deviceData['timestamps'],
+                        'timestamp' => $deviceData['timestamp'],
                     ];
-
                     // Find the latest record for the device
                     $latestRecord = $this->model->where('device_id', $getDevice->id)->latest('created_at')->first();
-
+                    // dd($latestRecord);
                     // Determine the time difference based on the interval
                     $timeDifference = $latestRecord ? now()->diffInMinutes($latestRecord->created_at) : PHP_INT_MAX;
 
                     // Set the threshold based on the interval
                     $threshold = interval(1);
 
-                    // Check if the latest record is older than the specified threshold
+
                     if ($latestRecord && $timeDifference < $threshold) {
-                        // Update the latest record
-                        $latestRecord->update($data);
+                        dump('update Function');
+                        // Assuming $data needs to be merged with additional data before updating
+                        if (!empty($deviceData['data'])) {
+                            foreach ($deviceData['data'] as $key => $value) {
+
+                                $updateData = [
+                                    "device_timestamps" => $value['device_timestamps'],
+                                    "valts" => $value['valts'],
+                                ] + $data;
+
+                                $latestRecord->update($updateData);
+                            }
+                        } else {
+                            // If there's no additional data to merge, update directly
+                            $latestRecord->update($data);
+                        }
                         return $latestRecord;
                     } else {
-                        // Create a new record
-                        return $this->model->create($data);
+                        dump('create Function');
+                        // Create a new record(s) with optimizations applied from the previous explanation
+                        // dd($deviceData);
+                        if (!empty($deviceData['data'])) {
+                            $creation = null;
+                            foreach ($deviceData['data'] as $key => $value) {
+                                $recordData = [
+                                    "device_timestamps" => $value['device_timestamps'],
+                                    "valts" => $value['valts'],
+                                ] + $data;
+
+                                $creation = $this->model->create($recordData);
+                            }
+                            return $creation;
+                        } else {
+                            Log::channel('mqttlogs')->error("Device Data - Something Wrong With Device Data: ", $deviceData);
+                            return false;
+                        }
                     }
                 } else {
-                    Log::channel('mqttlogs')->error("Device  - Something Wrong with DEVICE in web-command-center", $getDevice);
+                    Log::channel('mqttlogs')->error("Device  - Something Wrong With DEVICE in Web-Command-Center",);
                     return false;
                 }
             } else {
-                Log::channel('mqttlogs')->error("Device Data - Something Wrong with Device Data: ", $deviceData);
+                Log::channel('mqttlogs')->error("Device Data - Something Wrong With Device Data: ", $deviceData);
                 return false;
             }
         } catch (Exception $e) {
-            Log::channel('mqttlogs')->error("MQTT - Something Wrong with Device Logs: {$e->getMessage()}");
+            Log::channel('mqttlogs')->error("MQTT - Something Wrong With Device Logs: {$e->getMessage()}");
             return false;
         }
     }
@@ -116,15 +148,54 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
             // Assuming $id is already provided as a parameter and should not be hardcoded
             $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
 
-            // Check if device data is found
-            if (!$deviceData) {
-                return response()->json(['message' => 'Device not found'], 404);
-            }
-
             return response()->json($deviceData);
         } catch (\Exception $e) {
             // Handle general exceptions
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
+    }
+
+    // In your Laravel Controller
+    public function getDeviceLineChartData($id)
+    {
+        // dd($id);
+        // Simulate data fetching, you should replace this with actual data fetching logic
+        $data = [
+            // Example data, should be replaced with dynamic data from your database or other source
+            ['x' => now()->subMinutes(5)->timestamp * 1000, 'y' => rand(1, 10)],
+            ['x' => now()->subMinutes(4)->timestamp * 1000, 'y' => rand(1, 10)],
+            ['x' => now()->subMinutes(3)->timestamp * 1000, 'y' => rand(1, 10)],
+            ['x' => now()->subMinutes(2)->timestamp * 1000, 'y' => rand(1, 10)],
+            ['x' => now()->subMinutes(1)->timestamp * 1000, 'y' => rand(1, 100)],
+            // Add more points as needed
+        ];
+
+        $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
+
+        if (!$deviceData) {
+            return response()->json(['message' => 'Device not found'], 404);
+        }
+        $targetTimestamp = $deviceData->timestamp;
+
+        $nearestDataBatch = $this->model::select('timestamp', 'device_timestamps', 'valts')
+            ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // time diff to get nearest data for last data batch
+            ->limit(10) // Limit to the nearest 10 entries
+            ->get();
+
+        $xyData = $nearestDataBatch->map(function ($item) {
+            $timestampInMilliseconds = \Carbon\Carbon::createFromTimestamp($item->device_timestamps)
+                ->timestamp * 1000;
+            return [
+                'x' => $timestampInMilliseconds,
+                'y' => $item->valts
+            ];
+        });
+        $xyArray = $xyData->toArray();
+        $deviceName = $deviceData->device->name ?? 'Unknown Device';
+        $finalArray = [
+            'data' => $xyArray,
+            'deviceName' => $deviceName
+        ];
+        return response()->json($finalArray);
     }
 }

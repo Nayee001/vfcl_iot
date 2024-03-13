@@ -55,4 +55,9 @@ class DashboardService implements DashboardServiceInterface
     public function getDeviceData($id){
         return $this->deviceService->getDeviceData($id);
     }
+
+    public function getDeviceLineChartData($id)
+    {
+        return $this->deviceService->getDeviceLineChartData($id);
+    }
 }

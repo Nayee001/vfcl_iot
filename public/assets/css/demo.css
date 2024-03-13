@@ -204,3 +204,9 @@
     border-radius: 8px;
     display: inline-block;
 }
+.white{
+    color: #fff;
+}
+.white:hover {
+    color: #fff;
+  }

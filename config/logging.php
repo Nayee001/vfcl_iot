@@ -125,9 +125,11 @@ return [
         ],
 
         'emergency' => [
+            'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
         ],
         'mqttlogs' => [
+            'driver' => 'single',
             'path' => storage_path('logs/mqtt_logs.log'),
         ],
     ],

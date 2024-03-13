@@ -78,10 +78,7 @@
                                     aria-haspopup="true" aria-expanded="false">
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                 </button>
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                    <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                                    <a class="dropdown-item" href="javascript:void(0);">View All</a>
-                                </div>
+
                             </div>
                         </div>
                     </div>

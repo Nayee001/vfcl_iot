@@ -17,6 +17,8 @@ class DeviceData extends Model
         'topic',
         'device_status',
         'health_status',
+        'device_timestamps',
+        'valts',
         'timestamp',
     ];
 
