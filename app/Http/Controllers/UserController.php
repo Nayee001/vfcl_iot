@@ -8,8 +8,7 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Arr;
+use App\Http\Requests\UpdateUsersRequest;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Datatables;
@@ -22,6 +21,9 @@ use Illuminate\Support\Facades\Gate;
 use App\Repositories\UserRepository;
 use App\Services\DeviceService;
 use App\Repositories\LocationNameRepository;
+use App\Mail\UserCreated;
+use Illuminate\Support\Facades\Mail;
+
 
 class UserController extends Controller
 {
@@ -66,7 +68,6 @@ class UserController extends Controller
     public function create(): View
     {
         $roles = Role::pluck('name', 'name')->all();
-
         return view('users.create', compact('roles'));
     }
 
@@ -89,6 +90,8 @@ class UserController extends Controller
             if (!$user) {
                 return errorMessage();
             }
+            Mail::to($user->email)->send(new UserCreated($user,$input['password']));
+
             $location = $this->locationRepository->create($user, $input);
             if ($location) {
                 $this->locationNameRepository->create($location, $input);
@@ -130,42 +133,30 @@ class UserController extends Controller
     }
 
 
-    public function update(Request $request, $id) // Route model binding
+    public function update(UpdateUsersRequest $request, $id)
     {
-        $validatedData = $request->validate([
-            'fname' => 'required',
-            'lname' => 'required',
-            'title' => 'required',
-            'roles' => 'required', // Ensure 'roles' is an array
-            'password' => 'same:confirm-password',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'phonenumber' => 'required|numeric|digits:10|unique:users,phonenumber,' . $id,
-            'address' => 'required',
-            'city' => 'required',
-            'state' => 'required',
-            'country' => 'required',
-            'postal_code' => 'required|numeric',
-        ]);
+        $validatedData = $request->validated();
+
+        if (!empty($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } else {
+            unset($validatedData['password']);
+        }
+
+        $validatedData['address_optional'] = $request->input('address_optional', null);
+
         try {
-            if (!empty($validatedData['password'])) {
-                $validatedData['password'] = Hash::make($validatedData['password']);
-            } else {
-                unset($validatedData['password']);
-            }
-            if (!empty($request['address_optional'])) {
-                $validatedData['address_optional'] = $request['address_optional'];
-            } else {
-                $validatedData['address_optional'] = null;
-            }
             $user = $this->userRepository->update($id, $validatedData);
+
             if ($user) {
                 $userAddress = $this->locationRepository->update($id, $validatedData);
-                $locations = $this->locationNameRepository->update($userAddress,$request->all());
+                $locations = $this->locationNameRepository->update($userAddress, $request->all());
             }
-            return successMessage('User updated successfully');
-        } catch (Exception $e) {
+
+            return response()->json(['Message' => 'User updated successfully', 'code' => 'OK(200)']);
+        } catch (\Exception $e) {
             Log::error("Error Updating User: {$e->getMessage()}");
-            return errorMessage();
+            return response()->json(['error' => 'Failed to update user'], 500);
         }
     }
 
