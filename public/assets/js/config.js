@@ -1,8 +1,6 @@
 /**
- * Config
- * -------------------------------------------------------------------------------------
- * ! IMPORTANT: Make sure you clear the browser local storage In order to see the config changes in the template.
- * ! To clear local storage: (https://www.leadshook.com/help/how-to-clear-local-storage-in-google-chrome-browser/).
+ * Config File for JS
+ *
  */
 
 "use strict";
@@ -85,104 +83,83 @@ function fetchAndUpdateData() {
 // Fetch and update data every 1000 milliseconds
 setInterval(fetchAndUpdateData, 2000);
 
-function showData(deviceId) {
-    if (deviceId) {
-        fetch(`/device-data/${deviceId}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((deviceData) => {
-                // console.log(deviceData);
-                let statusClass =
-                    deviceData.fault_status === "ON" ? "red" : "green";
-                let imageSrc =
-                    deviceData.fault_status === "ON"
-                        ? "assets/img/illustrations/red.png"
-                        : "assets/img/illustrations/green.png";
+async function fetchDeviceData(deviceId) {
+    if (!deviceId) {
+        return Promise.reject(new Error("No device ID provided"));
+    }
+    const response = await fetch(`/device-data/${deviceId}`);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+}
 
-                let html = `
-                    <div class="row align-items-center">
-                        <div class="col-md-6 text-center" style="position: relative;">
-                        <img class="fault-img" src="${imageSrc}" alt="Device image">
-                            <span class="fault ${statusClass}">${
-                    deviceData.fault_status
-                }</span>
-                        </div>
-                        <div class="col-md-6 mt-3 mt-md-0">
-                            <div class="avatar">
-                                <div class="avatar-initial ${
-                                    deviceData.randomBackgroundColor
-                                } rounded shadow">
-                                <a href="#" class="white" onclick="showLineChart(${deviceId})"><i class='bx bx-line-chart'></i></a>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="avatar">
-                                    <div class="avatar-initial ${
-                                        deviceData.randomBackgroundColor
-                                    } rounded shadow">
-                                        <i class='bx bx-devices'></i>
-                                    </div>
-                                </div>
-                                <div class="ms-3 d-flex flex-column">
-                                    <p class="mb-1" style="font-size: 0.9em; color: #555;">${
-                                        deviceData.device.name
-                                    }</p>
-                                    <h5 class="mb-1" style="font-weight: bold; ">${
-                                        deviceData.device.status
-                                    }</h5>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row g-4">
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="badge badge-dot bg-primary me-2"></div>
-                                        <p class="text-heading mb-0" style="font-weight: bold;">Health Status</p>
-                                    </div>
-                                    <p class="fw-medium mb-0  ${statusClass}">${
-                    deviceData.health_status
-                }</p>
-                                </div>
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="badge badge-dot bg-primary me-2"></div>
-                                        <p class="text-heading mb-0" style="font-weight: bold;">Time Stamps</p>
-                                    </div>
-                                    <p class="fw-medium mb-0">${formatTimestamp(
-                                        deviceData.timestamp
-                                    )}</p>
-                                    </div>
-                            </div>
-                        </div>
-                    </div>`;
+function updateUIWithDeviceData(deviceData) {
+    const falutStatusClass = deviceData.fault_status === "ON" ? "text-danger" : "text-success";
+    const deviceStatusClass = deviceData.status === "Active" ? "text-danger" : "text-success";
 
-                document.getElementById("device-fault-status-shown").innerHTML =
-                    html;
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                document.getElementById("device-fault-status-shown").innerHTML =
-                    "Error loading device data";
-            });
-    } else {
-        document.getElementById("device-fault-status-shown").innerHTML =
-            "Error No device ID provided";
+    const imageSrc =
+        deviceData.fault_status === "ON"
+            ? "assets/img/illustrations/red.png"
+            : "assets/img/illustrations/green.png";
+    const html = `
+        <div class="col-md-12 mt-3">
+        <div class="text-center fw-semibold pt-3 mb-2">
+            <img class="fault-img mb-3" src="${imageSrc}" alt="Device image" style="margin: auto;">
+            <div>
+                <span class="fault ${falutStatusClass}">${
+        deviceData.fault_status
+    }</span><br>
+                <span>${deviceData.device.name}</span><br>
+                <span class="fault ${deviceStatusClass}">${deviceData.device.status}</span>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center px-xxl-4 px-lg-2 p-4">
+            <div class="d-flex gap-xxl-3 gap-lg-1 gap-3">
+                <div class="d-flex align-items-center me-4">
+                    <span class="badge bg-label-primary p-2 me-2"><i class='bx bxs-heart'></i></span>
+                    <div>
+                        <small>Health Status</small>
+                        <h6 class="mb-0"><span class="fw-medium ${falutStatusClass}">${
+        deviceData.health_status
+    }</span></h6>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-label-info p-2 me-2"><i class='bx bx-time'></i></span>
+                    <div>
+                        <small>Last Sync</small>
+                        <h6 class="mb-0">${formatTimestamp(
+                            deviceData.timestamp
+                        )}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>`;
+    document.getElementById("device-fault-status-shown").innerHTML = html;
+}
+
+function showError(error) {
+    document.getElementById(
+        "device-fault-status-shown"
+    ).innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
+}
+
+async function showData(deviceId) {
+    try {
+        const deviceData = await fetchDeviceData(deviceId);
+        updateUIWithDeviceData(deviceData);
+    } catch (error) {
+        showError(error);
     }
 }
 
 function showLineChart(deviceId) {
-    var faultStatus = document.getElementById("device-fault-status-shown");
-    faultStatus.style.display = "none";
     var lineChart = document.getElementById("device-fault-line-chart");
-    lineChart.style.display = "block";
     fetchChartDataAndUpdateChart(deviceId);
 }
-setInterval(() => showData(1), 2000);
-// Refresh the data every 2 seconds
+// setInterval(() => showData(1), 2000);
 
 document.addEventListener("DOMContentLoaded", function () {
     var lastDate = 0;
@@ -194,7 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
         lastDate = newDate;
 
         for (var i = 0; i < data.length - 10; i++) {
-            // This is just to keep the array from becoming infinitely long, adjust as needed
             data[i].x = new Date(newDate - XAXISRANGE - 1000);
             data[i].y = 0;
         }
@@ -206,19 +182,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function fetchChartDataAndUpdateChart(deviceId) {
-        fetch(`/get-device-line-chart-data/${deviceId}`) // Adjust the URL to match your route
+        fetch(`/get-device-line-chart-data/${deviceId}`)
             .then((response) => response.json())
             .then((newData) => {
                 data = newData.data.map((item) => ({
                     x: new Date(item.x),
                     y: item.y,
                 }));
-                // deviceName = newData.deviceName;
-                chart.updateSeries([
-                    {
-                        data: data,
-                    },
-                ]);
+                chart.updateSeries([{ data: data }]);
             });
     }
     var options = {
@@ -291,10 +262,10 @@ document.addEventListener("DOMContentLoaded", function () {
     chart.render();
 
     // Initially fetch some data to display
-    fetchChartDataAndUpdateChart(1);
+    fetchChartDataAndUpdateChart();
 
     // Then, update the chart every 1 second with new data
-    window.setInterval(function () {
-        fetchChartDataAndUpdateChart(1);
-    }, 1000); // Adjust this interval as needed
+    // window.setInterval(function () {
+    //     fetchChartDataAndUpdateChart();
+    // }, 1000); // Adjust this interval as needed
 });
