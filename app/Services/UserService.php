@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\UserRepository;
+use App\Repositories\LocationNameRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -10,6 +11,7 @@ use Exception;
 class UserService
 {
     protected $userRepository;
+    protected $locationNameRepository;
 
     public function __construct(UserRepository $userRepository)
     {

@@ -146,59 +146,48 @@ function showError(error) {
     ).innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
 }
 
+var chart;
+var lastDate = 0;
+var data = [];
+var XAXISRANGE = 10 * 60000; // Adjust this based on your needs
+
+
+function fetchChartDataAndUpdateChart(deviceId) {
+    fetch(`/get-device-line-chart-data/${deviceId}`)
+        .then((response) => response.json())
+        .then((newData) => {
+            data = newData.data.map((item) => ({
+                x: new Date(item.x),
+                y: item.y,
+            }));
+            if (chart) {
+                chart.updateSeries([{ data: data }]);
+            }
+        });
+}
+
+
 async function showData(deviceId) {
     try {
         const deviceData = await fetchDeviceData(deviceId);
         updateUIWithDeviceData(deviceData);
+        showLineChart(deviceId);
     } catch (error) {
         showError(error);
     }
 }
 
 function showLineChart(deviceId) {
-    var lineChart = document.getElementById("device-fault-line-chart");
     fetchChartDataAndUpdateChart(deviceId);
 }
-// setInterval(() => showData(1), 2000);
 
 document.addEventListener("DOMContentLoaded", function () {
-    var lastDate = 0;
-    var data = [];
-    var XAXISRANGE = 10 * 60000; // Adjust this based on your needs
-
-    function getNewSeries(baseDate, { min, max }) {
-        var newDate = baseDate + 1000;
-        lastDate = newDate;
-
-        for (var i = 0; i < data.length - 10; i++) {
-            data[i].x = new Date(newDate - XAXISRANGE - 1000);
-            data[i].y = 0;
-        }
-
-        data.push({
-            x: new Date(newDate),
-            y: Math.floor(Math.random() * (max - min + 1)) + min,
-        });
-    }
-
-    function fetchChartDataAndUpdateChart(deviceId) {
-        fetch(`/get-device-line-chart-data/${deviceId}`)
-            .then((response) => response.json())
-            .then((newData) => {
-                data = newData.data.map((item) => ({
-                    x: new Date(item.x),
-                    y: item.y,
-                }));
-                chart.updateSeries([{ data: data }]);
-            });
-    }
+    // Define chart options
     var options = {
-        series: [
-            {
-                name: "Valts",
-                data: data.slice(),
-            },
-        ],
+        series: [{
+            name: "Valts",
+            data: data.slice(),
+        }],
         chart: {
             type: "area",
             stacked: false,
@@ -219,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
             size: 0,
         },
         title: {
-            // text: deviceName.slice(),
+
             align: "left",
         },
         fill: {
@@ -255,17 +244,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
     };
 
-    var chart = new ApexCharts(
-        document.querySelector("#device-fault-line-chart"),
-        options
-    );
+    chart = new ApexCharts(document.querySelector("#device-fault-line-chart"), options);
     chart.render();
-
-    // Initially fetch some data to display
-    fetchChartDataAndUpdateChart();
-
-    // Then, update the chart every 1 second with new data
-    // window.setInterval(function () {
-    //     fetchChartDataAndUpdateChart();
-    // }, 1000); // Adjust this interval as needed
 });
+

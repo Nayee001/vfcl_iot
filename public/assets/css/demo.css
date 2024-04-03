@@ -224,8 +224,20 @@
 }
 
 .scroller {
-    max-height: 150px;
+    max-height: 250px;
     overflow-y: auto;
     overflow-y: scroll;
     scrollbar-width: thin;
   }
+
+  .no-device-msg {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    height: 100%; /* Adjust height as necessary */
+    text-align: center; /* Ensure text alignment is centered */
+}
+.no-device-img{
+    width: 50px;
+}
