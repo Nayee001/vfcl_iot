@@ -143,32 +143,10 @@
                     <div class="row row-bordered g-0">
                         <div class="col-md-8">
                             <h5 class="card-header m-0 me-2 pb-3">Device SignWave</h5>
-                            <div id="totalRevenueChart" class="px-2"></div>
+                            <div id="device-fault-line-chart" class="px-2"></div>
                         </div>
                         <div class="col-md-4">
-                            <div id="growthChart" class="mt-3"></div>
-                            <div class="text-center fw-semibold pt-3 mb-2">Fault Occurs</div>
-                            <div class="d-flex px-xxl-4 px-lg-2 p-4 gap-xxl-3 gap-lg-1 gap-3 justify-content-between">
-                                <div class="d-flex">
-                                    <div class="me-2">
-                                        <span class="badge bg-label-primary p-2"><i
-                                                class="bx bx-dollar text-primary"></i></span>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <small>2022</small>
-                                        <h6 class="mb-0">$32.5k</h6>
-                                    </div>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="me-2">
-                                        <span class="badge bg-label-info p-2"><i
-                                                class="bx bx-wallet text-info"></i></span>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <small>2021</small>
-                                        <h6 class="mb-0">$41.2k</h6>
-                                    </div>
-                                </div>
+                            <div id="device-fault-status-shown">
                             </div>
                         </div>
                     </div>

@@ -156,10 +156,14 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                 // dd($device);
                 return DataTables::of($device)
                     ->addIndexColumn()
-                    ->addColumn('deviceName',function($row) {
-                        $deviceName = '<a class="primary">' . $row->device->name . '</a>';
+                    ->addColumn('deviceName', function($row) {
+                        // Check if the device property exists and has an ID
+                        $deviceId = isset($row->device) ? $row->device->id : '';
+                        // Generate the HTML link with the onclick event calling showData with the device ID
+                        $deviceName = "<a href='#' class='primary' onclick='showData(\"{$deviceId}\")'>" . htmlspecialchars($row->device->name) . "</a>";
                         return $deviceName;
                     })
+
                     ->addColumn('deviceStatus', function ($row) {
                         switch ($row->device_status) {
                             case Device::STATUS['Active']:
@@ -238,19 +242,15 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         }
     }
 
-    // In your Laravel Controller
     public function getDeviceLineChartData($id)
     {
-        // dd($id);
-        // Simulate data fetching, you should replace this with actual data fetching logic
         $data = [
-            // Example data, should be replaced with dynamic data from your database or other source
-            ['x' => now()->subMinutes(5)->timestamp * 1000, 'y' => rand(1, 10)],
-            ['x' => now()->subMinutes(4)->timestamp * 1000, 'y' => rand(1, 10)],
-            ['x' => now()->subMinutes(3)->timestamp * 1000, 'y' => rand(1, 10)],
-            ['x' => now()->subMinutes(2)->timestamp * 1000, 'y' => rand(1, 10)],
-            ['x' => now()->subMinutes(1)->timestamp * 1000, 'y' => rand(1, 100)],
-            // Add more points as needed
+
+            ['x' => now()->subMinutes(5)->timestamp * 1000, 'y' => rand(-1, 5)],
+            ['x' => now()->subMinutes(4)->timestamp * 1000, 'y' => rand(-1, 5)],
+            ['x' => now()->subMinutes(3)->timestamp * 1000, 'y' => rand(-1, 5)],
+            ['x' => now()->subMinutes(2)->timestamp * 1000, 'y' => rand(-1, 5)],
+            ['x' => now()->subMinutes(1)->timestamp * 1000, 'y' => rand(-1, 5)],
         ];
 
         $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
@@ -262,7 +262,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
 
         $nearestDataBatch = $this->model::select('timestamp', 'device_timestamps', 'valts')
             ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // time diff to get nearest data for last data batch
-            ->limit(10) // Limit to the nearest 10 entries
+            ->limit(20) // Limit to the nearest (limit (10)) entries
             ->get();
 
         $xyData = $nearestDataBatch->map(function ($item) {
