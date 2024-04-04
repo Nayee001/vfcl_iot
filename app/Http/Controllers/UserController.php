@@ -79,6 +79,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+        // dd($request->all());
         try {
             $input = $request->all();
             $latestUserId = User::max('user_id');
