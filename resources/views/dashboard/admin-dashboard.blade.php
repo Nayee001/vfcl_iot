@@ -125,7 +125,7 @@
                                     </div>
                                 </div>
                                 <span>Locations</span>
-                                <h2 class="mb-0 me-2">{{ $userCount }}</h2>
+                                <h2 class="mb-0 me-2">{{ $locationCount }}</h2>
                                 <small class="text-success">Total</small>
                             </div>
                         </div>
@@ -146,7 +146,9 @@
                             <div id="device-fault-line-chart" class="px-2"></div>
                         </div>
                         <div class="col-md-4">
-                            <div id="device-fault-status-shown">
+                            <div id="device-fault-status-shown" class="no-device-msg">
+                                <img src="../assets/img/icons/unicons/error.png" alt="Credit Card" class="rounded no-device-img" />
+                                <b class="mt-3">No Device Selected</b>
                             </div>
                         </div>
                     </div>
@@ -158,26 +160,19 @@
                     <div class="card-header d-flex align-items-center justify-content-between pb-0">
                         <div class="card-title mb-0">
                             <h5 class="m-0 me-2">Device Type Statistics</h5>
-                            <small class="text-muted" id="dataCount">Loading...</small> <small>Total Data Recieved</small>
+
                         </div>
-                        {{-- <div class="dropdown">
-                            <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
-                                <a class="dropdown-item" href="javascript:void(0);">View All</a>
-                                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                            </div>
-                        </div> --}}
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex flex-column align-items-center gap-1">
-                                <h5 class="display-3 mb-0 item-">{{ $deviceCount }}</h5>
+                                <h6 class="display-3 mb-0 item-">{{ $deviceCount }}</h6>
                                 <small>Total Devices</small>
                             </div>
-                            <div id="orderStatisticsChart"></div>
+                            <div class="d-flex flex-column align-items-center gap-1">
+                                <h6 class="display-3 mb-0 item-" id="dataCount">Loading ...</h6>
+                                <small>Total Devices</small>
+                            </div>
                         </div>
                         <div class="scroller">
                             <ul class="p-0 m-0">

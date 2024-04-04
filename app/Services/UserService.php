@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\UserRepository;
+use App\Repositories\LocationNameRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -10,10 +11,13 @@ use Exception;
 class UserService
 {
     protected $userRepository;
+    protected $locationNameRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, LocationNameRepository $locationNameRepository)
     {
         $this->userRepository = $userRepository;
+        $this->locationNameRepository = $locationNameRepository;
+
     }
 
     public function getAllUsers()
@@ -45,6 +49,11 @@ class UserService
     public function getUserCount()
     {
         return $this->userRepository->getUserCount();
+    }
+
+    public function getLocationNameCount()
+    {
+        return $this->locationNameRepository->getLocationNameCount();
     }
 
     /**

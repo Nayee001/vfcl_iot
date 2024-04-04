@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+
 class LocationNameRepository implements LocationNameRepositoryInterface
 {
     /**
@@ -109,6 +110,19 @@ class LocationNameRepository implements LocationNameRepositoryInterface
             return response()->json(['locations' => $locationName]);
         } else {
             return response()->json(['locations' => []], statusMessage(404));
+        }
+    }
+
+    public function getLocationNameCount()
+    {
+        $model = $this->model;
+        if (isSuperAdmin()) {
+            return $model::count();
+        } elseif (isManager()) {
+        } else {
+            return $model::whereHas('roles', function ($query) {
+                $query->whereIn('name', ['Customer']);
+            })->count();
         }
     }
 }

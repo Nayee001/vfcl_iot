@@ -77,4 +77,9 @@ class DashboardService implements DashboardServiceInterface
             return null;
         }
     }
+
+    public function getLocationNameCount()
+    {
+        return $this->userService->getLocationNameCount();
+    }
 }
