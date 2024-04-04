@@ -43,7 +43,7 @@ function getDeviceDataCount() {
         })
         .catch((error) => console.error("Error:", error));
 }
-setInterval(getDeviceDataCount, 100);
+// setInterval(getDeviceDataCount, 100);
 
 // Getting Data
 function fetchAndUpdateData() {
@@ -81,7 +81,7 @@ function fetchAndUpdateData() {
 }
 
 // Fetch and update data every 1000 milliseconds
-setInterval(fetchAndUpdateData, 2000);
+// setInterval(fetchAndUpdateData, 2000);
 
 async function fetchDeviceData(deviceId) {
     if (!deviceId) {
@@ -246,5 +246,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     chart = new ApexCharts(document.querySelector("#device-fault-line-chart"), options);
     chart.render();
+
+    // Initially fetch some data to display
+    fetchChartDataAndUpdateChart();
+
+    // // Then, update the chart every 1 second with new data
+    // window.setInterval(function () {
+    //     fetchChartDataAndUpdateChart(1);
+    // }, 1000); // Adjust this interval as needed
+
 });
 
