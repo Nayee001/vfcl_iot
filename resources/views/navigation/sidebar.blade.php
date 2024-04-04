@@ -78,11 +78,11 @@
                         <div data-i18n="Account">My Account</div>
                     </a>
                 </li>
-                <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
+                {{-- <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
                     <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
                         <div data-i18n="Account">Notification Settings</div>
                     </a>
-                </li>
+                </li> --}}
                 @can('api-connection')
                     <li class="menu-item">
                         <a href="{{ route('api-connections') }}" class="menu-link">

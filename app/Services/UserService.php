@@ -13,9 +13,11 @@ class UserService
     protected $userRepository;
     protected $locationNameRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, LocationNameRepository $locationNameRepository)
     {
         $this->userRepository = $userRepository;
+        $this->locationNameRepository = $locationNameRepository;
+
     }
 
     public function getAllUsers()
@@ -47,6 +49,11 @@ class UserService
     public function getUserCount()
     {
         return $this->userRepository->getUserCount();
+    }
+
+    public function getLocationNameCount()
+    {
+        return $this->locationNameRepository->getLocationNameCount();
     }
 
     /**

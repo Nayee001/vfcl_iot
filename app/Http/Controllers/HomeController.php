@@ -10,6 +10,7 @@ use App\Services\DeviceService;
 use App\Services\DashboardService;
 use Exception;
 use Illuminate\Support\Facades\Log;
+
 class HomeController extends Controller
 {
     /**
@@ -33,23 +34,20 @@ class HomeController extends Controller
      */
     public function index(): View
     {
+        $managerCount = $this->dashboardService->getManagerCount();
+        $userCount = $this->dashboardService->getUserCount();
+        $deviceCount = $this->dashboardService->getDeviceCount();
+        $locationCount = $this->dashboardService->getLocationNameCount();
+
+        $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
         if (isSuperAdmin()) {
-            $managerCount = $this->dashboardService->getManagerCount();
-            $userCount = $this->dashboardService->getUserCount();
-            $deviceCount = $this->dashboardService->getDeviceCount();
 
-            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
-            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount','locationCount'));
         } elseif (isManager()) {
-            $userCount = $this->dashboardService->getUserCount();
-            $deviceCount = $this->dashboardService->getDeviceCount();
 
-            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
             return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
         } else {
-            $deviceCount = $this->dashboardService->getDeviceCount();
 
-            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
             return view('dashboard.admin-dashboard', compact('deviceTypesWithDeviceCount', 'deviceCount'));
         }
     }

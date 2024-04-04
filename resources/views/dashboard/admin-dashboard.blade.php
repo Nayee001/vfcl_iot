@@ -125,7 +125,7 @@
                                     </div>
                                 </div>
                                 <span>Locations</span>
-                                <h2 class="mb-0 me-2">{{ $userCount }}</h2>
+                                <h2 class="mb-0 me-2">{{ $locationCount }}</h2>
                                 <small class="text-success">Total</small>
                             </div>
                         </div>
