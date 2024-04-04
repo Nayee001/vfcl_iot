@@ -83,14 +83,17 @@ class UserController extends Controller
             $input = $request->all();
             $latestUserId = User::max('user_id');
             $input['user_id'] = $latestUserId ? $latestUserId + 1 : 10000;
+
+            $tempPassword = $input['password'];
             $input['password'] = Hash::make($input['password']);
+
             $input['status'] = User::USER_STATUS['NEWUSER'];
             $input['created_by'] = Auth::id();
             $user = $this->userRepository->store($input, $request);
             if (!$user) {
                 return errorMessage();
             }
-            Mail::to($user->email)->send(new UserCreated($user,$input['password']));
+            Mail::to($user->email)->send(new UserCreated($user, $tempPassword));
 
             $location = $this->locationRepository->create($user, $input);
             if ($location) {

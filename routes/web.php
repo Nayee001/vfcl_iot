@@ -14,9 +14,9 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
 
 
-use App\Mail\UserCreated;
-use Illuminate\Support\Facades\Mail;
-use App\Models\User;
+// use App\Mail\UserCreated;
+// use Illuminate\Support\Facades\Mail;
+// use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,20 +30,20 @@ use App\Models\User;
 */
 
 // Example route to send a test email
-Route::get('/send-test-mail', function () {
-    // Retrieve or create a user instance to pass to the mailable
-    // For testing, you can either create a new user or use a static one
-    $user = User::first(); // Assuming there's at least one user in your database
+// Route::get('/send-test-mail', function () {
+//     // Retrieve or create a user instance to pass to the mailable
+//     // For testing, you can either create a new user or use a static one
+//     $user = User::first(); // Assuming there's at least one user in your database
 
-    // Check if a user exists
-    if ($user) {
-        // Send the email
-        Mail::to($user->email)->send(new UserCreated($user));
-        return response()->json(['message' => 'Test email sent successfully to ' . $user->email]);
-    } else {
-        return response()->json(['error' => 'No user found in the database.'], 404);
-    }
-});
+//     // Check if a user exists
+//     if ($user) {
+//         // Send the email
+//         Mail::to($user->email)->send(new UserCreated($user));
+//         return response()->json(['message' => 'Test email sent successfully to ' . $user->email]);
+//     } else {
+//         return response()->json(['error' => 'No user found in the database.'], 404);
+//     }
+// });
 
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 
