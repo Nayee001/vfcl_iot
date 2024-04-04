@@ -264,3 +264,21 @@
     color: white;
     font-size: 20px;
   }
+
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.card-body {
+    font-size: 0.9rem;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #ebebeb;
+}
+
+.text-monospace {
+    font-family: monospace;
+}

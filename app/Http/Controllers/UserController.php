@@ -347,7 +347,7 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
             if (Hash::check($request->oldpassword, $user->password)) {
-                $input['status'] = User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
+                $input['status'] = User::USER_STATUS['ACTIVE'];
                 $input['password'] = Hash::make($request->password);
                 $user->update($input);
                 return successMessage('Password Changed successfully');
@@ -374,7 +374,7 @@ class UserController extends Controller
         try {
             if ($request->terms_and_conditions) {
                 $user = User::findOrFail(Auth::user()->id);
-                $input['status'] = User::USER_STATUS['ACTIVE'];
+                $input['status'] = User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
                 $input['terms_and_conditions'] = User::TERMS_AND_CONDITIONS;
                 $user->update($input);
                 return successMessage('Please Wait ...');

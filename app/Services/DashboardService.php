@@ -36,6 +36,10 @@ class DashboardService implements DashboardServiceInterface
     {
         return $this->userService->getUserCount();
     }
+    public function getCountUsersAddedByManagers($id)
+    {
+        return $this->userService->getCountUsersAddedByManagers($id);
+    }
 
     public function getDeviceTypeWithDevicesCount()
     {

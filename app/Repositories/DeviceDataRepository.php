@@ -129,6 +129,15 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
             $latestRecords->where('devices.created_by', Auth::id());
         }
 
+        if (isCustomer()) {
+            // Assuming `device_assignments` table has `device_id` and `customer_id` columns
+            // and `Auth::id()` returns the ID of the currently authenticated customer
+            $latestRecords->join('device_assignments', 'devices.id', '=', 'device_assignments.device_id')
+                ->where('device_assignments.assign_to', Auth::id());
+        }
+
+        // Further logic to execute or return the query results
+
         return $latestRecords;
     }
 
@@ -156,7 +165,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                 // dd($device);
                 return DataTables::of($device)
                     ->addIndexColumn()
-                    ->addColumn('deviceName', function($row) {
+                    ->addColumn('deviceName', function ($row) {
                         // Check if the device property exists and has an ID
                         $deviceId = isset($row->device) ? $row->device->id : '';
                         // Generate the HTML link with the onclick event calling showData with the device ID
@@ -183,7 +192,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                         return $healthStatus;
                     })->addColumn('faultStatus', function ($row) {
                         switch ($row->fault_status) {
-                            case'ON':
+                            case 'ON':
                                 $badgeClass = 'success';
                                 break;
                             case 'OFF':
@@ -198,7 +207,6 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                     })->addColumn('TimeStamps', function ($row) {
                         $TimeStamps = Carbon::parse($row->timestamp)->diffForHumans();
                         return $TimeStamps;
-
                     })->addColumn('actions', function ($row) {
                         $deviceDetails = '<a class="dropdown-item" href="' . route('devices.edit', $row->id) . '" title="Device Details"><i class="bx bx-detail"></i> Device Details</a>';
                         $viewGraph = '<a class="dropdown-item" href="' . route('devices.edit', $row->id) . '" title="View Graph"><i class="bx bx-line-chart"></i> View Graph</a>';
@@ -216,7 +224,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
 
                         return $actions;
                     })
-                    ->rawColumns(['deviceName','deviceStatus','healthStatus','faultStatus','TimeStamps','actions'])
+                    ->rawColumns(['deviceName', 'deviceStatus', 'healthStatus', 'faultStatus', 'TimeStamps', 'actions'])
                     ->make(true);
             }
         } catch (Exception $e) {

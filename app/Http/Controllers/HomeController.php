@@ -42,13 +42,20 @@ class HomeController extends Controller
         $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
         if (isSuperAdmin()) {
 
-            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount','locationCount'));
+            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount', 'locationCount'));
         } elseif (isManager()) {
-
+            $userCount = $this->dashboardService->getCountUsersAddedByManagers(Auth::id());
             return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
         } else {
-
-            return view('dashboard.admin-dashboard', compact('deviceTypesWithDeviceCount', 'deviceCount'));
+            $user = auth()->user();
+            $showTermsModal = $user->status == User::USER_STATUS['NEWUSER'];
+            $showPasswordChangeModal = $user->status == User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
+            return view('dashboard.customer-dashboard', [
+                'showTermsModal' => $showTermsModal,
+                'showPasswordChangeModal' => $showPasswordChangeModal,
+                'locationCount' => $locationCount,
+                'user' => $user
+            ]);
         }
     }
     public function getDeviceDataCounts()

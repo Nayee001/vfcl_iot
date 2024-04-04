@@ -120,9 +120,10 @@ class LocationNameRepository implements LocationNameRepositoryInterface
             return $model::count();
         } elseif (isManager()) {
         } else {
-            return $model::whereHas('roles', function ($query) {
-                $query->whereIn('name', ['Customer']);
-            })->count();
+            // return $model::whereHas('roles', function ($query) {
+            //     $query->whereIn('name', ['Customer']);
+            // })->count();
+            return 0;
         }
     }
 }
