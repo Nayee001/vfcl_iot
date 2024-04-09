@@ -43,7 +43,47 @@ class DeviceController extends Controller
      */
     public function index(): view
     {
-        return view('devices.index');
+        if (isSuperAdmin()) {
+            return view('devices.index');
+        }elseif (isManager()) {
+            return view('devices.index');
+        }else{
+            $devices = [
+                [
+                    'name' => 'Device 1',
+                    'health' => 'Good',
+                    'status' => 'Active',
+                    'manager' => 'John Doe',
+                    'assignedTo' => 'Alice Smith',
+                    'location' => 'Warehouse 1',
+                    'created_at' => '2023-01-01',
+                    'api_key' => 'abc123'
+                ],
+                [
+                    'name' => 'Device 2',
+                    'health' => 'Moderate',
+                    'status' => 'Active',
+                    'manager' => 'Emily Clark',
+                    'assignedTo' => 'Bob Brown',
+                    'location' => 'Warehouse 2',
+                    'created_at' => '2023-02-01',
+                    'api_key' => 'def456'
+                ],
+                [
+                    'name' => 'Device 3',
+                    'health' => 'Critical',
+                    'status' => 'Inactive',
+                    'manager' => 'Chris Green',
+                    'assignedTo' => 'David Wilson',
+                    'location' => 'Main Office',
+                    'created_at' => '2023-03-01',
+                    'api_key' => 'ghi789'
+                ],
+            ];
+
+            return view('devices.customer-device-index',compact('devices'));
+        }
+
     }
 
     /**
