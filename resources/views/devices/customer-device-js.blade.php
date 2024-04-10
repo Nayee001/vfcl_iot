@@ -20,7 +20,7 @@
                                     <p class="card-text">${device.description}</p>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-subtitle mb-2 text-muted">API KEY: ${device.api_key}</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">API KEY: ${device.short_apikey}</h6>
                                 </div>
                             </div>
                         </div>`;

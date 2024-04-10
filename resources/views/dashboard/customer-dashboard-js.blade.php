@@ -42,12 +42,9 @@
                                 timer: 5000, // Adjust the timer if needed
                                 timerProgressBar: true,
                                 didClose: () => {
-                                    // Show the password change modal after the Swal message closes
                                     $('#password-change-modal').modal('show');
                                 }
                             });
-                            sessionStorage.setItem('showDeviceGuide', 'true'); // Set a flag to show the guide
-                            window.location.href = '/devices'; // Redirect to device management
 
                         } else {
                             toastr.error(resp.Message);
@@ -91,9 +88,11 @@
                                 timerProgressBar: true,
                                 didClose: () => {
                                     // Show the password change modal after the Swal message closes
-                                    $('#password-change-modal').modal('show');
+                                    // $('#password-change-modal').modal('show');
                                 }
                             });
+                            sessionStorage.setItem('showDeviceGuide', 'true'); // Set a flag to show the guide
+                            window.location.href = '/devices'; // Redirect to device management
                     },
                     error: function(data) {
                         $(".submit").attr("disabled", false);

@@ -21,4 +21,15 @@ trait GenerateDeviceApiToken
             return $hashedMacAddress;
         }
     }
+
+    /**
+     * Generate a unique API key of 6 hexadecimal characters.
+     *
+     * @return string
+     */
+    public static function generateShortApiKey()
+    {
+        $salt = bin2hex(random_bytes(3)); // This will produce a string of 6 hexadecimal characters
+        return $salt;
+    }
 }
