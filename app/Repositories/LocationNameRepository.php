@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class LocationNameRepository implements LocationNameRepositoryInterface
 {
@@ -120,10 +121,8 @@ class LocationNameRepository implements LocationNameRepositoryInterface
             return $model::count();
         } elseif (isManager()) {
         } else {
-            // return $model::whereHas('roles', function ($query) {
-            //     $query->whereIn('name', ['Customer']);
-            // })->count();
-            return 0;
+            $locationNameCount = $model::where('user_id', Auth::id())->count();
+            return $locationNameCount;
         }
     }
 }

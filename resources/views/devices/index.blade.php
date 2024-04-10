@@ -15,7 +15,6 @@
         </div>
         <div class="card">
             <h5 class="card-header">Device List</h5>
-
             <div class="table-responsive text-nowrap">
                 <div class="container">
                     <table class="table devices-ajax-datatable">

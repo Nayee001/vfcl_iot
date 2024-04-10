@@ -132,8 +132,9 @@
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
                     <div class="card">
-                        <h5 class="card-header">Devices</h5>
-                        {{-- <small class="card-header">Note: Device will apears here only when data/messages arises !</small> --}}
+                        <h5 class="card-header">Devices Data</h5>
+                        <small class="message-device-dashboard">Note: Device will apears here only when data/messages
+                            arises !</small>
                         <div class="table-responsive text-nowrap">
                             <table class="table dashboard-devices-ajax-datatable">
                                 <thead>
@@ -346,15 +347,43 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                            <form id="form-users-change-password" method="post">
-                                @csrf
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <label for="fname" class="form-label">Old Password {!!dynamicRedAsterisk()!!}</label>
+                        <form id="form-users-change-password" method="post">
+                            @csrf
+                            <div class="row">
+                                <div class="mb-3">
+                                    <label for="fname" class="form-label">Old Password {!! dynamicRedAsterisk() !!}</label>
+                                    <div class="input-group input-group-merge">
+                                        {!! Form::password('oldpassword', [
+                                            'placeholder' => 'Old Password',
+                                            'id' => 'oldpassword',
+                                            'class' => 'form-control',
+                                        ]) !!}
+                                        <span class="input-group-text cursor-pointer" id="basic-default-password"><i
+                                                class="bx bx-hide"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3">
+                                    <div class="form-password-toggle">
+                                        <label class="form-label" for="password">Password {!! dynamicRedAsterisk() !!}</label>
                                         <div class="input-group input-group-merge">
-                                            {!! Form::password('oldpassword', [
-                                                'placeholder' => 'Old Password',
-                                                'id' => 'oldpassword',
+                                            {!! Form::password('password', ['placeholder' => 'Password', 'id' => 'password', 'class' => 'form-control']) !!}
+                                            <span class="input-group-text cursor-pointer" id="basic-default-password"><i
+                                                    class="bx bx-hide"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3">
+                                    <div class="form-password-toggle">
+                                        <label class="form-label" for="confirm-password">Confirm Password
+                                            {!! dynamicRedAsterisk() !!}</label>
+                                        <div class="input-group input-group-merge">
+                                            {!! Form::password('confirm-password', [
+                                                'placeholder' => 'Confirm Password',
+                                                'id' => 'confirm_password',
                                                 'class' => 'form-control',
                                             ]) !!}
                                             <span class="input-group-text cursor-pointer" id="basic-default-password"><i
@@ -362,39 +391,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <div class="form-password-toggle">
-                                            <label class="form-label" for="password">Password {!!dynamicRedAsterisk()!!}</label>
-                                            <div class="input-group input-group-merge">
-                                                {!! Form::password('password', ['placeholder' => 'Password', 'id' => 'password', 'class' => 'form-control']) !!}
-                                                <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                        class="bx bx-hide"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="mb-3">
-                                        <div class="form-password-toggle">
-                                            <label class="form-label" for="confirm-password">Confirm Password {!!dynamicRedAsterisk()!!}</label>
-                                            <div class="input-group input-group-merge">
-                                                {!! Form::password('confirm-password', [
-                                                    'placeholder' => 'Confirm Password',
-                                                    'id' => 'confirm_password',
-                                                    'class' => 'form-control',
-                                                ]) !!}
-                                                <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                        class="bx bx-hide"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-2">
-                                    <button type="submit" id="submit"
-                                        class="submit btn btn-primary me-2">Submit</button>
-                                </div>
-                            </form>
+                            </div>
+                            <div class="mt-2">
+                                <button type="submit" id="submit" class="submit btn btn-primary me-2">Submit</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

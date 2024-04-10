@@ -56,6 +56,11 @@ class UserService
         return $this->locationNameRepository->getLocationNameCount();
     }
 
+    public function getManagerAddedUsers($id)
+    {
+        return $this->userRepository->getUsersAddedByManagers($id);
+    }
+
     /**
      * Get All the users for admin
      *

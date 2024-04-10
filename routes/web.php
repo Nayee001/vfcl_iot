@@ -74,6 +74,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/devices-ajax-datatable', [DeviceController::class, 'deviceAjaxDatatable'])->name('devices-ajax-datatable');
     Route::get('/device/{id}/assign', [DeviceController::class, 'showAssignDeviceForm'])->name('device.assign');
     Route::get('/device/dashboard', [DeviceController::class, 'dashboard'])->name('devices.dashboard');
+    // Customer Device Data
+    Route::get('/customer/devices/data', [DeviceController::class, 'fetchDevices'])->name('devices.data');
 
     Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
 
@@ -81,11 +83,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('/unassign-device/{id}', [DeviceController::class, 'unAssign'])->name('device.unAssign');
     Route::delete('/location-name/{id}/delete', [LocationManagerController::class, 'deleteLocationName'])->name('location-name-delete');
     Route::get('/get-customer-locations/{customer_id}', [LocationManagerController::class, 'getCustomerLocations'])->name('get-customer-locations');
-    Route::get('/device-data/count', [HomeController::class,'getDeviceDataCounts']);
-    Route::get('/device-data/messages', [HomeController::class,'getDeviceAllMessages']);
-    Route::get('/device-data/{id}',[HomeController::class,'getdeviceMessage']);
+    Route::get('/device-data/count', [HomeController::class, 'getDeviceDataCounts']);
+    Route::get('/device-data/messages', [HomeController::class, 'getDeviceAllMessages']);
+    Route::get('/device-data/{id}', [HomeController::class, 'getdeviceMessage']);
 
-    Route::get('/get-device-line-chart-data/{id}',[HomeController::class,'getDeviceLineChartData']);
+    Route::get('/get-device-line-chart-data/{id}', [HomeController::class, 'getDeviceLineChartData']);
 
 
 
