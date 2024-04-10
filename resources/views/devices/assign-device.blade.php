@@ -57,7 +57,13 @@
         $('#assign-device-to-user').on('submit', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            $('submit').attr('disabled', true);
+
+            // Disable the submit button to prevent multiple submits
+            $('.submit').attr('disabled', true);
+
+            // Show the loader
+            $('#loader').show();
+
             var formData = new FormData($('#assign-device-to-user')[0]);
             $.ajax({
                 method: 'POST',
@@ -67,6 +73,9 @@
                 processData: false,
                 contentType: false,
                 success: function(resp) {
+                    // Hide the loader
+                    $('#loader').hide();
+
                     if (resp.code == '{{ __('statuscode.CODE200') }}') {
                         toastr.success(resp.Message);
                         setTimeout(function() {
@@ -77,7 +86,12 @@
                     }
                 },
                 error: function(data) {
-                    $(".submit").attr("disabled", false);
+                    // Hide the loader
+                    $('#loader').hide();
+
+                    // Enable the submit button again
+                    $('.submit').attr("disabled", false);
+
                     var errors = data.responseJSON;
                     $.each(errors.errors, function(key, value) {
                         var ele = "#" + key;
@@ -88,6 +102,7 @@
                 }
             });
         });
+
         $('#assign_to').change(function() {
             var customer_id = $(this).val(); // Get the selected customer id
             $('#loading_spinner').show();

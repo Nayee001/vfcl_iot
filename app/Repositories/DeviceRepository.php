@@ -58,7 +58,6 @@ class DeviceRepository implements DeviceRepositoryInterface
     }
 
     public function deviceDashboard(){
-        // dd($this->getDevices());
         return $this->getDevices();
     }
     /**

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\Interfaces\DeviceAssignRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Device;
+use Illuminate\Support\Facades\Mail;
 
 class DeviceAssignRepository implements DeviceAssignRepositoryInterface
 {
@@ -28,14 +31,18 @@ class DeviceAssignRepository implements DeviceAssignRepositoryInterface
     public function assignDeviceToUser(array $inputdata): bool
     {
         $fillableFields = [
-            'device_id','assign_to','location_id'
+            'device_id', 'assign_to', 'location_id'
         ];
+
 
         $modifiedData = array_intersect_key($inputdata, array_flip($fillableFields));
         if ($this->model->where('device_id', $modifiedData['device_id'])->exists()) {
             return false;
         }
         $modifiedData['assign_by'] = Auth::id();
+        $user = User::find($modifiedData['assign_to']);
+        $device = Device::find($modifiedData['device_id']);
+        Mail::to($user->email)->send(new \App\Mail\DeviceAssigned($device, $user));
         return (bool) $this->model->create($modifiedData);
     }
 
