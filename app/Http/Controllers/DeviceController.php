@@ -90,6 +90,7 @@ class DeviceController extends Controller
     //Customer Device Dashboard
     public function deviceDashboard()
     {
+        $devices = $this->deviceService->deviceDashboard();
         return response()->json($devices);
     }
 

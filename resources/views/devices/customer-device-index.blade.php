@@ -7,21 +7,10 @@
                 <span class="text-muted fw-light">Device Management
             </h4>
         </div>
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-4 mb-3" id="#devices">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <h6 class="card-subtitle text-muted">Support card subtitle</h6>
-                    </div>
-                    <img class="img-fluid" src="../assets/img/elements/13.jpg" alt="Card image cap" />
-                    <div class="card-body">
-                        <p class="card-text">Bear claw sesame snaps gummies chocolate.</p>
-                        <a href="javascript:void(0);" class="card-link">Card link</a>
-                        <a href="javascript:void(0);" class="card-link">Another link</a>
-                    </div>
-                </div>
-            </div>
+        <div class="row g-4" id="devices">
+            <img src="{{ asset('assets/img/illustrations/girl-doing-yoga-light.jpg') }}" alt="No Devices"
+            width="500" class="no-device img-fluid"/>
+            <p>No Device Assined to you !</p>
         </div>
     </div>
 @endsection

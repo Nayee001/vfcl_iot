@@ -75,7 +75,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device/{id}/assign', [DeviceController::class, 'showAssignDeviceForm'])->name('device.assign');
     Route::get('/device/dashboard', [DeviceController::class, 'dashboard'])->name('devices.dashboard');
     // Customer Device Data
-    Route::get('/customer/devices/data', [DeviceController::class, 'fetchDevices'])->name('devices.data');
+    Route::get('/customer/devices/data', [DeviceController::class, 'deviceDashboard'])->name('customer.devices.data');
 
     Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
 
