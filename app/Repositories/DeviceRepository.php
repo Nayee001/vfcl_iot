@@ -57,6 +57,10 @@ class DeviceRepository implements DeviceRepositoryInterface
         }
     }
 
+    public function deviceDashboard(){
+        // dd($this->getDevices());
+        return $this->getDevices();
+    }
     /**
      * Pluck all device records from the database.
      *
@@ -283,7 +287,6 @@ class DeviceRepository implements DeviceRepositoryInterface
         try {
             if ($request->ajax()) {
                 $device = $this->getDevices();
-                dd($device);
                 return DataTables::of($device)
                     ->addIndexColumn()
                     ->addColumn('deviceStatus', function ($row) {

@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
     chart.render();
 
     // Initially fetch some data to display
-    fetchChartDataAndUpdateChart();
+    // fetchChartDataAndUpdateChart();
 
     // // Then, update the chart every 1 second with new data
     // window.setInterval(function () {

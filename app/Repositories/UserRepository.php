@@ -60,6 +60,11 @@ class UserRepository implements UserRepositoryInterface
         return $this->model::where('created_by', $userId)->pluck('fname', 'id');
     }
 
+    public function getCountUsersAddedByManagers($userId)
+    {
+        return $this->model::where('created_by', $userId)->count();
+    }
+
     public function store($inputData, $request)
     {
         $user = $this->model::create($inputData);

@@ -43,7 +43,13 @@ class DeviceController extends Controller
      */
     public function index(): view
     {
-        return view('devices.index');
+        if (isSuperAdmin()) {
+            return view('devices.index');
+        } elseif (isManager()) {
+            return view('devices.index');
+        } else {
+            return view('devices.customer-device-index');
+        }
     }
 
     /**
@@ -79,6 +85,13 @@ class DeviceController extends Controller
             Log::error("Error creating device: {$e->getMessage()}");
             return exceptionMessage('An unexpected error occurred. Please try again later.');
         }
+    }
+
+    //Customer Device Dashboard
+    public function deviceDashboard()
+    {
+        $devices = $this->deviceService->deviceDashboard();
+        return response()->json($devices);
     }
 
     /**
@@ -206,6 +219,5 @@ class DeviceController extends Controller
             Log::error("Error in Assign Device: {$e->getMessage()}");
             return exceptionMessage('An unexpected error occurred. Please try again later.');
         }
-
     }
 }

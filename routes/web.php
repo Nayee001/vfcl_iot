@@ -14,9 +14,9 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
 
 
-use App\Mail\UserCreated;
-use Illuminate\Support\Facades\Mail;
-use App\Models\User;
+// use App\Mail\UserCreated;
+// use Illuminate\Support\Facades\Mail;
+// use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,20 +30,20 @@ use App\Models\User;
 */
 
 // Example route to send a test email
-Route::get('/send-test-mail', function () {
-    // Retrieve or create a user instance to pass to the mailable
-    // For testing, you can either create a new user or use a static one
-    $user = User::first(); // Assuming there's at least one user in your database
+// Route::get('/send-test-mail', function () {
+//     // Retrieve or create a user instance to pass to the mailable
+//     // For testing, you can either create a new user or use a static one
+//     $user = User::first(); // Assuming there's at least one user in your database
 
-    // Check if a user exists
-    if ($user) {
-        // Send the email
-        Mail::to($user->email)->send(new UserCreated($user));
-        return response()->json(['message' => 'Test email sent successfully to ' . $user->email]);
-    } else {
-        return response()->json(['error' => 'No user found in the database.'], 404);
-    }
-});
+//     // Check if a user exists
+//     if ($user) {
+//         // Send the email
+//         Mail::to($user->email)->send(new UserCreated($user));
+//         return response()->json(['message' => 'Test email sent successfully to ' . $user->email]);
+//     } else {
+//         return response()->json(['error' => 'No user found in the database.'], 404);
+//     }
+// });
 
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 
@@ -74,6 +74,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/devices-ajax-datatable', [DeviceController::class, 'deviceAjaxDatatable'])->name('devices-ajax-datatable');
     Route::get('/device/{id}/assign', [DeviceController::class, 'showAssignDeviceForm'])->name('device.assign');
     Route::get('/device/dashboard', [DeviceController::class, 'dashboard'])->name('devices.dashboard');
+    // Customer Device Data
+    Route::get('/customer/devices/data', [DeviceController::class, 'deviceDashboard'])->name('customer.devices.data');
 
     Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
 
@@ -81,11 +83,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('/unassign-device/{id}', [DeviceController::class, 'unAssign'])->name('device.unAssign');
     Route::delete('/location-name/{id}/delete', [LocationManagerController::class, 'deleteLocationName'])->name('location-name-delete');
     Route::get('/get-customer-locations/{customer_id}', [LocationManagerController::class, 'getCustomerLocations'])->name('get-customer-locations');
-    Route::get('/device-data/count', [HomeController::class,'getDeviceDataCounts']);
-    Route::get('/device-data/messages', [HomeController::class,'getDeviceAllMessages']);
-    Route::get('/device-data/{id}',[HomeController::class,'getdeviceMessage']);
+    Route::get('/device-data/count', [HomeController::class, 'getDeviceDataCounts']);
+    Route::get('/device-data/messages', [HomeController::class, 'getDeviceAllMessages']);
+    Route::get('/device-data/{id}', [HomeController::class, 'getdeviceMessage']);
 
-    Route::get('/get-device-line-chart-data/{id}',[HomeController::class,'getDeviceLineChartData']);
+    Route::get('/get-device-line-chart-data/{id}', [HomeController::class, 'getDeviceLineChartData']);
 
 
 

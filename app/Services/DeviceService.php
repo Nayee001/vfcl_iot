@@ -46,6 +46,11 @@ class DeviceService
         $this->deviceDataRepository = $deviceDataRepository;
     }
 
+    public function deviceDashboard()
+    {
+        return $this->deviceRepository->deviceDashboard();
+
+    }
     /**
      * Get Device Data
      */

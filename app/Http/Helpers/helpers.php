@@ -160,6 +160,18 @@ if (!function_exists("isManager")) {
     }
 }
 
+if (!function_exists("isCustomer")) {
+    function isCustomer()
+    {
+        $targetValue = (int)implode(', ', Auth::user()->roles->pluck('id')->toArray());
+        if ($targetValue ==  roleChecker()['Customer']) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
 if (!function_exists("permissionChecker")) {
     function permissionChecker()
     {

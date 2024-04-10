@@ -33,9 +33,9 @@ class UserService
         return $this->userRepository->getManagersAndAdmin();
     }
 
-    public function getManagerAddedUsers($id)
+    public function getCountUsersAddedByManagers($id)
     {
-        return $this->userRepository->getUsersAddedByManagers($id);
+        return $this->userRepository->getCountUsersAddedByManagers($id);
     }
 
     public function getSelfManager($id)
@@ -54,6 +54,11 @@ class UserService
     public function getLocationNameCount()
     {
         return $this->locationNameRepository->getLocationNameCount();
+    }
+
+    public function getManagerAddedUsers($id)
+    {
+        return $this->userRepository->getUsersAddedByManagers($id);
     }
 
     /**
