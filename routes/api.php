@@ -3,6 +3,8 @@
 // use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\ApiAuthController as AuthApi;
+use Spatie\Permission\Contracts\Role;
+use App\Http\Controllers\DeviceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +21,5 @@ use App\Http\Controllers\Auth\ApiAuthController as AuthApi;
 Route::post('/login', [AuthApi::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthApi::class, 'logout']);
-    Route::get('/debug', function () {
-        dd('Debugging route');
-    });
+    Route::post('/verifyDevice', [DeviceController::class, 'verifyDeviceApi'])->name('verifyDeviceApi');
 });

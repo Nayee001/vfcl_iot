@@ -376,4 +376,9 @@ class DeviceRepository implements DeviceRepositoryInterface
             return $e->getMessage();
         }
     }
+
+    public function verifyDeviceApi($request){
+        dd($request);
+        // return $this->model::where()->get();
+    }
 }

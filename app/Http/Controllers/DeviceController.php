@@ -13,6 +13,7 @@ use App\Http\Requests\StoreAssignDevice;
 use App\Http\Requests\UpdateDeviceRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\VerifyDeviceViaApi;
 
 class DeviceController extends Controller
 {
@@ -218,6 +219,22 @@ class DeviceController extends Controller
         } catch (Exception $e) {
             Log::error("Error in Assign Device: {$e->getMessage()}");
             return exceptionMessage('An unexpected error occurred. Please try again later.');
+        }
+    }
+
+
+    public function verifyDeviceApi(VerifyDeviceViaApi $request)
+    {
+        Log::info('Received verifyDeviceApi request', $request->all());
+        try {
+            $result = $this->deviceService->verifyDeviceApi($request->all());
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (DeviceCreationException $e) {
+            Log::error("Device Creation Error: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
+        } catch (Exception $e) {
+            Log::error("General Error in verifyDeviceApi: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'An unexpected error occurred. Please try again later.'], 500);
         }
     }
 }
