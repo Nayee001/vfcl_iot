@@ -222,21 +222,29 @@ class DeviceController extends Controller
         }
     }
 
-    public function verifyDeviceApi(Request $request)
+    public function verifyDeviceApi(VerifyDeviceViaApi $request)
     {
         Log::info('Received verifyDeviceApi request', $request->all());
         try {
             $user = $request->user();
             $token = $user->currentAccessToken();
             Log::info('Current access token details', ['token' => $token]);
-            $result = $this->deviceService->verifyDeviceApi($request->all());
-            return response()->json(['success' => true, 'data' => $result]);
-        } catch (DeviceCreationException $e) {
+
+            $result = $this->deviceService->verifyDeviceApi($request->all(), $user);
+            return $result;
+        } catch (Exception $e) {
+            return $this->handleExceptions($e);
+        }
+    }
+
+    private function handleExceptions(Exception $e)
+    {
+        if ($e instanceof DeviceCreationException) {
             Log::error("Device Creation Error: {$e->getMessage()}");
             return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
-        } catch (Exception $e) {
-            Log::error("General Error in verifyDeviceApi: {$e->getMessage()}");
-            return response()->json(['success' => false, 'message' => 'An unexpected error occurred. Please try again later.'], 500);
         }
+
+        Log::error("General Error in verifyDeviceApi: {$e->getMessage()}");
+        return response()->json(['success' => false, 'message' => 'An unexpected error occurred. Please try again later.'], 500);
     }
 }
