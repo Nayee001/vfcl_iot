@@ -213,4 +213,9 @@ class DeviceService
             return null;
         }
     }
+
+    public function verifyDeviceApi($request,$user){
+        return $this->deviceRepository->verifyDeviceApi($request,$user);
+    }
+
 }

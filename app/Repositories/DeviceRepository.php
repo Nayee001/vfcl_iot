@@ -11,6 +11,8 @@ use Yajra\DataTables\Datatables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\DeviceAssignment;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class DeviceRepository implements DeviceRepositoryInterface
 {
@@ -45,11 +47,11 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function getDevices()
     {
         if (isSuperAdmin()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee','deviceAssigned.deviceLocation','deviceAssigned.assignee.locations')->get();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->get();
         } elseif (isManager()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee','deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->get();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->get();
         } else {
-            return $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation','deviceAssigned.assignee.locations'])
+            return $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations'])
                 ->whereHas('deviceAssigned', function ($query) {
                     $query->where('assign_to', Auth::id());
                 })
@@ -57,7 +59,8 @@ class DeviceRepository implements DeviceRepositoryInterface
         }
     }
 
-    public function deviceDashboard(){
+    public function deviceDashboard()
+    {
         return $this->getDevices();
     }
     /**
@@ -374,6 +377,52 @@ class DeviceRepository implements DeviceRepositoryInterface
             }
         } catch (Exception $e) {
             return $e->getMessage();
+        }
+    }
+
+    public function verifyDeviceApi($request, $user)
+    {
+        try {
+            // Extract MAC address and API key from the request
+            $macAddress = $request['mac_address'];
+            $apikey = $request['apikey'];
+
+            // Check if the device exists with the given MAC address and API key
+            $device = $this->model::where('mac_address', $macAddress)
+                ->where('short_apikey', $apikey)
+                ->firstOrFail(); // Automatically returns 404 if not found
+
+            // Check if the device is assigned to the user
+            abort_unless(
+                DeviceAssignment::where('assign_to', $user->id)
+                    ->where('device_id', $device->id)
+                    ->exists(),
+                403,
+                'Device not assigned to this user.'
+            );
+
+            // If all checks pass, return a success message with a success flag
+            return response()->json([
+                'success' => true,
+                'message' => 'The device has been successfully verified.'
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Device not found.'
+            ], 404);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            // This will catch the abort_unless failure
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], $e->getStatusCode());
+        } catch (\Exception $e) {
+            // Generic error handling
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred. Please try again later.'
+            ], 500);
         }
     }
 }
