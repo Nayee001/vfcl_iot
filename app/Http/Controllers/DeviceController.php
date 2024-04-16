@@ -222,11 +222,13 @@ class DeviceController extends Controller
         }
     }
 
-
-    public function verifyDeviceApi(VerifyDeviceViaApi $request)
+    public function verifyDeviceApi(Request $request)
     {
         Log::info('Received verifyDeviceApi request', $request->all());
         try {
+            $user = $request->user();
+            $token = $user->currentAccessToken();
+            Log::info('Current access token details', ['token' => $token]);
             $result = $this->deviceService->verifyDeviceApi($request->all());
             return response()->json(['success' => true, 'data' => $result]);
         } catch (DeviceCreationException $e) {

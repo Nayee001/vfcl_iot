@@ -21,5 +21,5 @@ use App\Http\Controllers\DeviceController;
 Route::post('/login', [AuthApi::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthApi::class, 'logout']);
-    Route::post('/verifyDevice', [DeviceController::class, 'verifyDeviceApi'])->name('verifyDeviceApi');
+    Route::post('/verifyDevice', [DeviceController::class, 'verifyDeviceApi']);
 });
