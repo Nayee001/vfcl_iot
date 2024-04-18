@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\DeviceAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\DeviceVerification;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class DeviceRepository implements DeviceRepositoryInterface
 {
@@ -24,6 +27,27 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function __construct(Model $model)
     {
         $this->model = $model;
+    }
+
+    public function deviceVerifications($associativeArray)
+    {
+        if (!isset($associativeArray['api_key'], $associativeArray['encryption_key'])) {
+            Log::error('Missing required keys in associative array for device verification.');
+            return;
+        }
+        try {
+            $deviceId = $this->model::where('short_apikey', $associativeArray['api_key'])->value('id');
+            if ($deviceId) {
+                DeviceVerification::updateOrCreate(
+                    ['device_id' => $deviceId],
+                    ['encryption_key' => $associativeArray['encryption_key']]
+                );
+            } else {
+                Log::error('No device found with the provided API key.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Error during device verification: ' . $e->getMessage());
+        }
     }
 
     public function getCount()

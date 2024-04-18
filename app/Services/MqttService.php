@@ -9,6 +9,7 @@ use App\Interfaces\MqttServiceInterface;
 use App\Models\DeviceLogs;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
+use App\Repositories\DeviceRepository;
 use App\Repositories\DeviceLogsRepository;
 use App\Repositories\DeviceDataRepository;
 use Illuminate\Support\Facades\Log;
@@ -28,6 +29,7 @@ class MqttService implements MqttServiceInterface
 
     protected $deviceDataRepository;
     protected $deviceLogsRepository;
+    protected $deviceRepository;
 
 
     /**
@@ -36,15 +38,19 @@ class MqttService implements MqttServiceInterface
      *
      * @param DeviceDataRepository $deviceDataRepository
      * @param DeviceLogsRepository $deviceLogsRepository
+     * @param DeviceRepository $deviceRepository
+     *
      *
      *
      */
     public function __construct(
         DeviceDataRepository $deviceDataRepository,
-        DeviceLogsRepository $deviceLogsRepository
+        DeviceLogsRepository $deviceLogsRepository,
+        DeviceRepository $deviceRepository
     ) {
         $this->deviceDataRepository = $deviceDataRepository;
         $this->deviceLogsRepository = $deviceLogsRepository;
+        $this->deviceRepository = $deviceRepository;
         $this->mqttClient = new MqttClient($this->server, $this->port, uniqid());
         $this->connectionSettings = (new ConnectionSettings())
             ->setUsername($this->username)
@@ -58,13 +64,23 @@ class MqttService implements MqttServiceInterface
         try {
             $this->mqttClient->subscribe($topic, function ($topic, $message) {
                 // dump("Received message on topic [%s]: %s\n", $topic, $message);
-                $associativeArray = json_decode($message, true);
+                // $associativeArray = json_decode($message, true);
                 // dd($associativeArray);
+                $associativeArray =  [
+                    "encryption_key" => "3tZIilSrXpG3nzNHQNw3xBvwA3HcaCvpQIlDQYjWE5Q=",
+                    "api_key" => "46269a"
+                ];
+                // Check if 'encryption_key' is present in the array
+                if (isset($associativeArray['encryption_key'])) {
+                    $this->deviceRepository->deviceVerifications($associativeArray);
+                }
+
                 $this->deviceDataRepository->update_device_data($associativeArray);
                 $this->deviceLogsRepository->create($associativeArray);
             }, 0);
 
             $this->mqttClient->loop();
+
         } catch (Exception $e) {
             Log::channel('mqttlogs')->error("MQTT - Somthing went wrong: {$e->getMessage()}");
         }
