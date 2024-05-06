@@ -9,7 +9,7 @@ class DeviceAssignment extends Model
 {
     use HasFactory;
     protected $table = "device_assignments";
-    protected $fillable = ['device_id', 'assign_to', 'assign_by', 'location_id', 'created_at', 'updated_at'];
+    protected $fillable = ['device_id', 'assign_to', 'assign_by', 'location_id', 'created_at', 'updated_at','status','encryption_key'];
 
     public function assignee()
     {

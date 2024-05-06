@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('device_assingments', function (Blueprint $table) {
+        Schema::table('device_assignments', function (Blueprint $table) {
             $table->enum('status', ['Accept', 'Reject'])->default('Reject')->nullable();
             $table->string('encryption_key')->comment('deviceFolderKey')->nullable();
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('device_assingments', function (Blueprint $table) {
+        Schema::table('device_assignments', function (Blueprint $table) {
             $table->dropColumn('status', ['Accept', 'Reject'])->default('Reject');
             $table->dropColumn('encryption_key')->comment('deviceFolderKey');
         });

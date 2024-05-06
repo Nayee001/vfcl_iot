@@ -29,24 +29,37 @@ class DeviceRepository implements DeviceRepositoryInterface
         $this->model = $model;
     }
 
+    /**
+     * Verifies device by updating encryption key based on API key.
+     *
+     * @param array $associativeArray An associative array that must include 'api_key' and 'encryption_key'.
+     * @return int|bool Returns user ID on success, false on failure.
+     */
     public function deviceVerifications($associativeArray)
     {
+        // Check for required keys
         if (!isset($associativeArray['api_key'], $associativeArray['encryption_key'])) {
             Log::error('Missing required keys in associative array for device verification.');
-            return;
+            return false;
         }
+
         try {
+            // Retrieve device ID using the API key
             $deviceId = $this->model::where('short_apikey', $associativeArray['api_key'])->value('id');
-            if ($deviceId) {
-                DeviceVerification::updateOrCreate(
-                    ['device_id' => $deviceId],
-                    ['encryption_key' => $associativeArray['encryption_key']]
-                );
-            } else {
+            if (!$deviceId) {
                 Log::error('No device found with the provided API key.');
+                return false;
             }
+
+            // Update the encryption key for the found device
+            $userId = DeviceAssignment::where('device_id', $deviceId)->update([
+                'encryption_key' => $associativeArray['encryption_key']
+            ]);
+
+            return $userId ?: false;
         } catch (\Exception $e) {
-            Log::error('Error during device verification: ' . $e->getMessage());
+            Log::error("Error during device verification: {$e->getMessage()}");
+            return false;
         }
     }
 
