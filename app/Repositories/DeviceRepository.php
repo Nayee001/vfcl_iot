@@ -14,6 +14,7 @@ use App\Models\DeviceAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\DeviceVerification;
+use App\Models\Notifications;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
@@ -37,31 +38,64 @@ class DeviceRepository implements DeviceRepositoryInterface
      */
     public function deviceVerifications($associativeArray)
     {
-        // Check for required keys
-        if (!isset($associativeArray['api_key'], $associativeArray['encryption_key'])) {
-            Log::error('Missing required keys in associative array for device verification.');
-            return false;
-        }
-
         try {
+            // Check for required keys
+            if (!isset($associativeArray['api_key'], $associativeArray['encryption_key'])) {
+                throw new \InvalidArgumentException('Missing required keys in associative array for device verification.');
+            }
+
             // Retrieve device ID using the API key
             $deviceId = $this->model::where('short_apikey', $associativeArray['api_key'])->value('id');
             if (!$deviceId) {
-                Log::error('No device found with the provided API key.');
-                return false;
+                throw new \RuntimeException('No device found with the provided API key.');
+            }
+
+            // Retrieve user ID for the device
+            $userId = DeviceAssignment::where('device_id', $deviceId)->value('assign_to');
+            if (!$userId) {
+                throw new \RuntimeException('No user assigned to the device.');
             }
 
             // Update the encryption key for the found device
-            $userId = DeviceAssignment::where('device_id', $deviceId)->update([
+            $update = DeviceAssignment::where([
+                ['device_id', '=', $deviceId],
+                ['assign_to', '=', $userId],
+            ])->update([
                 'encryption_key' => $associativeArray['encryption_key']
             ]);
 
-            return $userId ?: false;
+
+            // Create entry for notification
+            $notification = Notifications::create([
+                'device_id' => $deviceId,
+                'user_id' => $userId,
+                'notification' => Notifications::DefaultNotiMessages['deviceVerification']
+            ]);
+            // Find existing notification and delete it if found
+            $existingNotification = Notifications::where('device_id', $deviceId)
+                ->where('user_id', $userId)->where('notification', Notifications::DefaultNotiMessages['deviceVerification'])
+                ->first();
+
+            // Keep at least one record and delete any additional records
+            $existingNotificationsCount = $existingNotification->count();
+            if ($existingNotificationsCount > 1) {
+                // Delete additional records starting from the second one
+                $existingNotification->splice(1)->each(function ($notification) {
+                    $notification->delete();
+                });
+            }
+
+            if (!$update || !$notification) {
+                throw new \RuntimeException('Failed to update device or create notification entry.');
+            }
+
+            return $userId;
         } catch (\Exception $e) {
             Log::error("Error during device verification: {$e->getMessage()}");
             return false;
         }
     }
+
 
     public function getCount()
     {
