@@ -20,4 +20,8 @@ class NotificationRepository implements NotificationRepositoryInterface
     {
         $this->model = $model;
     }
+
+    public function notifictionCount($id){
+        return $this->model::where('user_id',$id)->count();
+    }
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\LocationManagerController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\NotificationController;
 
 
 // use App\Mail\UserCreated;
@@ -78,7 +79,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/get-device-line-chart-data/{id}', [HomeController::class, 'getDeviceLineChartData']);
 
-
+    Route::get('/notifications/{id}', [NotificationController::class, 'index'])->name('notifications');
 
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);

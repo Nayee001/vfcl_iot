@@ -10,7 +10,7 @@ use App\Services\DeviceService;
 use App\Services\DashboardService;
 use Exception;
 use Illuminate\Support\Facades\Log;
-
+use App\Repositories\NotificationRepository;
 class HomeController extends Controller
 {
     /**
@@ -20,10 +20,13 @@ class HomeController extends Controller
      */
 
     protected $dashboardService;
+    protected $notificationRepository;
 
-    public function __construct(DashboardService $dashboardService)
+
+    public function __construct(DashboardService $dashboardService,NotificationRepository $notificationRepository)
     {
         $this->dashboardService = $dashboardService;
+        $this->notificationRepository = $notificationRepository;
         $this->middleware('permission:dashboard', ['only' => ['index']]);
     }
 
@@ -50,11 +53,13 @@ class HomeController extends Controller
             $user = auth()->user();
             $showTermsModal = $user->status == User::USER_STATUS['NEWUSER'];
             $showPasswordChangeModal = $user->status == User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
+            $notifications = $this->notificationRepository->notifictionCount($user->id);
             return view('dashboard.customer-dashboard', [
                 'showTermsModal' => $showTermsModal,
                 'showPasswordChangeModal' => $showPasswordChangeModal,
                 'locationCount' => $locationCount,
-                'user' => $user
+                'user' => $user,
+                'notifications' => $notifications
             ]);
         }
     }

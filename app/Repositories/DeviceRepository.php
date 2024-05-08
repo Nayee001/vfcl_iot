@@ -64,26 +64,11 @@ class DeviceRepository implements DeviceRepositoryInterface
                 'encryption_key' => $associativeArray['encryption_key']
             ]);
 
-
-            // Create entry for notification
-            $notification = Notifications::create([
-                'device_id' => $deviceId,
-                'user_id' => $userId,
-                'notification' => Notifications::DefaultNotiMessages['deviceVerification']
-            ]);
-            // Find existing notification and delete it if found
-            $existingNotification = Notifications::where('device_id', $deviceId)
-                ->where('user_id', $userId)->where('notification', Notifications::DefaultNotiMessages['deviceVerification'])
-                ->first();
-
-            // Keep at least one record and delete any additional records
-            $existingNotificationsCount = $existingNotification->count();
-            if ($existingNotificationsCount > 1) {
-                // Delete additional records starting from the second one
-                $existingNotification->splice(1)->each(function ($notification) {
-                    $notification->delete();
-                });
-            }
+            $notification = Notifications::updateOrCreate(
+                ['device_id' => $deviceId,  // Attributes to match
+                    'user_id' => $userId,'notification' => Notifications::DefaultNotiMessages['deviceVerification']],
+                ['notification' => Notifications::DefaultNotiMessages['deviceVerification']]
+            );
 
             if (!$update || !$notification) {
                 throw new \RuntimeException('Failed to update device or create notification entry.');

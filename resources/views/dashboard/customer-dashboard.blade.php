@@ -15,21 +15,22 @@
                                     Devices Health Status: <span class="fw-bold">72</span> data points received today. View
                                     all data on the dashboard.
                                 </p>
-                                <button title="Unread notifications" type="button"
+                                <a  href="{{ route('notifications', ['id' => Auth::user()->id]) }}" title="Unread notifications" role="button"
                                     class="btn rounded-pill btn-icon btn-outline-primary position-relative notification-button">
                                     <span class="tf-icons bx bx-bell"></span>
                                     <span
                                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge"
-                                        title="Unread notifications">45</span>
-                                </button>
+                                        title="Unread notifications">{{ $notifications }}</span>
+                                </a>
 
-                                <button title="Device Alerts" type="button"
+
+                                <a href="#" title="Device Alerts" type="button"
                                     class="btn rounded-pill btn-icon btn-outline-danger position-relative notification-button">
                                     <i class='bx bxs-alarm-exclamation'></i>
                                     <span
                                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success notification-badge"
-                                        title="Device Alerts">5</span>
-                                </button>
+                                        title="Device Alerts">0</span>
+                                </a>
                             </div>
                         </div>
                         <div class="col-sm-5 text-center text-sm-left">
