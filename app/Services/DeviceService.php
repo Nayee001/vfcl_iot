@@ -51,6 +51,10 @@ class DeviceService
         return $this->deviceRepository->deviceDashboard();
 
     }
+
+    public function deviceVerify($id){
+        return $this->deviceRepository->deviceVerify($id);
+    }
     /**
      * Get Device Data
      */

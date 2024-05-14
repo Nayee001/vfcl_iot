@@ -21,7 +21,7 @@
                                     <a href="javascript:void(0);" class="list-group-item list-group-item-action">
                                             <i class="bx bx-tv me-2"></i>
                                             Soufflé pastry pie ice
-                                    </a>
+                                    </a>q
                                 </div>
                             </div>
                         </div>
@@ -33,9 +33,6 @@
         <!-- / Content -->
     </div>
     <!-- Content wrapper -->
-
-
-
 
     </div>
 @endsection

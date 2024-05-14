@@ -13,6 +13,7 @@ use App\Http\Controllers\LocationManagerController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\NotificationController;
+use Illuminate\Support\Facades\Mail;
 
 
 // use App\Mail\UserCreated;
@@ -30,6 +31,18 @@ use App\Http\Controllers\NotificationController;
 |
 */
 
+Route::get('/send-test-email', function () {
+    $toName = 'Recipient Name';
+    $toEmail = 'nayee001@gannon.edu'; // Change to the recipient's email address
+
+    Mail::raw('This is a simple test email from your Laravel application.', function ($message) use ($toName, $toEmail) {
+        $message->to($toEmail, $toName)
+                ->subject('Laravel Test Email');
+        $message->from('ak4917620.ak@gmail.com', 'Your Application Name'); // Change sender information
+    });
+
+    return 'Email sent successfully!';
+});
 // Example route to send a test email
 Route::get('/Test', function () {
     dd('test');
@@ -66,7 +79,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device/dashboard', [DeviceController::class, 'dashboard'])->name('devices.dashboard');
     // Customer Device Data
     Route::get('/customer/devices/data', [DeviceController::class, 'deviceDashboard'])->name('customer.devices.data');
-
+    Route::get('/verify-device-model/{id}',[DeviceController::class, 'verifyDeviceModel'])->name('verify-device-model');
     Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
 
     Route::get('/device/{id}/api-key', [DeviceController::class, 'getApiKey'])->name('device.getApiKey');
