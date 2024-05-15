@@ -24,12 +24,8 @@
                     <p>Please confirm that you want to verify this device to ensure proper functionality and data
                         visualization. This process is necessary to unlock full device capabilities and ensure security
                         compliance.</p>
+                        <p id="modalContent"></p>
                 </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Reject</button>
-                    <button type="button" class="btn btn-warning" id="verifyButton">Verify Now</button>
-                </div>
-
             </div>
         </div>
     </div>

@@ -18,6 +18,7 @@ use App\Models\Notifications;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Mail\DeviceVerificationNotification;
+use Illuminate\Support\Facades\DB;
 
 
 class DeviceRepository implements DeviceRepositoryInterface
@@ -142,6 +143,21 @@ class DeviceRepository implements DeviceRepositoryInterface
             ->where('id', $id)  // Adding the condition to filter by id
             ->first();  // Changed from get() to first()
         return $device;
+    }
+
+
+    public function sendDeviceModel($id)
+    {
+        try {
+            $deviceAssignmentUpdated = DeviceAssignment::where('device_id', $id)
+                ->where('assign_to', Auth::id())->update(['status' => 'Accept']);
+            $notificationsUpdated = Notifications::where('device_id', $id)
+                ->where('user_id', Auth::id())->update(['read' => 'Yes']);
+            return $deviceAssignmentUpdated;
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json(['error' => 'Update failed'], 500);
+        }
     }
 
     public function deviceDashboard()

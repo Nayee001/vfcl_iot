@@ -13,6 +13,9 @@ use App\Http\Requests\StoreAssignDevice;
 use App\Http\Requests\UpdateDeviceRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Services\MqttService;
+use App\Models\Device;
+
 use App\Http\Requests\VerifyDeviceViaApi;
 
 class DeviceController extends Controller
@@ -24,10 +27,13 @@ class DeviceController extends Controller
      */
     protected $deviceService;
     protected $userService;
-    function __construct(DeviceService $deviceService, UserService $userService)
+    protected $mqttService;
+
+    function __construct(DeviceService $deviceService, UserService $userService, MqttService $mqttService)
     {
         $this->deviceService = $deviceService;
         $this->userService = $userService;
+        $this->mqttService = $mqttService;
         $this->middleware('permission:device-list', ['only' => ['index', 'store', 'deviceAjaxDatatable']]);
         $this->middleware('permission:device-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:device-edit', ['only' => ['edit', 'update']]);
@@ -53,8 +59,17 @@ class DeviceController extends Controller
         }
     }
 
-    public function verifyDeviceModel($id){
+    public function verifyDeviceModel($id)
+    {
         $content = $this->deviceService->deviceVerify($id);
+        return response()->json($content);
+    }
+
+    public function sendDeviceModel($id)
+    {
+        $api = Device::find($id);
+        $sendApproval = $this->mqttService->sendToDevice($api->short_apikey);
+        $content = $this->deviceService->sendDeviceModel($id);
         return response()->json($content);
     }
     /**

@@ -11,12 +11,13 @@ use Yajra\DataTables\Datatables;
 use App\Repositories\DeviceDataRepository;
 use App\Repositories\LocationRepository;
 use App\Repositories\DeviceAssignRepository;
+use App\Services\MqttService;
 use Exception;
 
 class DeviceService
 {
 
-    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository, $locationRepository, $deviceDataRepository;
+    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository, $locationRepository, $deviceDataRepository, $mqttService;
 
     /**
      * Constructor for the class.
@@ -27,8 +28,7 @@ class DeviceService
      * @param DeviceAssignRepository $deviceAssignRepository
      * @param LocationRepository $locationRepository
      * @param DeviceDataRepository $deviceDataRepository
-     *
-     *
+     * @param MqttService $mqttService
      *
      */
     public function __construct(
@@ -36,14 +36,15 @@ class DeviceService
         DeviceTypeRepository $deviceTypeRepository,
         DeviceAssignRepository $deviceAssignRepository,
         LocationRepository $locationRepository,
-        DeviceDataRepository $deviceDataRepository
-
+        DeviceDataRepository $deviceDataRepository,
+        MqttService $mqttService
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->deviceTypeRepository = $deviceTypeRepository;
         $this->deviceAssignRepository = $deviceAssignRepository;
         $this->locationRepository = $locationRepository;
         $this->deviceDataRepository = $deviceDataRepository;
+        $this->mqttService = $mqttService;
     }
 
     public function deviceDashboard()
@@ -55,6 +56,12 @@ class DeviceService
     public function deviceVerify($id){
         return $this->deviceRepository->deviceVerify($id);
     }
+
+    public function sendDeviceModel($id){
+        $d = $this->deviceRepository->sendDeviceModel($id);
+        return $d;
+    }
+
     /**
      * Get Device Data
      */

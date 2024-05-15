@@ -64,28 +64,84 @@
 
         function verifyDevice(deviceId) {
             console.log("Verifying device with ID:", deviceId);
-            $.ajax({
-                url: "{{ url('verify-device-model') }}" + "/" + deviceId,
-                type: 'get',
-                success: function(response) {
-                    if (response) {
-                        var contentHtml = '<p>' + response.message + '</p>';
-                        contentHtml += '<ul>';
-                        contentHtml += '<li>Device ID: ' + response.id + '</li>';
-                        contentHtml += '<li>Device Name: ' + response.name + '</li>';
-                        contentHtml += '<li>Status: ' + response.status + '</li>';
-                        contentHtml += '<li>Location: ' + response.location + '</li>';
-                        contentHtml += '</ul>';
+            fetch(`{{ url('verify-device-model') }}/${deviceId}`, {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        // Building the content HTML
+                        var contentHtml = `Device Name: <b>${data.name}</b> <br>`;
+                        contentHtml += `Status: ${data.status}<br>`;
 
-                        $('#modalContent').html(contentHtml);
+                        // Create Reject Button dynamically
+                        const rejectButton = document.createElement('button');
+                        rejectButton.type = 'button';
+                        rejectButton.className = 'btn btn-danger';
+                        rejectButton.textContent = 'Reject';
+                        rejectButton.setAttribute('data-dismiss', 'modal');
+
+                        // Create Verify Again Button dynamically
+                        const verifyAgainButton = document.createElement('button');
+                        verifyAgainButton.type = 'button';
+                        verifyAgainButton.className = 'btn btn-warning';
+                        verifyAgainButton.textContent = 'Verify Again';
+                        verifyAgainButton.onclick = function() {
+                            sendToDevice(deviceId); // This will re-verify using the same device ID
+                        };
+
+                        // Add buttons to the content HTML
+                        document.getElementById('modalContent').innerHTML = contentHtml;
+                        // document.getElementById('modalContent').appendChild(rejectButton);
+                        document.getElementById('modalContent').appendChild(verifyAgainButton);
+
                         $('#verificationModal').modal('show');
                     }
-                },
-                error: function(error) {
+                })
+                .catch(error => {
                     console.log('Error during verification:', error);
-                    alert('Failed to verify device ID ' + deviceId);
-                }
+                    alert(`Failed to verify device ID ${deviceId}`);
+                });
+        }
+
+        const verifyButton = document.getElementById('verifyButton');
+        if (verifyButton) {
+            verifyButton.addEventListener('click', function() {
+                const deviceId = this.getAttribute('data-device-id');
+                sendToDevice(deviceId);
             });
+        }
+
+
+        function sendToDevice(deviceId) {
+            console.log("sendToDevice device with ID:", deviceId);
+            fetch(`{{ url('send-device-mqtt') }}/${deviceId}`, {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        Swal.fire({
+                            title: "Good job!",
+                            text: "You clicked the button!",
+                            icon: "success"
+                        }).then((result) => {
+                            if (result.value) {
+                                // Trigger the modal to hide
+                                $('#verificationModal').modal('hide');
+                            }
+                        });
+                        // Event listener for when the modal has finished being hidden
+                        $('#verificationModal').on('hidden.bs.modal', function() {
+                            // Reload the page
+                            window.location.reload();
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log('Error during verification:', error);
+                    alert(`Failed to verify device ID ${deviceId}`);
+                });
         }
     </script>
 @endsection

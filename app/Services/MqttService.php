@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-require('vendor/autoload.php');
+// require('vendor/autoload.php');
 
 use App\Interfaces\MqttServiceInterface;
 
@@ -31,6 +31,7 @@ class MqttService implements MqttServiceInterface
     protected $deviceLogsRepository;
     protected $deviceRepository;
 
+    // public $topic = 'mqttdevice/#';
 
     /**
      * Constructor for the class.
@@ -74,38 +75,25 @@ class MqttService implements MqttServiceInterface
             }, 0);
 
             $this->mqttClient->loop();
-
         } catch (Exception $e) {
             Log::channel('mqttlogs')->error("MQTT - Somthing went wrong: {$e->getMessage()}");
         }
     }
 
-    // Simulation Completed
-    // public function connectAndSubscribe($topic)
-    // {
-    //     try {
-    //         $deviceLogs = DeviceLogs::orderBy('id', 'desc')->get();
-
-    //         // Loop through each log
-    //         foreach ($deviceLogs as $log) {
-    //             // Decode the json_response field into an associative array
-    //             $associativeArray = json_decode($log->json_response, true);
-
-    //             // Check if decoding was successful
-    //             if ($associativeArray !== null) {
-    //                 // Update device data with the associative array
-    //                 $dummyData = $this->deviceDataRepository->update_device_data($associativeArray);
-
-    //                 // Optionally, output the $dummyData for debugging
-    //                 // Note: `dd()` will stop execution, so use `dump()` if iterating over multiple logs
-    //                 dump($dummyData);
-    //             } else {
-    //                 echo "Failed to decode JSON for log ID {$log->id}\n";
-    //             }
-    //         }
-    //         // $this->mqttClient->loop();
-    //     } catch (Exception $e) {
-    //         Log::channel('mqttlogs')->error("MQTT - Somthing went wrong: {$e->getMessage()}");
-    //     }
-    // }
+    public function sendToDevice($api)
+    {
+        try {
+            $topic = "mqttdevice/{$api}";
+            $message = json_encode(['status' => 'Approve', 'timestamp' => now()]);
+            $endTime = time() + 10;
+            while (time() < $endTime) {
+                Log::info("Sending message to [{$topic}]: {$message}");
+                $this->mqttClient->publish($topic, $message, 0);
+                sleep(5);
+            }
+        } catch (Exception $e) {
+            Log::channel('mqttlogs')->error("MQTT sendToDevice - Something went wrong: {$e->getMessage()}");
+            throw $e;
+        }
+    }
 }
