@@ -15,16 +15,18 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="verificationModal" tabindex="-1" role="dialog" aria-labelledby="verificationModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <h3>Verify This Device!!</h3>
-                    <p>Please confirm that you want to verify this device to ensure proper functionality and data
-                        visualization. This process is necessary to unlock full device capabilities and ensure security
-                        compliance.</p>
+
+    <div class="modal fade" id="verificationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <h3>Verify This Device!!</h3>
+                        <p>Please confirm that you want to verify this device to ensure proper functionality and data
+                            visualization. This process is necessary to unlock full device capabilities and ensure security
+                            compliance.</p>
                         <p id="modalContent"></p>
+                    </div>
                 </div>
             </div>
         </div>

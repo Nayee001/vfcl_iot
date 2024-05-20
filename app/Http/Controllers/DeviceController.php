@@ -17,6 +17,7 @@ use App\Services\MqttService;
 use App\Models\Device;
 
 use App\Http\Requests\VerifyDeviceViaApi;
+use App\Models\DeviceAssignment;
 
 class DeviceController extends Controller
 {
@@ -67,11 +68,12 @@ class DeviceController extends Controller
 
     public function sendDeviceModel($id)
     {
-        $api = Device::find($id);
-        $sendApproval = $this->mqttService->sendToDevice($api->short_apikey);
+        $device = DeviceAssignment::with('deviceLocation', 'assignee')->where('device_id', $id);
+        $sendApproval = $this->mqttService->sendToDevice($device);
         $content = $this->deviceService->sendDeviceModel($id);
         return response()->json($content);
     }
+
     /**
      * Show the form for creating a new resource.
      */

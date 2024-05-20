@@ -1,6 +1,10 @@
 @section('script')
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
+        loadDevices();
+
+        // Load devices function
+        function loadDevices() {
             $.ajax({
                 url: '/customer/devices/data',
                 type: 'GET',
@@ -8,133 +12,143 @@
                 success: function(devices) {
                     let contentHtml = '';
                     if (devices.length > 0) {
-                        devices.forEach(function(device) {
-                            console.log(device);
-                            let verifyButton = '';
-                            if (device.device_assigned.status === 'Not Responded') {
-                                verifyButton =
-                                    '<button class="btn btn-warning btn-sm" onclick="verifyDevice(' +
-                                    device.id + ')">Verify</button>';
-                            }
-                            // Adding icons and additional details like model and last updated time
-                            contentHtml += `
-                        <div class="col-md-4 col-lg-3 mb-4">
-                            <div class="card border-0 shadow h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title text-primary">
-                                        <i class="bi bi-laptop"></i> ${device.name}
-                                    </h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">
-                                        <i class="bi bi-circle-fill" style="color: ${device.status === 'Active' ? 'green' : 'red'};"></i> ${device.status}
-                                    </h6>
-                                    <p class="card-text">${device.description}</p>
-                                    <p class="card-text">
-                                        ${device.device_assigned.status}
-                                        ${verifyButton}
-                                    </p>
-                                </div>
-                                <div class="card-footer bg-white border-0">
-                                    <small class="text-muted">API KEY: <span class="text-secondary">${device.short_apikey}</span></small>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                        devices.forEach(device => {
+                            const verifyButton = device.device_assigned.status === 'Not Responded' ?
+                                `<button class="btn btn-warning btn-sm" onclick="verifyDevice(${device.id})">Verify</button>` : '';
+                            contentHtml += generateDeviceCard(device, verifyButton);
                         });
                     } else {
-                        contentHtml = `
-                    <div class="col">
-                        <div class="alert alert-info" role="alert">
-                            There are no devices assigned to you!
-                        </div>
-                    </div>`;
+                        contentHtml = noDevicesAssignedMessage();
                     }
                     $('#devices').html(contentHtml);
                 },
                 error: function(xhr, status, error) {
                     console.error("An error occurred: ", error);
-                    $('#devices').html(`
+                    $('#devices').html(fetchDevicesErrorMessage());
+                }
+            });
+        }
+
+        // Generate device card HTML
+        function generateDeviceCard(device, verifyButton) {
+            return `
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="bi bi-laptop"></i> ${device.name}
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                <i class="bi bi-circle-fill" style="color: ${device.status === 'Active' ? 'green' : 'red'};"></i> ${device.status}
+                            </h6>
+                            <p class="card-text">${device.description}</p>
+                            <p class="card-text">
+                                ${device.device_assigned.status}
+                                ${verifyButton}
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            <small class="text-muted">API KEY: <span class="text-secondary">${device.short_apikey}</span></small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // No devices assigned message HTML
+        function noDevicesAssignedMessage() {
+            return `
+                <div class="col">
+                    <div class="alert alert-info" role="alert">
+                        There are no devices assigned to you!
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch devices error message HTML
+        function fetchDevicesErrorMessage() {
+            return `
                 <div class="col">
                     <div class="alert alert-danger" role="alert">
                         An error occurred while fetching the devices.
                     </div>
-                </div>`);
-                }
-            });
-        });
+                </div>
+            `;
+        }
 
-        function verifyDevice(deviceId) {
+        // Verify device function
+        window.verifyDevice = function(deviceId) {
             console.log("Verifying device with ID:", deviceId);
-            fetch(`{{ url('verify-device-model') }}/${deviceId}`, {
-                    method: 'GET'
-                })
+            fetch(`{{ url('verify-device-model') }}/${deviceId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
-                        // Building the content HTML
-                        var contentHtml = `Device Name: <b>${data.name}</b> <br>`;
-                        contentHtml += `Status: ${data.status}<br>`;
-
-                        // Create Reject Button dynamically
-                        const rejectButton = document.createElement('button');
-                        rejectButton.type = 'button';
-                        rejectButton.className = 'btn btn-danger';
-                        rejectButton.textContent = 'Reject';
-                        rejectButton.setAttribute('data-dismiss', 'modal');
-
-                        // Create Verify Again Button dynamically
-                        const verifyAgainButton = document.createElement('button');
-                        verifyAgainButton.type = 'button';
-                        verifyAgainButton.className = 'btn btn-warning';
-                        verifyAgainButton.textContent = 'Verify Again';
-                        verifyAgainButton.onclick = function() {
-                            sendToDevice(deviceId); // This will re-verify using the same device ID
-                        };
-
-                        // Add buttons to the content HTML
-                        document.getElementById('modalContent').innerHTML = contentHtml;
-                        // document.getElementById('modalContent').appendChild(rejectButton);
-                        document.getElementById('modalContent').appendChild(verifyAgainButton);
-
-                        $('#verificationModal').modal('show');
+                        showVerificationModal(data, deviceId);
                     }
                 })
                 .catch(error => {
                     console.log('Error during verification:', error);
                     alert(`Failed to verify device ID ${deviceId}`);
                 });
-        }
+        };
 
-        const verifyButton = document.getElementById('verifyButton');
-        if (verifyButton) {
-            verifyButton.addEventListener('click', function() {
-                const deviceId = this.getAttribute('data-device-id');
+        // Show verification modal
+        function showVerificationModal(data, deviceId) {
+            const contentHtml = `
+                Device Name: <b>${data.name}</b> <br>
+                Status: ${data.status}<br>
+            `;
+
+            // Create Verify Again Button dynamically
+            const verifyAgainButton = document.createElement('button');
+            verifyAgainButton.type = 'button';
+            verifyAgainButton.className = 'btn btn-warning';
+            verifyAgainButton.textContent = 'Verify Device';
+            verifyAgainButton.onclick = function() {
                 sendToDevice(deviceId);
-            });
+            };
+
+            document.getElementById('modalContent').innerHTML = contentHtml;
+            document.getElementById('modalContent').appendChild(verifyAgainButton);
+            $('#verificationModal').modal('show');
         }
 
+        // Send to device function
+        window.sendToDevice = function(deviceId) {
+            $('#verificationModal').modal('hide');
 
-        function sendToDevice(deviceId) {
+            const timer = 10000;
+            let timerInterval;
+            Swal.fire({
+                title: 'Device Authorization',
+                html: `Please wait for <b></b> seconds.`,
+                timer: timer,
+                timerProgressBar: true,
+                didOpen: () => {
+                    const b = Swal.getHtmlContainer().querySelector('b');
+                    timerInterval = setInterval(() => {
+                        b.textContent = Math.round(Swal.getTimerLeft() / 1000);
+                    }, 100);
+                },
+                didClose: () => {
+                    clearInterval(timerInterval);
+                    // Optional: Show another modal after Swal closes
+                }
+            });
+
             console.log("sendToDevice device with ID:", deviceId);
-            fetch(`{{ url('send-device-mqtt') }}/${deviceId}`, {
-                    method: 'GET'
-                })
+            fetch(`{{ url('send-device-mqtt') }}/${deviceId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
                         Swal.fire({
-                            title: "Good job!",
-                            text: "You clicked the button!",
+                            title: "Device Authorized",
+                            text: "Please check the device; it is now ready for use.",
                             icon: "success"
-                        }).then((result) => {
-                            if (result.value) {
-                                // Trigger the modal to hide
-                                $('#verificationModal').modal('hide');
-                            }
-                        });
-                        // Event listener for when the modal has finished being hidden
-                        $('#verificationModal').on('hidden.bs.modal', function() {
-                            // Reload the page
+                        }).then(() => {
                             window.location.reload();
+                            $('#verificationModal').modal('hide');
                         });
                     }
                 })
@@ -142,6 +156,7 @@
                     console.log('Error during verification:', error);
                     alert(`Failed to verify device ID ${deviceId}`);
                 });
-        }
-    </script>
+        };
+    });
+</script>
 @endsection
