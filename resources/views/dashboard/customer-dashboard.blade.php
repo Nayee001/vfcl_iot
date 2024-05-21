@@ -15,9 +15,9 @@
                                     Devices Health Status: <span class="fw-bold">72</span> data points received today. View
                                     all data on the dashboard.
                                 </p>
-                                <a  href="{{ route('notifications', ['id' => Auth::user()->id]) }}" title="Unread notifications" role="button"
+                                <a  href="{{ route('devices.index') }}" title="Unread notifications" role="button"
                                     class="btn rounded-pill btn-icon btn-outline-primary position-relative notification-button">
-                                    <span class="tf-icons bx bx-bell"></span>
+                                    <i class="fa-solid fa-microchip"></i>
                                     <span
                                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge"
                                         title="Unread notifications">{{ $notifications }}</span>

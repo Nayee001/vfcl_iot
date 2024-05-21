@@ -80,15 +80,25 @@ class MqttService implements MqttServiceInterface
         }
     }
 
-    public function sendToDevice($api)
+    public function sendToDevice($deviceData)
     {
         try {
-            $topic = "mqttdevice/{$api}";
-            $message = json_encode(['status' => 'Approve', 'timestamp' => now()]);
+            $topic = "mqttdevice/{$deviceData['device']['short_apikey']}";
+            $message = json_encode([
+                'device' => $deviceData['device']['name'],
+                'location' => $deviceData['deviceLocation']['location_name'],
+                'status' => 'Verified',
+                'timestamp' => now()
+            ]);
+
             $endTime = time() + 10;
             while (time() < $endTime) {
-                Log::info("Sending message to [{$topic}]: {$message}");
-                $this->mqttClient->publish($topic, $message, 0);
+                try {
+                    Log::info("Sending message to [{$topic}]: {$message}");
+                    $this->mqttClient->publish($topic, $message, 0);
+                } catch (Exception $e) {
+                    Log::channel('mqttlogs')->error("MQTT sendToDevice - Failed to send message: {$e->getMessage()}");
+                }
                 sleep(5);
             }
         } catch (Exception $e) {

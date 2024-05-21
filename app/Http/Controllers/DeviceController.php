@@ -68,7 +68,7 @@ class DeviceController extends Controller
 
     public function sendDeviceModel($id)
     {
-        $device = DeviceAssignment::with('deviceLocation', 'assignee')->where('device_id', $id);
+        $device = DeviceAssignment::with('device', 'deviceLocation', 'assignee')->where('device_id', $id)->first();
         $sendApproval = $this->mqttService->sendToDevice($device);
         $content = $this->deviceService->sendDeviceModel($id);
         return response()->json($content);

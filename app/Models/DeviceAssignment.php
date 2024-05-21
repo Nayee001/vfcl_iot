@@ -20,4 +20,10 @@ class DeviceAssignment extends Model
     {
         return $this->belongsTo(LocationName::class, 'location_id');
     }
+
+
+    public function device()
+    {
+        return $this->belongsTo(Device::class, 'device_id');
+    }
 }
