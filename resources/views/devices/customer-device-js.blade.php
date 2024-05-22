@@ -46,62 +46,95 @@
                 });
             }
 
-            // Generate device card HTML
             function generateDeviceCard(device, verifyButton) {
+                console.log(device);
+                const statusIconColor = device.status == 'Active' ? 'green' : '#dc3545';
+                const isPending = device.device_assigned.status === 'Not Responded' || device.device_assigned
+                    .status === 'Reject';
+                const deviceStatusText = device.device_assigned.status === 'Accept' ?
+                    `Accepted by ${device.device_assigned.assignee.fname}` :
+                    device.device_assigned.status;
+
+                const notLoggedInMessage = `
+        <div class="alert alert-danger" role="alert">
+            This device is not logged in or plugged in.
+        </div>
+    `;
+
+                const needsAcceptanceMessage = `
+        <div class="alert alert-warning" role="alert">
+            This device needs to be accepted from the command center.
+        </div>
+    `;
+
                 return `
-            <div class="col-md-4 col-lg-3 mb-4">
-                <div class="card border-0 shadow h-100">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card custom-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">
                             <i class="bi bi-laptop"></i> ${device.name}
                         </h5>
-                        <h6 class="card-subtitle mb-2 text-muted">
-                            <i class="bi bi-circle-fill" style="color: ${device.status === 'Active' ? 'green' : 'red'};"></i> ${device.status}
+                        <h6 class="card-subtitle mb-2">
+                            <i class="bi bi-circle-fill" style="color: ${statusIconColor};"></i> ${device.status}
                         </h6>
-                        <p class="card-text">${device.description}</p>
-                        ${device.device_assigned.status === 'Not Responded' || device.device_assigned.status === 'Reject' ? `
-                                <div class="alert alert-warning" role="alert">
-                                    This device needs to be accepted from the command center.
-                                </div>
-                                ${verifyButton}
-                            ` : ''}
-                        <p class="card-text">
-                            ${device.device_assigned.status}
-                        </p>
                     </div>
-                    <div class="card-footer bg-white border-0">
-                        <small class="text-muted">API KEY: <span class="text-secondary">${device.short_apikey}</span></small>
-                    </div>
+                    <p class="card-text"><strong>Description:</strong> ${device.description}</p>
+                    <p class="card-text"><strong>Location:</strong> ${device.device_assigned.device_location.location_name || 'i Hack'}</p>
+                    <p class="card-text"><strong>Last Sync:</strong> ${device.lastActive || '22 May 2024'}</p>
+                    <p class="card-text"><strong>Connection Status:</strong> ${device.device_assigned.connection_status || 'Active'}</p>
+                    ${device.device_assigned.login_to_device == false || device.device_assigned.login_to_device == 0 ? `
+                            ${notLoggedInMessage}
+                        ` : isPending ? ``
+                            ${needsAcceptanceMessage}
+                            ${verifyButton}
+                        ` : ''}
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">API KEY: <span class="text-secondary">${device.short_apikey}</span></small>
+                    ${device.device_assigned.status === 'Accept' ? `
+                            <p class="card-text mt-2 mb-0 text-success">${deviceStatusText}</p>
+                        ` : ''}
+                    ${device.device_assigned.login_to_device == true || device.device_assigned.login_to_device == 1 ? `
+                            <button class="btn btn-primary mt-3" onclick="viewGraph('${device.id}')">See Graph</button>
+                        ` : ''}
                 </div>
             </div>
-            `;
+        </div>
+    `;
             }
+
+            function viewGraph(deviceId) {
+                // Add your logic to view the graph for the device with the given deviceId
+                console.log('Viewing graph for device:', deviceId);
+                // You can redirect to another page, open a modal, or anything else you need
+            }
+
 
             // No devices assigned message HTML
             function noDevicesAssignedMessage() {
                 return `
-            <div class="col">
-                <div class="alert alert-info" role="alert">
-                    There are no devices assigned to you!
+                <div class="col">
+                    <div class="alert alert-info" role="alert">
+                        There are no devices assigned to you!
+                    </div>
                 </div>
-            </div>
-            `;
+                `;
             }
 
             // Fetch devices error message HTML
             function fetchDevicesErrorMessage() {
                 return `
-            <div class="col">
-                <div class="alert alert-danger" role="alert">
-                    An error occurred while fetching the devices.
+                <div class="col">
+                    <div class="alert alert-danger" role="alert">
+                        An error occurred while fetching the devices.
+                    </div>
                 </div>
-            </div>
-            `;
+                `;
             }
 
             // Verify device function
             window.verifyDevice = function(deviceId) {
-                console.log("Verifying device with ID:", deviceId);
                 fetch(`{{ url('verify-device-model') }}/${deviceId}`)
                     .then(response => response.json())
                     .then(data => {
@@ -118,8 +151,8 @@
             // Show verification modal
             function showVerificationModal(data, deviceId) {
                 const contentHtml = `
-            Device Name: <b>${data.name}</b> <br>
-            Status: ${data.status}<br>
+                Device Name: <b>${data.name}</b> <br>
+                Status: ${data.status}<br>
             `;
 
                 // Create Verify Again Button dynamically
@@ -143,7 +176,7 @@
                 const timer = 10000;
                 let timerInterval;
                 Swal.fire({
-                    title: 'Device Authorization',
+                    title: 'Device Activation',
                     html: `Please wait for <b></b> seconds.`,
                     timer: timer,
                     timerProgressBar: true,
