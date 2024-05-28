@@ -34,6 +34,7 @@ function formatTimestamp(timestamp) {
         minute: "2-digit",
     });
 }
+
 // Getting Count
 function getDeviceDataCount() {
     fetch("/device-data/count")
@@ -43,12 +44,24 @@ function getDeviceDataCount() {
         })
         .catch((error) => console.error("Error:", error));
 }
-setInterval(getDeviceDataCount, 100);
+// setInterval(getDeviceDataCount, 100);
 
 // Getting Data
 function fetchAndUpdateData() {
     fetch("/device-data/messages")
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json();
+            } else {
+                return response.text().then((text) => {
+                    throw new Error(`Unexpected content type: ${contentType}. Response: ${text}`);
+                });
+            }
+        })
         .then((data) => {
             let html = "";
             data.forEach((record) => {
@@ -58,40 +71,48 @@ function fetchAndUpdateData() {
                             <i class="mdi mdi-circle"></i>
                         </span>
                         <h6 class="fw-normal mb-0">
-                            <a href="#" onclick="showData('${
-                                record.device ? record.device.id : ""
-                            }')">
-                                ${
-                                    record.device
-                                        ? record.device.name
-                                        : "Device Name"
-                                }
+                            <a href="#" onclick="showData('${record.device ? record.device.id : ""}')">
+                                ${record.device ? record.device.name : "Device Name"}
                             </a>
                         </h6>
                     <div class="flex-grow-1"></div>
-                    <h6 class="text-end me-4 mb-0 ${
-                        record.fault_status == "ON" ? "green" : "red"
-                    }">${record.fault_status}</h6>
+                    <h6 class="text-end me-4 mb-0 ${record.fault_status == "ON" ? "green" : "red"}">
+                        ${record.fault_status}
+                    </h6>
                     <h6 class="text-end me-2 mb-0">${record.device_status}</h6>
                     </div>`;
             });
             document.getElementById("deviceDataContainer").innerHTML = html;
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => {
+            console.error("Fetch and Update Data Error:", error);
+            document.getElementById("deviceDataContainer").innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
+        });
 }
 
-// Fetch and update data every 1000 milliseconds
-setInterval(fetchAndUpdateData, 2000);
+// Fetch and update data every 2000 milliseconds
+// setInterval(fetchAndUpdateData, 2000);
 
 async function fetchDeviceData(deviceId) {
     if (!deviceId) {
         return Promise.reject(new Error("No device ID provided"));
     }
-    const response = await fetch(`/device-data/${deviceId}`);
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+        const response = await fetch(`/device-data/${deviceId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return await response.json();
+        } else {
+            const errorText = await response.text();
+            throw new Error(`Unexpected content type: ${contentType}. Response: ${errorText}`);
+        }
+    } catch (error) {
+        console.error("Fetch Device Data Error:", error);
+        throw error;
     }
-    return await response.json();
 }
 
 function updateUIWithDeviceData(deviceData) {
@@ -107,9 +128,7 @@ function updateUIWithDeviceData(deviceData) {
         <div class="text-center fw-semibold pt-3 mb-2">
             <img class="fault-img mb-3" src="${imageSrc}" alt="Device image" style="margin: auto;">
             <div>
-                <span class="fault ${falutStatusClass}">${
-        deviceData.fault_status
-    }</span><br>
+                <span class="fault ${falutStatusClass}">${deviceData.fault_status}</span><br>
                 <span>${deviceData.device.name}</span><br>
                 <span class="fault ${deviceStatusClass}">${deviceData.device.status}</span>
             </div>
@@ -120,18 +139,14 @@ function updateUIWithDeviceData(deviceData) {
                     <span class="badge bg-label-primary p-2 me-2"><i class='bx bxs-heart'></i></span>
                     <div>
                         <small>Health Status</small>
-                        <h6 class="mb-0"><span class="fw-medium ${falutStatusClass}">${
-        deviceData.health_status
-    }</span></h6>
+                        <h6 class="mb-0"><span class="fw-medium ${falutStatusClass}">${deviceData.health_status}</span></h6>
                     </div>
                 </div>
                 <div class="d-flex align-items-center">
                     <span class="badge bg-label-info p-2 me-2"><i class='bx bx-time'></i></span>
                     <div>
                         <small>Last Sync</small>
-                        <h6 class="mb-0">${formatTimestamp(
-                            deviceData.timestamp
-                        )}</h6>
+                        <h6 class="mb-0">${formatTimestamp(deviceData.timestamp)}</h6>
                     </div>
                 </div>
             </div>
@@ -141,16 +156,13 @@ function updateUIWithDeviceData(deviceData) {
 }
 
 function showError(error) {
-    document.getElementById(
-        "device-fault-status-shown"
-    ).innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
+    document.getElementById("device-fault-status-shown").innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
 }
 
 var chart;
 var lastDate = 0;
 var data = [];
 var XAXISRANGE = 10 * 60000; // Adjust this based on your needs
-
 
 function fetchChartDataAndUpdateChart(deviceId) {
     fetch(`/get-device-line-chart-data/${deviceId}`)
@@ -165,7 +177,6 @@ function fetchChartDataAndUpdateChart(deviceId) {
             }
         });
 }
-
 
 async function showData(deviceId) {
     try {
@@ -208,7 +219,6 @@ document.addEventListener("DOMContentLoaded", function () {
             size: 0,
         },
         title: {
-
             align: "left",
         },
         fill: {
@@ -218,7 +228,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 inverseColors: false,
                 opacityFrom: 0.5,
                 opacityTo: 0,
-                // stops: [0, 90, 100],
             },
         },
         yaxis: {
@@ -247,13 +256,12 @@ document.addEventListener("DOMContentLoaded", function () {
     chart = new ApexCharts(document.querySelector("#device-fault-line-chart"), options);
     chart.render();
 
-    // Initially fetch some data to display
-    fetchChartDataAndUpdateChart();
+    // // Initially fetch some data to display
+    // fetchChartDataAndUpdateChart();
 
     // // Then, update the chart every 1 second with new data
-    window.setInterval(function () {
-        fetchChartDataAndUpdateChart(1);
-    }, 1000); // Adjust this interval as needed
+    // window.setInterval(function () {
+    //     fetchChartDataAndUpdateChart(1);
+    // }, 1000); // Adjust this interval as needed
 
 });
-
