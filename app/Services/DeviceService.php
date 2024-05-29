@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\DeviceRepository;
 use App\Interfaces\DeviceRepositoryInterface;
+use App\Models\Device;
 use App\Repositories\DeviceTypeRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -50,14 +51,27 @@ class DeviceService
     public function deviceDashboard()
     {
         return $this->deviceRepository->deviceDashboard();
-
     }
 
-    public function deviceVerify($id){
+    public function assingedDevice($id)
+    {
+
+        return $this->deviceRepository->assingedDevice($id);
+    }
+
+    public function resetDevice($id)
+    {
+        $device = Device::find($id);
+        $akkui = $this->mqttService->resetDevice($device);
+        return $this->deviceRepository->resetDevice($id);
+    }
+    public function deviceVerify($id)
+    {
         return $this->deviceRepository->deviceVerify($id);
     }
 
-    public function sendDeviceModel($id){
+    public function sendDeviceModel($id)
+    {
         $d = $this->deviceRepository->sendDeviceModel($id);
         return $d;
     }
@@ -225,8 +239,8 @@ class DeviceService
         }
     }
 
-    public function verifyDeviceApi($request,$user){
-        return $this->deviceRepository->verifyDeviceApi($request,$user);
+    public function verifyDeviceApi($request, $user)
+    {
+        return $this->deviceRepository->verifyDeviceApi($request, $user);
     }
-
 }

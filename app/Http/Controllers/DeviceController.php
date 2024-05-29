@@ -115,6 +115,32 @@ class DeviceController extends Controller
         $devices = $this->deviceService->deviceDashboard();
         return response()->json($devices);
     }
+    public function assingedDevice($id)
+    {
+        $devices = $this->deviceService->assingedDevice($id);
+        return response()->json($devices);
+    }
+
+    public function resetDevice($id)
+    {
+        return $this->deviceService->resetDevice($id);
+    }
+
+    public function getAssignedDevices($userId)
+    {
+        try {
+            // Fetch devices created by or assigned to the user
+            $devices = Device::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations'])
+                ->orWhereHas('deviceAssigned', function ($query) use ($userId) {
+                    $query->where('assign_to', $userId);
+                })
+                ->get();
+
+            return response()->json($devices);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 
     /**
      * Retrieves devices for datatable asynchronously using AJAX.

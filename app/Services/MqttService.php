@@ -2,18 +2,13 @@
 
 namespace App\Services;
 
-// require('vendor/autoload.php');
-
 use App\Interfaces\MqttServiceInterface;
-
-use App\Models\DeviceLogs;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use App\Repositories\DeviceRepository;
 use App\Repositories\DeviceLogsRepository;
 use App\Repositories\DeviceDataRepository;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Carbon;
 use Exception;
 
 class MqttService implements MqttServiceInterface
@@ -31,19 +26,6 @@ class MqttService implements MqttServiceInterface
     protected $deviceLogsRepository;
     protected $deviceRepository;
 
-    // public $topic = 'mqttdevice/#';
-
-    /**
-     * Constructor for the class.
-     * Initializes the device data and device logs repositories.
-     *
-     * @param DeviceDataRepository $deviceDataRepository
-     * @param DeviceLogsRepository $deviceLogsRepository
-     * @param DeviceRepository $deviceRepository
-     *
-     *
-     *
-     */
     public function __construct(
         DeviceDataRepository $deviceDataRepository,
         DeviceLogsRepository $deviceLogsRepository,
@@ -58,7 +40,6 @@ class MqttService implements MqttServiceInterface
             ->setPassword($this->password);
         $this->mqttClient->connect($this->connectionSettings, true);
     }
-
 
     public function connectAndSubscribe($topic)
     {
@@ -76,7 +57,7 @@ class MqttService implements MqttServiceInterface
 
             $this->mqttClient->loop();
         } catch (Exception $e) {
-            Log::channel('mqttlogs')->error("MQTT - Somthing went wrong: {$e->getMessage()}");
+            Log::channel('mqttlogs')->error("MQTT - Something went wrong: {$e->getMessage()}");
         }
     }
 
@@ -103,6 +84,25 @@ class MqttService implements MqttServiceInterface
             }
         } catch (Exception $e) {
             Log::channel('mqttlogs')->error("MQTT sendToDevice - Something went wrong: {$e->getMessage()}");
+            throw $e;
+        }
+    }
+
+    public function resetDevice($device)
+    {
+        try {
+            $topic = "mqttdevice/{$device['short_apikey']}";
+            $message = json_encode([
+                'device' => $device['name'],
+                'message' => 'reset',
+                'timestamp' => now()
+            ]);
+            Log::info("Sending reset message to [{$topic}]: {$message}");
+            $this->mqttClient->publish($topic, $message, 0);
+
+            Log::info("Reset message sent successfully to [{$topic}]");
+        } catch (Exception $e) {
+            Log::channel('mqttlogs')->error("MQTT resetDevice - Failed to send reset message: {$e->getMessage()}");
             throw $e;
         }
     }

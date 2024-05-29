@@ -79,6 +79,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device/dashboard', [DeviceController::class, 'dashboard'])->name('devices.dashboard');
     // Customer Device Data
     Route::get('/customer/devices/data', [DeviceController::class, 'deviceDashboard'])->name('customer.devices.data');
+    Route::get('/reset-device/{id}', [DeviceController::class, 'resetDevice'])->name('reset-device');
+
+    Route::get('/customer/assinged/devices/data/{id}', [DeviceController::class, 'assingedDevice'])->name('customer.assinged.devices.data');
+
+    Route::get('/customer/assigned/devices/data/{userId}', [DeviceController::class, 'getAssignedDevices']);
+
     Route::get('/verify-device-model/{id}',[DeviceController::class, 'verifyDeviceModel'])->name('verify-device-model');
     Route::get('/send-device-mqtt/{id}',[DeviceController::class, 'sendDeviceModel'])->name('send-device-mqtt');
 
