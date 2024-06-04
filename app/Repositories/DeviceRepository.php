@@ -51,7 +51,7 @@ class DeviceRepository implements DeviceRepositoryInterface
 
             // Retrieve device ID using the API key
             $device = $this->model::where('short_apikey', $associativeArray['api_key'])->first();
-            dump($device->id);
+            // dump($device->id);
             if (!$device) {
                 throw new \RuntimeException('No device found with the provided API key.');
             }
@@ -59,7 +59,7 @@ class DeviceRepository implements DeviceRepositoryInterface
             // Retrieve user ID for the device
             $assignment = DeviceAssignment::where('device_id', $device->id)->first();
             // dd($assignment);
-            dump($assignment->device_id);
+            // dump($assignment->device_id);
 
             if (!$assignment) {
                 throw new \RuntimeException('No assignment found for the device.');
@@ -150,13 +150,14 @@ class DeviceRepository implements DeviceRepositoryInterface
         ]);
 
         if (!isSuperAdmin()) {
+            return $query->get();
+        } else {
             $query->where('created_by', $id)
                 ->orWhereHas('deviceAssigned', function ($query) use ($id) {
                     $query->where('assign_to', $id);
                 });
+            return $query->get();
         }
-
-        return $query->get();
     }
 
 

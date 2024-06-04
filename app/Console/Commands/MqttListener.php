@@ -38,8 +38,8 @@ class MqttListener extends Command
         $this->deviceDataRepository = $deviceDataRepository;
         $this->deviceLogsRepository = $deviceLogsRepository;
         $this->deviceRepository = $deviceRepository;
-
     }
+
     public function handle()
     {
         $mqttService = new MqttService($this->deviceDataRepository, $this->deviceLogsRepository, $this->deviceRepository);

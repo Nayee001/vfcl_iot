@@ -63,6 +63,7 @@ class DeviceController extends Controller
     public function verifyDeviceModel($id)
     {
         $content = $this->deviceService->deviceVerify($id);
+        // dd($content);
         return response()->json($content);
     }
 

@@ -85,10 +85,10 @@
 
                             if (deviceNames.length > 0) {
                                 topMessageHtml = `
-                        <div class="alert alert-warning" role="alert">
-                            <b style="color: red;">${deviceNames.join(', ')} need to be accepted from the command center</b>
-                        </div>
-                    `;
+                                    <div class="alert alert-warning" role="alert">
+                                        <b style="color: red;">${deviceNames.join(', ')} need to be accepted from the command center</b>
+                                    </div>
+                                `;
                             }
 
                             $('#devices').html(contentHtml);
@@ -117,71 +117,72 @@
                     (device.device_assigned ? device.device_assigned.status : '--');
 
                 const notLoggedInMessage = `
-        <div class="alert alert-danger" role="alert">
-            This device is not logged in or plugged in.
-        </div>
-    `;
+                    <div class="alert alert-danger" role="alert">
+                        This device is not logged in or plugged in.
+                    </div>
+                `;
 
                 const needsAcceptanceMessage = `
-        <div class="alert alert-warning" role="alert">
-            This device needs to be accepted from the command center.
-        </div>
-    `;
+                    <div class="alert alert-warning" role="alert">
+                        This device needs to be accepted from the command center.
+                    </div>
+                `;
 
                 return `
-        <div class="col-md-4 col-lg-3 mb-4">
-            <div class="card custom-card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <h5 class="card-title">
-                            <i class="bi bi-laptop"></i> ${device.name}
-                        </h5>
-                        <h6 class="card-subtitle mb-2">
-                            <i class="bi bi-circle-fill" style="color: ${statusIconColor};"></i> ${device.device_assigned ? device.device_assigned.connection_status : 'Inactive'}
-                        </h6>
-                    </div>
-                    <p class="card-text"><strong>Description:</strong> ${device.description}</p>
-                    <p class="card-text"><strong>Location:</strong> ${device.device_assigned ? device.device_assigned.device_location.location_name : 'i Hack'}</p>
-                    <p class="card-text"><strong>Last Sync:</strong> ${device.lastActive || '22 May 2024'}</p>
-                    <p class="card-text"><strong>Connection Status:</strong> ${device.device_assigned ? device.device_assigned.connection_status : 'Inactive'}</p>
-                    ${device.device_assigned && !device.device_assigned.login_to_device ? `
-                                            ${notLoggedInMessage}
-                                        ` : isPending ? `
-                                            ${needsAcceptanceMessage}
-                                            ${verifyButton}
-                                        ` : ''}
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                    <div>
-                        <small class="text-muted">API KEY: <span class="text-secondary">${device.short_apikey}</span></small>
-                        ${device.device_assigned && device.device_assigned.status === 'Accept' ? `
-                                        <p class="card-text mt-2 mb-0 text-success">${deviceStatusText}</p>
-                                    ` : ''}
-                        ${device.device_assigned && device.device_assigned.login_to_device ? `
-                                        <button class="btn btn-primary mt-3" onclick="viewGraph('${device.id}')">See Graph</button>
-                                    ` : ''}
-                    </div>
+                    <div class="col-md-4 col-lg-3 mb-4">
+                        <div class="card custom-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-laptop"></i> ${device.name}
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2">
+                                        <i class="bi bi-circle-fill" style="color: ${statusIconColor};"></i> ${device.device_assigned ? device.device_assigned.connection_status : 'Inactive'}
+                                    </h6>
+                                </div>
+                                <p class="card-text"><strong>Description:</strong> ${device.description}</p>
+                                <p class="card-text"><strong>Location:</strong> ${device.device_assigned ? device.device_assigned.device_location.location_name : 'i Hack'}</p>
+                                <p class="card-text"><strong>Last Sync:</strong> ${device.lastActive || '22 May 2024'}</p>
+                                <p class="card-text"><strong>Connection Status:</strong> ${device.device_assigned ? device.device_assigned.connection_status : 'Inactive'}</p>
+                                ${device.device_assigned && !device.device_assigned.login_to_device ? `
+                                                            ${notLoggedInMessage}
+                                                        ` : isPending ? `
+                                                            ${needsAcceptanceMessage}
+                                                            ${verifyButton}
+                                                        ` : ''}
+                            </div>
+                            <div class="card-footer d-flex justify-content-between">
+                                <div>
+                                    <small class="text-muted">API KEY: <span class="text-secondary">${device.short_apikey}</span></small>
+                                    ${device.device_assigned && device.device_assigned.status === 'Accept' ? `
+                                                        <p class="card-text mt-2 mb-0 text-success">${deviceStatusText}</p>
+                                                    ` : ''}
+                                    ${device.device_assigned && device.device_assigned.login_to_device ? `
+                                                        <button class="btn btn-primary mt-3" onclick="viewGraph('${device.id}')">See Graph</button>
+                                                    ` : ''}
+                                </div>
 
-                    <button onclick="resetDevice(${device.id})" title="Reset Device" type="button" class="btn rounded-pill btn-icon btn-outline-danger position-relative notification-button">
-                        <i class='bx bx-reset'></i>
-                                </button>
-                </div>
-            </div>
-        </div>
-    `;
+                                <button onclick="resetDevice(${device.id})" title="Reset Device" type="button" class="btn rounded-pill btn-icon btn-outline-danger position-relative notification-button">
+                                    <i class='bx bx-reset'></i>
+                                            </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
 
             function fetchDevicesErrorMessage() {
                 return `
-        <div class="col">
-            <div class="alert alert-danger" role="alert">
-                An error occurred while fetching the devices.
-            </div>
-        </div>
-    `;
+                <div class="col">
+                    <div class="alert alert-danger" role="alert">
+                        An error occurred while fetching the devices.
+                    </div>
+                </div>
+            `;
             }
 
             window.verifyDevice = function(deviceId) {
+                console.log(deviceId);
                 fetch(`{{ url('verify-device-model') }}/${deviceId}`)
                     .then(response => response.json())
                     .then(data => {
@@ -197,9 +198,9 @@
 
             function showVerificationModal(data, deviceId) {
                 const contentHtml = `
-        Device Name: <b>${data.name}</b> <br>
-        Status: ${data.status}<br>
-    `;
+                Device Name: <b>${data.name}</b> <br>
+                Status: ${data.status}<br>
+            `;
 
                 const verifyAgainButton = document.createElement('button');
                 verifyAgainButton.type = 'button';
