@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeviceAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,18 +45,20 @@ class HomeController extends Controller
 
         $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
         if (isSuperAdmin()) {
-
             return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount', 'locationCount'));
         } elseif (isManager()) {
             $userCount = $this->dashboardService->getCountUsersAddedByManagers(Auth::id());
             return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
         } else {
             $user = auth()->user();
-            $showTermsModal = $user->status == User::USER_STATUS['NEWUSER'];
+            $showNewUserModel = $user->status == User::USER_STATUS['NEWUSER'];
             $showPasswordChangeModal = $user->status == User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
             $notifications = $this->notificationRepository->notifictionCount($user->id);
+            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)->where('connection_status','Not Authorized')->get();
+            // dd($newDevices);
             return view('dashboard.customer-dashboard', [
-                'showTermsModal' => $showTermsModal,
+                'unAuthnewDevices'=> $unAuthnewDevices,
+                'showNewUserModel' => $showNewUserModel,
                 'showPasswordChangeModal' => $showPasswordChangeModal,
                 'locationCount' => $locationCount,
                 'user' => $user,

@@ -1,5 +1,5 @@
 @section('script')
-    @if ($showTermsModal)
+    @if ($showNewUserModel)
         <script>
             $(document).ready(function() {
                 $('#terms-conditions').modal('show');
@@ -115,7 +115,6 @@
                     }
                 });
             });
-
         });
 
         $(function() {
@@ -157,9 +156,6 @@
             });
         });
 
-
-
-
         $(document).ready(function() {
             // Function to check device status
             function checkDeviceStatus() {
@@ -194,10 +190,8 @@
                     }
                 });
             }
-
             // Check device status on page load
             checkDeviceStatus();
-
             // Optionally, you can set an interval to check the device status periodically
             setInterval(checkDeviceStatus, 6000); // Check every 60 seconds
         });
