@@ -62,7 +62,7 @@ class DeviceService
     public function resetDevice($id)
     {
         $device = Device::find($id);
-        $akkui = $this->mqttService->resetDevice($device);
+        $sendMqttReqforResetDevice = $this->mqttService->resetDevice($device);
         return $this->deviceRepository->resetDevice($id);
     }
     public function deviceVerify($id)
@@ -72,8 +72,8 @@ class DeviceService
 
     public function sendDeviceModel($id)
     {
-        $d = $this->deviceRepository->sendDeviceModel($id);
-        return $d;
+        $deviceAuth = $this->deviceRepository->sendDeviceModel($id);
+        return $deviceAuth;
     }
 
     /**

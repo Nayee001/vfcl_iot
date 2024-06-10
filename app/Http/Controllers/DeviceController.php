@@ -122,6 +122,35 @@ class DeviceController extends Controller
         return response()->json($devices);
     }
 
+    public function deviceStep2(Request $request)
+    {
+        $deviceAssignments = DeviceAssignment::with('device', 'deviceLocation', 'assignee')
+            ->where('assign_to', Auth::id())
+            ->where('login_to_device', 0)
+            ->where('connection_status', 'Not Authorized')
+            ->get();
+
+        if ($deviceAssignments->isEmpty()) {
+            return response()->json(['error' => 'No device assignments found.'], 404);
+        }
+
+        $devices = [];
+        foreach ($deviceAssignments as $assignment) {
+            $devices[] = [
+                'mac_address' => $assignment->device->mac_address,
+                'api_key' => $assignment->device->short_apikey,
+                'device_name' => $assignment->device->name
+            ];
+        }
+
+        $data = [
+            'title' => 'Device Step 2 : API KEY',
+            'devices' => $devices
+        ];
+
+        return response()->json($data);
+    }
+
     public function resetDevice($id)
     {
         return $this->deviceService->resetDevice($id);

@@ -186,7 +186,7 @@ class DeviceRepository implements DeviceRepositoryInterface
     {
         try {
             $deviceAssignmentUpdated = DeviceAssignment::where('device_id', $id)
-                ->where('assign_to', Auth::id())->update(['status' => 'Accept']);
+                ->where('assign_to', Auth::id())->update(['status' => 'Accept','connection_status' => 'Authorized']);
             $notificationsUpdated = Notifications::where('device_id', $id)
                 ->where('user_id', Auth::id())->update(['read' => 'Yes']);
             return $deviceAssignmentUpdated;
@@ -219,7 +219,7 @@ class DeviceRepository implements DeviceRepositoryInterface
                     'last_sync' => null,
                     'send_mac' => 0,
                     'login_to_device' => 0,
-                    'connection_status' => 'Not Active',
+                    'connection_status' => 'Not Authorized',
                     'status' => 'Not Responded',
                     'encryption_key' => null,
                     'updated_at' => now()

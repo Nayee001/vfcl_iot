@@ -70,13 +70,13 @@
                                         <i class="bi bi-laptop"></i> ${device.name}
                                     </h5>
                                     <h6 class="card-subtitle mb-2">
-                                        <i class="bi bi-circle-fill" style="color: ${statusIconColor};"></i> ${device.status}
+                                        <i class="bi bi-circle-fill" style="color: ${statusIconColor};"></i> ${device.device_assigned.connection_status}
                                     </h6>
                                 </div>
                                 <p class="card-text"><strong>Description:</strong> ${device.description}</p>
                                 <p class="card-text"><strong>Location:</strong> ${device.device_assigned.device_location.location_name || 'i Hack'}</p>
                                 <p class="card-text"><strong>Last Sync:</strong> ${device.lastActive || '22 May 2024'}</p>
-                                <p class="card-text"><strong>Connection Status:</strong> ${device.device_assigned.connection_status || 'Active'}</p>
+                                <p class="card-text"><strong>Connection Status:</strong> ${device.device_assigned.connection_status || 'Authorized'}</p>
                                 ${device.device_assigned.login_to_device == false || device.device_assigned.login_to_device == 0 ? `
                                     ${notLoggedInMessage}
                                 ` : isPending ? `
@@ -100,8 +100,6 @@
 
             function viewGraph(deviceId) {
                 console.log('Viewing graph for device:', deviceId);
-                // Add your logic to view the graph for the device with the given deviceId
-                // You can redirect to another page, open a modal, or anything else you need
             }
 
             function noDevicesAssignedMessage() {

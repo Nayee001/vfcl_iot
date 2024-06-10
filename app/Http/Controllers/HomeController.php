@@ -54,8 +54,8 @@ class HomeController extends Controller
             $showNewUserModel = $user->status == User::USER_STATUS['NEWUSER'];
             $showPasswordChangeModal = $user->status == User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
             $notifications = $this->notificationRepository->notifictionCount($user->id);
-            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)->where('connection_status','Not Authorized')->get();
-            // dd($newDevices);
+            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)->where('connection_status','Authorized')->where('status','Accept')->get();
+            // dd($unAuthnewDevices);
             return view('dashboard.customer-dashboard', [
                 'unAuthnewDevices'=> $unAuthnewDevices,
                 'showNewUserModel' => $showNewUserModel,

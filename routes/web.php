@@ -82,6 +82,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/reset-device/{id}', [DeviceController::class, 'resetDevice'])->name('reset-device');
 
     Route::get('/customer/assinged/devices/data/{id}', [DeviceController::class, 'assingedDevice'])->name('customer.assinged.devices.data');
+    Route::get('/deviceStep2', [DeviceController::class, 'deviceStep2'])->name('deviceStep2');
+
 
     Route::get('/customer/assigned/devices/data/{userId}', [DeviceController::class, 'getAssignedDevices']);
 
