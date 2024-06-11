@@ -333,3 +333,40 @@
 .justify-content-between {
     justify-content: space-between;
 }
+
+.title-dash
+{
+    font-style: italic;
+    color: #696cff;
+}
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    margin-top: 50px;
+}
+
+.app-brand-logo {
+    width: 50px;
+}
+.card-header {
+    background-color: #fff;
+    border-bottom: none;
+    padding-top: 20px;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+.btn-primary {
+    background-color: #696cff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #575ed8;
+}
+
+.username{
+    color:#696cff;
+}

@@ -144,7 +144,7 @@ class DeviceController extends Controller
         }
 
         $data = [
-            'title' => 'Device Step 2 : API KEY',
+            'title' => 'Device Step 2 : Login and Api Key',
             'devices' => $devices
         ];
 

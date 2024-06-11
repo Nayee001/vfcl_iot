@@ -12,6 +12,7 @@ use App\Services\DashboardService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\NotificationRepository;
+
 class HomeController extends Controller
 {
     /**
@@ -24,7 +25,7 @@ class HomeController extends Controller
     protected $notificationRepository;
 
 
-    public function __construct(DashboardService $dashboardService,NotificationRepository $notificationRepository)
+    public function __construct(DashboardService $dashboardService, NotificationRepository $notificationRepository)
     {
         $this->dashboardService = $dashboardService;
         $this->notificationRepository = $notificationRepository;
@@ -51,13 +52,14 @@ class HomeController extends Controller
             return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
         } else {
             $user = auth()->user();
+            // dd($user);
             $showNewUserModel = $user->status == User::USER_STATUS['NEWUSER'];
             $showPasswordChangeModal = $user->status == User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
             $notifications = $this->notificationRepository->notifictionCount($user->id);
-            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)->where('connection_status','Authorized')->where('status','Accept')->get();
+            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)->where('connection_status', 'Authorized')->where('status', 'Accept')->get();
             // dd($unAuthnewDevices);
             return view('dashboard.customer-dashboard', [
-                'unAuthnewDevices'=> $unAuthnewDevices,
+                'unAuthnewDevices' => $unAuthnewDevices,
                 'showNewUserModel' => $showNewUserModel,
                 'showPasswordChangeModal' => $showPasswordChangeModal,
                 'locationCount' => $locationCount,
