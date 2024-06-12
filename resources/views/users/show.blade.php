@@ -18,9 +18,12 @@
                                         <small class="text-muted">{{ $user->roles[0]->name }}</small>
                                     </div>
                                     <small class="text-muted">Joined on: {{ $user->created_at->format('F j, Y') }}</small>
-                                    @if($user->locations)
-                                    <br>
-                                        <small>Location : {{$user->locations->location_type}}, {{$user->locations->address}}, {{$user->locations->city}}, {{$user->locations->state}}, {{$user->locations->country}}, {{$user->locations->postal_code}}</small>
+                                    @if ($user->locations)
+                                        <br>
+                                        <small>Location : {{ $user->locations->location_type }},
+                                            {{ $user->locations->address }}, {{ $user->locations->city }},
+                                            {{ $user->locations->state }}, {{ $user->locations->country }},
+                                            {{ $user->locations->postal_code }}</small>
                                     @endif
                                 </div>
                                 <div class="ml-auto small-widget">
@@ -104,14 +107,23 @@
                                         </div>
                                         <div class="tab-pane fade @hasanyrole('Customer')show active @endhasanyrole"
                                             id="navs-pills-justified-profile" role="tabpanel">
-                                            <div class="image-container">
-                                                <img src="{{ asset('assets/img/illustrations/no-devices.jpg') }}"
-                                                    alt="No Devices" width="500" class="no-device img-fluid"
-                                                    data-app-dark-img="illustrations/page-misc-error-dark.png"
-                                                    data-app-light-img="illustrations/page-misc-error-light.png" />
-                                            </div>
-                                            <div class="text-container">
-                                                {{ __('messages.no_msg') }}
+                                            <div class="container-xxl flex-grow-1 container-p-y">
+                                                <div class="mb-4">
+                                                    <div id="top-message"></div>
+                                                </div>
+                                                <div class="row g-4" id="devices">
+                                                </div>
+                                                <div id="no-devices-assigned" class="text-center" style="display: none;">
+                                                    <div class="image-container">
+                                                        <img src="{{ asset('assets/img/illustrations/no-devices.jpg') }}"
+                                                            alt="No Devices" width="500" class="no-device img-fluid"
+                                                            data-app-dark-img="illustrations/page-misc-error-dark.png"
+                                                            data-app-light-img="illustrations/page-misc-error-light.png" />
+                                                    </div>
+                                                    <div class="text-container mt-3">
+                                                        <h5>{{ __('messages.no_device') }}</h5>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

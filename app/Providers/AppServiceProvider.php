@@ -59,11 +59,6 @@ class AppServiceProvider extends ServiceProvider
 		);
 
 		$this->app->bind(
-			\App\Interfaces\MqttConnectionRepositoryInterface::class,
-			\App\Repositories\MqttConnectionRepository::class
-		);
-
-		$this->app->bind(
 			\App\Interfaces\DeviceLogsRepositoryInterface::class,
 			\App\Repositories\DeviceLogsRepository::class
 		);
@@ -76,6 +71,11 @@ class AppServiceProvider extends ServiceProvider
 		$this->app->bind(
 			\App\Interfaces\DashboardServiceInterface::class,
 			\App\Services\DashboardService::class
+		);
+
+		$this->app->bind(
+			\App\Interfaces\NotificationRepositoryInterface::class,
+			\App\Repositories\NotificationRepository::class
 		);
     }
 

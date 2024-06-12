@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeviceAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,7 @@ use App\Services\DeviceService;
 use App\Services\DashboardService;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\NotificationRepository;
 
 class HomeController extends Controller
 {
@@ -20,10 +22,13 @@ class HomeController extends Controller
      */
 
     protected $dashboardService;
+    protected $notificationRepository;
 
-    public function __construct(DashboardService $dashboardService)
+
+    public function __construct(DashboardService $dashboardService, NotificationRepository $notificationRepository)
     {
         $this->dashboardService = $dashboardService;
+        $this->notificationRepository = $notificationRepository;
         $this->middleware('permission:dashboard', ['only' => ['index']]);
     }
 
@@ -41,20 +46,25 @@ class HomeController extends Controller
 
         $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
         if (isSuperAdmin()) {
-
             return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount', 'locationCount'));
         } elseif (isManager()) {
             $userCount = $this->dashboardService->getCountUsersAddedByManagers(Auth::id());
             return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
         } else {
             $user = auth()->user();
-            $showTermsModal = $user->status == User::USER_STATUS['NEWUSER'];
+            // dd($user);
+            $showNewUserModel = $user->status == User::USER_STATUS['NEWUSER'];
             $showPasswordChangeModal = $user->status == User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
+            $notifications = $this->notificationRepository->notifictionCount($user->id);
+            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)->where('connection_status', 'Authorized')->where('status', 'Accept')->get();
+            // dd($unAuthnewDevices);
             return view('dashboard.customer-dashboard', [
-                'showTermsModal' => $showTermsModal,
+                'unAuthnewDevices' => $unAuthnewDevices,
+                'showNewUserModel' => $showNewUserModel,
                 'showPasswordChangeModal' => $showPasswordChangeModal,
                 'locationCount' => $locationCount,
-                'user' => $user
+                'user' => $user,
+                'notifications' => $notifications
             ]);
         }
     }

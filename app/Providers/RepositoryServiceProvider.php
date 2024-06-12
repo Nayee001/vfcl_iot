@@ -13,12 +13,14 @@ use App\Repositories\DeviceAssignRepository;
 use App\Repositories\DeviceRepository;
 use App\Models\Location;
 use App\Models\LocationName;
+use App\Models\Notifications;
 use App\Models\DeviceData;
 use App\Models\DeviceLogs;
 use App\Repositories\LocationNameRepository;
 use App\Repositories\LocationRepository;
 use App\Repositories\DeviceDataRepository;
 use App\Repositories\DeviceLogsRepository;
+use App\Repositories\NotificationRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -54,6 +56,9 @@ class RepositoryServiceProvider extends ServiceProvider
         });
         $this->app->bind(DeviceLogsRepository::class, function ($app) {
             return new DeviceLogsRepository($app->make(DeviceLogs::class));
+        });
+        $this->app->bind(NotificationRepository::class, function ($app) {
+            return new NotificationRepository($app->make(Notifications::class));
         });
     }
 

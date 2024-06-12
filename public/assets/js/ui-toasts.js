@@ -38,8 +38,8 @@
   }
 })();
 
-$(document).ready(function() {
-    $("#copied").on('click', function(e) {
+$(document).ready(function () {
+    $("#copied").on("click", function (e) {
         e.preventDefault(); // Prevent the default action
 
         // Copy the API key to clipboard
@@ -54,9 +54,9 @@ $(document).ready(function() {
         showToast("API key copied to clipboard!");
     });
 
-    $('.copy-api-key').click(function() {
+    $(".copy-api-key").click(function () {
         // Get the API key from the id of the clicked element
-        let apiKey = $(this).attr('id');
+        let apiKey = $(this).attr("id");
 
         // Create a temporary input to hold the text
         let $temp = $("<input>");
@@ -73,7 +73,10 @@ $(document).ready(function() {
 function showToast(message) {
     var $toast = $('<div class="toast">').text(message);
     $("body").append($toast);
-    $toast.fadeIn(400).delay(2000).fadeOut(400, function() {
-        $(this).remove();
-    });
+    $toast
+        .fadeIn(400)
+        .delay(2000)
+        .fadeOut(400, function () {
+            $(this).remove();
+        });
 }

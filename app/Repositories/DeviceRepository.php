@@ -13,6 +13,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\DeviceAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\DeviceVerification;
+use App\Models\Notifications;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\DeviceVerificationNotification;
+use Illuminate\Support\Facades\DB;
+
 
 class DeviceRepository implements DeviceRepositoryInterface
 {
@@ -25,6 +32,72 @@ class DeviceRepository implements DeviceRepositoryInterface
     {
         $this->model = $model;
     }
+
+    /**
+     * Verifies device by updating encryption key based on API key.
+     *
+     * @param array $associativeArray An associative array that must include 'api_key' and 'encryption_key'.
+     * @return int|bool Returns user ID on success, false on failure.
+     */
+    public function deviceVerifications($associativeArray)
+    {
+        try {
+
+            // dd($associativeArray);
+            // Check for required keys
+            if (!isset($associativeArray['api_key'], $associativeArray['encryption_key'])) {
+                throw new \InvalidArgumentException('Missing required keys in associative array for device verification.');
+            }
+
+            // Retrieve device ID using the API key
+            $device = $this->model::where('short_apikey', $associativeArray['api_key'])->first();
+            // dump($device->id);
+            if (!$device) {
+                throw new \RuntimeException('No device found with the provided API key.');
+            }
+
+            // Retrieve user ID for the device
+            $assignment = DeviceAssignment::where('device_id', $device->id)->first();
+            // dd($assignment);
+            // dump($assignment->device_id);
+
+            if (!$assignment) {
+                throw new \RuntimeException('No assignment found for the device.');
+            }
+
+
+            $user = User::find($assignment->assign_to);
+            if (!$user) {
+                throw new \RuntimeException('User not found.');
+            }
+
+            if ($assignment->email_sent == true) {
+                return $assignment->assign_to;
+            } else {
+                Mail::to('nayee001@gannon.edu')->send(new DeviceVerificationNotification($device, $user));
+                $assignment->update(['email_sent' => 1]);
+            }
+
+            // Update the encryption key and notification
+            $update = $assignment->update(['encryption_key' => $associativeArray['encryption_key'], 'login_to_device' => 1]);
+            dump($update);
+            $notification = Notifications::updateOrCreate(
+                ['device_id' => $device->id, 'user_id' => $assignment->assign_to],
+                ['notification' => Notifications::DefaultNotiMessages['deviceVerification']]
+            );
+
+            if (!$update || !$notification) {
+                throw new \RuntimeException('Failed to update device or create notification entry.');
+            }
+
+            return $assignment->assign_to;
+        } catch (\Exception $e) {
+            Log::error("Error during device verification: {$e->getMessage()}");
+            return false;
+        }
+    }
+
+
 
     public function getCount()
     {
@@ -47,21 +120,124 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function getDevices()
     {
         if (isSuperAdmin()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->get();
+            $device =  $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->get();
+            return $device;
         } elseif (isManager()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->get();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->orWhereHas('deviceAssigned', function ($query) {
+                $query->where('assign_to', Auth::id());
+            })
+                ->get();
         } else {
-            return $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations'])
+            $device =  $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations'])
                 ->whereHas('deviceAssigned', function ($query) {
                     $query->where('assign_to', Auth::id());
                 })
                 ->get();
+            return $device;
+        }
+    }
+
+    public function assingedDevices($id)
+    {
+        $query = $this->model::with([
+            'deviceType',
+            'deviceOwner',
+            'createdBy',
+            'deviceAssigned',
+            'deviceAssigned.assignee',
+            'deviceAssigned.deviceLocation',
+            'deviceAssigned.assignee.locations'
+        ]);
+
+        if (!isSuperAdmin()) {
+            return $query->get();
+        } else {
+            $query->where('created_by', $id)
+                ->orWhereHas('deviceAssigned', function ($query) use ($id) {
+                    $query->where('assign_to', $id);
+                });
+            return $query->get();
+        }
+    }
+
+
+
+    public function deviceVerify($id)
+    {
+        $device =  $this->model::with([
+            'deviceType',
+            'deviceOwner',
+            'createdBy',
+            'deviceAssigned',
+            'deviceAssigned.assignee',
+            'deviceAssigned.deviceLocation',
+            'deviceAssigned.assignee.locations'
+        ])
+            ->whereHas('deviceAssigned', function ($query) {
+                $query->where('assign_to', Auth::id());
+            })
+            ->where('id', $id)  // Adding the condition to filter by id
+            ->first();  // Changed from get() to first()
+        return $device;
+    }
+
+
+    public function sendDeviceModel($id)
+    {
+        try {
+            $deviceAssignmentUpdated = DeviceAssignment::where('device_id', $id)
+                ->where('assign_to', Auth::id())->update(['status' => 'Accept','connection_status' => 'Authorized']);
+            $notificationsUpdated = Notifications::where('device_id', $id)
+                ->where('user_id', Auth::id())->update(['read' => 'Yes']);
+            return $deviceAssignmentUpdated;
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json(['error' => 'Update failed'], 500);
         }
     }
 
     public function deviceDashboard()
     {
         return $this->getDevices();
+    }
+
+    public function assingedDevice($id)
+    {
+        return $this->assingedDevices($id);
+    }
+
+    public function resetDevice($id)
+    {
+        try {
+            // Log to check if function is being called
+            Log::info("Resetting device with ID: $id");
+
+            // Attempting to reset the specified fields
+            $affectedRows = DeviceAssignment::where('device_id', $id)
+                ->update([
+                    'email_sent' => 0,
+                    'last_sync' => null,
+                    'send_mac' => 0,
+                    'login_to_device' => 0,
+                    'connection_status' => 'Not Authorized',
+                    'status' => 'Not Responded',
+                    'encryption_key' => null,
+                    'updated_at' => now()
+                ]);
+
+            // Check if any rows were affected
+            if ($affectedRows > 0) {
+                Log::info("Device reset successfully: $id");
+                return response()->json(['success' => true, 'message' => 'Device has been reset successfully.']);
+            } else {
+                Log::warning("No rows affected while resetting device: $id");
+                return response()->json(['success' => false, 'message' => 'No rows were updated.']);
+            }
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error("Error resetting device with ID: $id", ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Failed to reset device.']);
+        }
     }
     /**
      * Pluck all device records from the database.
@@ -203,7 +379,12 @@ class DeviceRepository implements DeviceRepositoryInterface
                         $status = '<span class="badge bg-label-' . $badgeClass . ' me-1">' . e($row->status) . '</span>';
                         return $status;
                     })->addColumn('ownedBy', function ($row) {
-                        $ownedBy = '<a class="primary" href="' . route('users.show', $row->deviceOwner->id) . '">' . $row->deviceOwner->fname . ' ' . $row->deviceOwner->lname . '</a>';
+                        // Check if the current user is a manager and if the device owner has the super admin role
+                        if (isManager() && $row->deviceOwner->hasRole('Super Admin')) {
+                            $ownedBy = "Super Admin";
+                        } else {
+                            $ownedBy = '<a class="primary" href="' . route('users.show', $row->deviceOwner->id) . '">' . $row->deviceOwner->fname . ' ' . $row->deviceOwner->lname . '</a>';
+                        }
                         return $ownedBy;
                     })->addColumn('createdBy', function ($row) {
                         $createdBy = '<a class="secondary" href="' . route('users.show', $row->createdBy->id) . '">' . $row->createdBy->fname . ' ' . $row->createdBy->lname . '</a>';

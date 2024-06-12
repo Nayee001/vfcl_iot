@@ -13,7 +13,11 @@ use App\Http\Requests\StoreAssignDevice;
 use App\Http\Requests\UpdateDeviceRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Services\MqttService;
+use App\Models\Device;
+
 use App\Http\Requests\VerifyDeviceViaApi;
+use App\Models\DeviceAssignment;
 
 class DeviceController extends Controller
 {
@@ -24,10 +28,13 @@ class DeviceController extends Controller
      */
     protected $deviceService;
     protected $userService;
-    function __construct(DeviceService $deviceService, UserService $userService)
+    protected $mqttService;
+
+    function __construct(DeviceService $deviceService, UserService $userService, MqttService $mqttService)
     {
         $this->deviceService = $deviceService;
         $this->userService = $userService;
+        $this->mqttService = $mqttService;
         $this->middleware('permission:device-list', ['only' => ['index', 'store', 'deviceAjaxDatatable']]);
         $this->middleware('permission:device-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:device-edit', ['only' => ['edit', 'update']]);
@@ -51,6 +58,21 @@ class DeviceController extends Controller
         } else {
             return view('devices.customer-device-index');
         }
+    }
+
+    public function verifyDeviceModel($id)
+    {
+        $content = $this->deviceService->deviceVerify($id);
+        // dd($content);
+        return response()->json($content);
+    }
+
+    public function sendDeviceModel($id)
+    {
+        $device = DeviceAssignment::with('device', 'deviceLocation', 'assignee')->where('device_id', $id)->first();
+        $sendApproval = $this->mqttService->sendToDevice($device);
+        $content = $this->deviceService->sendDeviceModel($id);
+        return response()->json($content);
     }
 
     /**
@@ -93,6 +115,61 @@ class DeviceController extends Controller
     {
         $devices = $this->deviceService->deviceDashboard();
         return response()->json($devices);
+    }
+    public function assingedDevice($id)
+    {
+        $devices = $this->deviceService->assingedDevice($id);
+        return response()->json($devices);
+    }
+
+    public function deviceStep2(Request $request)
+    {
+        $deviceAssignments = DeviceAssignment::with('device', 'deviceLocation', 'assignee')
+            ->where('assign_to', Auth::id())
+            ->where('login_to_device', 0)
+            ->where('connection_status', 'Not Authorized')
+            ->get();
+
+        if ($deviceAssignments->isEmpty()) {
+            return response()->json(['error' => 'No device assignments found.'], 404);
+        }
+
+        $devices = [];
+        foreach ($deviceAssignments as $assignment) {
+            $devices[] = [
+                'mac_address' => $assignment->device->mac_address,
+                'api_key' => $assignment->device->short_apikey,
+                'device_name' => $assignment->device->name
+            ];
+        }
+
+        $data = [
+            'title' => 'Device Step 2 : Login and Api Key',
+            'devices' => $devices
+        ];
+
+        return response()->json($data);
+    }
+
+    public function resetDevice($id)
+    {
+        return $this->deviceService->resetDevice($id);
+    }
+
+    public function getAssignedDevices($userId)
+    {
+        try {
+            // Fetch devices created by or assigned to the user
+            $devices = Device::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations'])
+                ->orWhereHas('deviceAssigned', function ($query) use ($userId) {
+                    $query->where('assign_to', $userId);
+                })
+                ->get();
+
+            return response()->json($devices);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**

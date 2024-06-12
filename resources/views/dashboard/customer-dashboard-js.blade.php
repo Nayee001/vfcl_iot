@@ -1,5 +1,5 @@
 @section('script')
-    @if ($showTermsModal)
+    @if ($showNewUserModel)
         <script>
             $(document).ready(function() {
                 $('#terms-conditions').modal('show');
@@ -80,19 +80,20 @@
                     contentType: false,
                     success: function(resp) {
                         $('#password-change-modal').modal('toggle');
-                            $(".modal-backdrop").fadeOut();
-                            Swal.fire({
-                                title: resp.Message,
-                                html: 'Please wait for a moment...',
-                                timer: 5000, // Adjust the timer if needed
-                                timerProgressBar: true,
-                                didClose: () => {
-                                    // Show the password change modal after the Swal message closes
-                                    // $('#password-change-modal').modal('show');
-                                }
-                            });
-                            sessionStorage.setItem('showDeviceGuide', 'true'); // Set a flag to show the guide
-                            window.location.href = '/devices'; // Redirect to device management
+                        $(".modal-backdrop").fadeOut();
+                        Swal.fire({
+                            title: resp.Message,
+                            html: 'Please wait for a moment...',
+                            timer: 5000, // Adjust the timer if needed
+                            timerProgressBar: true,
+                            didClose: () => {
+                                // Show the password change modal after the Swal message closes
+                                // $('#password-change-modal').modal('show');
+                            }
+                        });
+                        sessionStorage.setItem('showDeviceGuide',
+                            'true'); // Set a flag to show the guide
+                        window.location.href = '/devices'; // Redirect to device management
                     },
                     error: function(data) {
                         $(".submit").attr("disabled", false);
@@ -114,7 +115,6 @@
                     }
                 });
             });
-
         });
 
         $(function() {
@@ -154,6 +154,120 @@
                     },
                 ]
             });
+        });
+
+        $(document).ready(function() {
+            // Function to check device status
+            function checkDeviceStatus() {
+                const authUserId = '{{ auth()->user()->id }}'; // Get the user ID dynamically
+                $.ajax({
+                    url: `/customer/assigned/devices/data/${authUserId}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(devices) {
+                        devices.forEach(device => {
+                            if (device.device_assigned && device.device_assigned
+                                .login_to_device && device.device_assigned.status !== 'Accept'
+                            ) {
+                                Swal.fire({
+                                    title: 'Action Required!',
+                                    text: `Device ${device.name} is logged in but not yet accepted.`,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Go to Device',
+                                    cancelButtonText: 'Dismiss'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Redirect to the device session page
+                                        window.location.href = `/devices`;
+                                    }
+                                });
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("An error occurred: ", error);
+                    }
+                });
+            }
+            // Check device status on page load
+            checkDeviceStatus();
+            // Optionally, you can set an interval to check the device status periodically
+            setInterval(checkDeviceStatus, 6000); // Check every 60 seconds
+        });
+
+        document.getElementById('deviceStep2').addEventListener('click', function() {
+            fetch('/deviceStep2')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('modalToggle2Label').innerText = "Error";
+                        document.getElementById('secondModalContent').innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        ${data.error}
+                    </div>
+                `;
+                    } else {
+                        document.getElementById('modalToggle2Label').innerText = data.title;
+                        let content = '';
+                        data.devices.forEach(device => {
+                            content += `
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">${device.device_name}</h5>
+                                <p class="card-text">MAC Address: ${device.mac_address}</p>
+                                <p class="card-text">API Key: <strong>${device.api_key}</strong></p>
+                            </div>
+                        </div>
+                    `;
+                        });
+                        document.getElementById('secondModalContent').innerHTML = content;
+                    }
+                    var secondModal = new bootstrap.Modal(document.getElementById('modalToggle2'));
+                    secondModal.show();
+                })
+                .catch(error => {
+                    document.getElementById('modalToggle2Label').innerText = "Error";
+                    document.getElementById('secondModalContent').innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    No Device Found
+                </div>
+            `;
+                    var secondModal = new bootstrap.Modal(document.getElementById('modalToggle2'));
+                    secondModal.show();
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        });
+
+
+        document.getElementById('prevModal').addEventListener('click', function() {
+            var firstModal = new bootstrap.Modal(document.getElementById('modalToggle'));
+            firstModal.show();
+        });
+
+        document.getElementById('deviceStep3').addEventListener('click', function() {
+            var thirdModal = new bootstrap.Modal(document.getElementById('modalToggle3'));
+            thirdModal.show();
+        });
+
+        document.getElementById('prevModal2').addEventListener('click', function() {
+            var secondModal = new bootstrap.Modal(document.getElementById('modalToggle2'));
+            secondModal.show();
+        });
+
+        document.getElementById('deviceStep4').addEventListener('click', function() {
+            var fourthModal = new bootstrap.Modal(document.getElementById('modalToggle4'));
+            fourthModal.show();
+        });
+
+        document.getElementById('prevModal3').addEventListener('click', function() {
+            var thirdModal = new bootstrap.Modal(document.getElementById('modalToggle3'));
+            thirdModal.show();
         });
     </script>
 @endsection

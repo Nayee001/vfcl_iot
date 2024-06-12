@@ -12,6 +12,8 @@ use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\LocationManagerController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\NotificationController;
+use Illuminate\Support\Facades\Mail;
 
 
 // use App\Mail\UserCreated;
@@ -29,21 +31,22 @@ use App\Http\Controllers\PermissionController;
 |
 */
 
-// Example route to send a test email
-// Route::get('/send-test-mail', function () {
-//     // Retrieve or create a user instance to pass to the mailable
-//     // For testing, you can either create a new user or use a static one
-//     $user = User::first(); // Assuming there's at least one user in your database
+// Route::get('/send-test-email', function () {
+//     $toName = 'Recipient Name';
+//     $toEmail = 'nayee001@gannon.edu'; // Change to the recipient's email address
 
-//     // Check if a user exists
-//     if ($user) {
-//         // Send the email
-//         Mail::to($user->email)->send(new UserCreated($user));
-//         return response()->json(['message' => 'Test email sent successfully to ' . $user->email]);
-//     } else {
-//         return response()->json(['error' => 'No user found in the database.'], 404);
-//     }
+//     Mail::raw('This is a simple test email from your Laravel application.', function ($message) use ($toName, $toEmail) {
+//         $message->to($toEmail, $toName)
+//                 ->subject('Laravel Test Email');
+//         $message->from('ak4917620.ak@gmail.com', 'Your Application Name'); // Change sender information
+//     });
+
+//     return 'Email sent successfully!';
 // });
+// Example route to send a test email
+Route::get('/Test', function () {
+    dd('test');
+});
 
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 
@@ -76,6 +79,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device/dashboard', [DeviceController::class, 'dashboard'])->name('devices.dashboard');
     // Customer Device Data
     Route::get('/customer/devices/data', [DeviceController::class, 'deviceDashboard'])->name('customer.devices.data');
+    Route::get('/reset-device/{id}', [DeviceController::class, 'resetDevice'])->name('reset-device');
+
+    Route::get('/customer/assinged/devices/data/{id}', [DeviceController::class, 'assingedDevice'])->name('customer.assinged.devices.data');
+    Route::get('/deviceStep2', [DeviceController::class, 'deviceStep2'])->name('deviceStep2');
+
+
+    Route::get('/customer/assigned/devices/data/{userId}', [DeviceController::class, 'getAssignedDevices']);
+
+    Route::get('/verify-device-model/{id}',[DeviceController::class, 'verifyDeviceModel'])->name('verify-device-model');
+    Route::get('/send-device-mqtt/{id}',[DeviceController::class, 'sendDeviceModel'])->name('send-device-mqtt');
 
     Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
 
@@ -89,7 +102,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/get-device-line-chart-data/{id}', [HomeController::class, 'getDeviceLineChartData']);
 
-
+    Route::get('/notifications/{id}', [NotificationController::class, 'index'])->name('notifications');
 
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);

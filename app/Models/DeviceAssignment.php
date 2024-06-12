@@ -9,7 +9,7 @@ class DeviceAssignment extends Model
 {
     use HasFactory;
     protected $table = "device_assignments";
-    protected $fillable = ['device_id', 'assign_to', 'assign_by', 'location_id', 'created_at', 'updated_at'];
+    protected $fillable = ['device_id', 'assign_to', 'email_sent', 'assign_by', 'location_id', 'created_at', 'updated_at', 'last_sync', 'send_mac', 'login_to_device', 'connection_status', 'status', 'encryption_key'];
 
     public function assignee()
     {
@@ -19,5 +19,11 @@ class DeviceAssignment extends Model
     public function deviceLocation()
     {
         return $this->belongsTo(LocationName::class, 'location_id');
+    }
+
+
+    public function device()
+    {
+        return $this->belongsTo(Device::class, 'device_id');
     }
 }

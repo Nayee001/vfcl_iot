@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\DeviceRepository;
 use App\Interfaces\DeviceRepositoryInterface;
+use App\Models\Device;
 use App\Repositories\DeviceTypeRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -11,12 +12,13 @@ use Yajra\DataTables\Datatables;
 use App\Repositories\DeviceDataRepository;
 use App\Repositories\LocationRepository;
 use App\Repositories\DeviceAssignRepository;
+use App\Services\MqttService;
 use Exception;
 
 class DeviceService
 {
 
-    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository, $locationRepository, $deviceDataRepository;
+    protected $deviceRepository, $deviceTypeRepository, $deviceAssignRepository, $locationRepository, $deviceDataRepository, $mqttService;
 
     /**
      * Constructor for the class.
@@ -27,8 +29,7 @@ class DeviceService
      * @param DeviceAssignRepository $deviceAssignRepository
      * @param LocationRepository $locationRepository
      * @param DeviceDataRepository $deviceDataRepository
-     *
-     *
+     * @param MqttService $mqttService
      *
      */
     public function __construct(
@@ -36,21 +37,45 @@ class DeviceService
         DeviceTypeRepository $deviceTypeRepository,
         DeviceAssignRepository $deviceAssignRepository,
         LocationRepository $locationRepository,
-        DeviceDataRepository $deviceDataRepository
-
+        DeviceDataRepository $deviceDataRepository,
+        MqttService $mqttService
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->deviceTypeRepository = $deviceTypeRepository;
         $this->deviceAssignRepository = $deviceAssignRepository;
         $this->locationRepository = $locationRepository;
         $this->deviceDataRepository = $deviceDataRepository;
+        $this->mqttService = $mqttService;
     }
 
     public function deviceDashboard()
     {
         return $this->deviceRepository->deviceDashboard();
-
     }
+
+    public function assingedDevice($id)
+    {
+
+        return $this->deviceRepository->assingedDevice($id);
+    }
+
+    public function resetDevice($id)
+    {
+        $device = Device::find($id);
+        $sendMqttReqforResetDevice = $this->mqttService->resetDevice($device);
+        return $this->deviceRepository->resetDevice($id);
+    }
+    public function deviceVerify($id)
+    {
+        return $this->deviceRepository->deviceVerify($id);
+    }
+
+    public function sendDeviceModel($id)
+    {
+        $deviceAuth = $this->deviceRepository->sendDeviceModel($id);
+        return $deviceAuth;
+    }
+
     /**
      * Get Device Data
      */
@@ -214,8 +239,8 @@ class DeviceService
         }
     }
 
-    public function verifyDeviceApi($request,$user){
-        return $this->deviceRepository->verifyDeviceApi($request,$user);
+    public function verifyDeviceApi($request, $user)
+    {
+        return $this->deviceRepository->verifyDeviceApi($request, $user);
     }
-
 }

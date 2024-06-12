@@ -9,6 +9,7 @@ use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use App\Repositories\DeviceDataRepository;
 use App\Repositories\DeviceLogsRepository;
+use App\Repositories\DeviceRepository;
 
 class MqttListener extends Command
 {
@@ -29,15 +30,19 @@ class MqttListener extends Command
 
     protected $deviceDataRepository;
     protected $deviceLogsRepository;
+    protected $deviceRepository;
 
-    public function __construct(DeviceDataRepository $deviceDataRepository, DeviceLogsRepository $deviceLogsRepository) {
+
+    public function __construct(DeviceDataRepository $deviceDataRepository, DeviceLogsRepository $deviceLogsRepository,DeviceRepository $deviceRepository) {
         parent::__construct();
         $this->deviceDataRepository = $deviceDataRepository;
         $this->deviceLogsRepository = $deviceLogsRepository;
+        $this->deviceRepository = $deviceRepository;
     }
+
     public function handle()
     {
-        $mqttService = new MqttService($this->deviceDataRepository, $this->deviceLogsRepository);
+        $mqttService = new MqttService($this->deviceDataRepository, $this->deviceLogsRepository, $this->deviceRepository);
         $mqttService->connectAndSubscribe('mqttdevice/#');
     }
 }
