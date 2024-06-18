@@ -11,7 +11,7 @@ class Notifications extends Model
     use HasFactory, SoftDeletes;
     protected $table = "notifications";
 
-    protected $fillable = ['device_id', 'user_id', 'notification', 'read','created_at','updated_at'];
+    protected $fillable = ['device_id', 'user_id', 'notification', 'read','deleted_at','created_at','updated_at'];
     const READ = ['Yes' => 'Yes', 'No' => 'No'];
 
     const DefaultNotiMessages = [

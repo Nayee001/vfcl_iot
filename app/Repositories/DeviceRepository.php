@@ -42,60 +42,72 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function deviceVerifications($associativeArray)
     {
         try {
-
-            // dd($associativeArray);
             // Check for required keys
             if (!isset($associativeArray['api_key'], $associativeArray['encryption_key'])) {
+                Log::error('Missing required keys in associative array for device verification.');
                 throw new \InvalidArgumentException('Missing required keys in associative array for device verification.');
             }
 
-            // Retrieve device ID using the API key
+            // Retrieve device using the API key
             $device = $this->model::where('short_apikey', $associativeArray['api_key'])->first();
-            // dump($device->id);
+
             if (!$device) {
+                Log::error('No device found with the provided API key.', ['api_key' => $associativeArray['api_key']]);
                 throw new \RuntimeException('No device found with the provided API key.');
             }
 
-            // Retrieve user ID for the device
-            $assignment = DeviceAssignment::where('device_id', $device->id)->first();
-            // dd($assignment);
-            // dump($assignment->device_id);
+            // Retrieve device assignment and user in a single query
+            $assignment = DeviceAssignment::with('assignee')->where('device_id', $device->id)->first();
 
             if (!$assignment) {
+                Log::error('No assignment found for the device.', ['device_id' => $device->id]);
                 throw new \RuntimeException('No assignment found for the device.');
             }
 
+            $user = $assignment->assignee;
 
-            $user = User::find($assignment->assign_to);
             if (!$user) {
+                Log::error('User not found for the assignment.', ['assignment_id' => $assignment->id]);
                 throw new \RuntimeException('User not found.');
             }
 
             if ($assignment->email_sent == true) {
+                Log::info('Email already sent for device assignment.', ['assignment_id' => $assignment->id]);
                 return $assignment->assign_to;
             } else {
-                Mail::to('nayee001@gannon.edu')->send(new DeviceVerificationNotification($device, $user));
+                // Send the device verification email
+                // Mail::to($user->email)->send(new DeviceVerificationNotification($device, $user));
+                Log::info('Sending device verification email.', ['user_email' => $user->email, 'device_id' => $device->id]);
+
                 $assignment->update(['email_sent' => 1]);
             }
 
-            // Update the encryption key and notification
+            // Update the encryption key and login status
             $update = $assignment->update(['encryption_key' => $associativeArray['encryption_key'], 'login_to_device' => 1]);
-            dump($update);
+            if (!$update) {
+                Log::error('Failed to update device assignment with encryption key and login status.', ['assignment_id' => $assignment->id]);
+                throw new \RuntimeException('Failed to update device assignment.');
+            }
+
+            // Create or update the notification
             $notification = Notifications::updateOrCreate(
                 ['device_id' => $device->id, 'user_id' => $assignment->assign_to],
                 ['notification' => Notifications::DefaultNotiMessages['deviceVerification']]
             );
 
-            if (!$update || !$notification) {
-                throw new \RuntimeException('Failed to update device or create notification entry.');
+            if (!$notification) {
+                Log::error('Failed to create or update notification entry.', ['device_id' => $device->id, 'user_id' => $assignment->assign_to]);
+                throw new \RuntimeException('Failed to create or update notification entry.');
             }
 
+            Log::info('Device verification completed successfully.', ['device_id' => $device->id, 'user_id' => $assignment->assign_to]);
             return $assignment->assign_to;
         } catch (\Exception $e) {
-            Log::error("Error during device verification: {$e->getMessage()}");
+            Log::error("Error during device verification: {$e->getMessage()}", ['exception' => $e]);
             return false;
         }
     }
+
 
 
 
@@ -186,7 +198,7 @@ class DeviceRepository implements DeviceRepositoryInterface
     {
         try {
             $deviceAssignmentUpdated = DeviceAssignment::where('device_id', $id)
-                ->where('assign_to', Auth::id())->update(['status' => 'Accept','connection_status' => 'Authorized']);
+                ->where('assign_to', Auth::id())->update(['status' => 'Accept', 'connection_status' => 'Authorized']);
             $notificationsUpdated = Notifications::where('device_id', $id)
                 ->where('user_id', Auth::id())->update(['read' => 'Yes']);
             return $deviceAssignmentUpdated;

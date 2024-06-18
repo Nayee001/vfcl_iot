@@ -162,8 +162,52 @@
             </div>
         @else
             <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
+                <div class="row">
+                    <div class="col-lg-12 mb-4 order-0">
+                        <div class="card">
+                            <div class="d-flex align-items-end row">
+                                <div class="col-sm-7">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-primary title-dash">Welcome To vFCL IoT Platform
+                                            {{ Auth::user()->lname }} 🎉</h5>
+                                        <p class="mb-4">
+                                            You have done <span class="fw-bold">72%</span> more sales today. Check your new
+                                            badge in
+                                            your profile.
+                                        </p>
+                                        <a href="{{ route('devices.index') }}" title="Unread notifications"
+                                            role="button"
+                                            class="flashing btn rounded-pill btn-icon btn-outline-primary position-relative notification-button flashing">
+                                            <i class="fa-solid fa-microchip"></i>
+                                            <span
+                                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge"
+                                                title="Unread notifications">{{ $notifications }}</span>
+                                        </a>
+
+                                        <a href="#" title="Device Alerts" type="button"
+                                            class="flashing btn rounded-pill btn-icon btn-outline-danger position-relative notification-button flashing">
+                                            <i class='bx bxs-alarm-exclamation'></i>
+                                            <span
+                                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success notification-badge"
+                                                title="Device Alerts">0</span>
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-5 text-center text-sm-left">
+                                    <div class="card-body pb-0 px-0 px-md-4">
+                                        <img src="../assets/img/illustrations/man-with-laptop-light.png" height="140"
+                                            alt="View Badge User"
+                                            data-app-dark-img="illustrations/man-with-laptop-dark.png"
+                                            data-app-light-img="illustrations/man-with-laptop-light.png">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-md-12">
                         <div class="card text-center">
                             <div class="card-header">
                                 <a href="{{ route('home') }}" class="app-brand-link d-flex justify-content-center">
@@ -216,15 +260,17 @@
                                         </svg>
                                     </span>
                                 </a>
-                                <h6 class="mt-3 title-dash">Hey, {{ Auth::user()->fname }} {{ Auth::user()->lname }} 🎉
-                                </h6>
-                                <h5 class="mt-3">Welcome to vFCL</h5>
+                                {{-- <h6 class="mt-3 title-dash">Hey, {{ Auth::user()->fname }} {{ Auth::user()->lname }} 🎉
+                                </h6> --}}
+                                <h5 class="mt-3">My Devices</h5>
+                                <p>To get started, please activate your new device by following the steps below.</p>
                             </div>
                             <div class="card-body">
-                                <p class="card-text">To get started, please activate your new device by following the steps
-                                    below.</p>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#modalToggle">Activate Device</button>
+                                <div class="row" id="devices">
+                                    <!-- Device List will be rendered here -->
+                                </div>
+                                {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modalToggle">Activate Device</button> --}}
                             </div>
                         </div>
                     </div>
@@ -605,6 +651,19 @@
                             <button type="submit" id="submit" class="submit btn btn-primary me-2">Submit</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="verificationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <h3>Verify This Device!!</h3>
+                        <p>Please confirm that you want to verify this device to ensure proper functionality and data visualization. This process is necessary to unlock full device capabilities and ensure security compliance.</p>
+                        <p id="modalContent"></p>
+                    </div>
                 </div>
             </div>
         </div>

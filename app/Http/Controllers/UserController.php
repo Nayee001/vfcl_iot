@@ -140,7 +140,7 @@ class UserController extends Controller
     public function update(UpdateUsersRequest $request, $id)
     {
         $validatedData = $request->validated();
-
+        // dd($validatedData);
         if (!empty($validatedData['password'])) {
             $validatedData['password'] = Hash::make($validatedData['password']);
         } else {
@@ -151,7 +151,7 @@ class UserController extends Controller
 
         try {
             $user = $this->userRepository->update($id, $validatedData);
-
+            // dd($user);
             if ($user) {
                 $userAddress = $this->locationRepository->update($id, $validatedData);
                 $locations = $this->locationNameRepository->update($userAddress, $request->all());

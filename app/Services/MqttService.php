@@ -51,8 +51,8 @@ class MqttService implements MqttServiceInterface
                     $this->deviceRepository->deviceVerifications($associativeArray);
                 }
 
-                $this->deviceDataRepository->update_device_data($associativeArray);
-                $this->deviceLogsRepository->create($associativeArray);
+                // $this->deviceDataRepository->update_device_data($associativeArray);
+                // $this->deviceLogsRepository->create($associativeArray);
             }, 0);
 
             $this->mqttClient->loop();
