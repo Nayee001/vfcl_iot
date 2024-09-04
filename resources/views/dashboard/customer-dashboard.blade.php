@@ -1,108 +1,104 @@
-@extends('layouts.app')
+@extends('layouts.customer-app')
 @section('content')
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
-    <style>
-
-    </style>
     @if ($unAuthnewDevices->isNotEmpty())
-        <div class="container-xxl flex-grow-1 container-p-y">
-
+        <div class="container-xxl flex-grow-1">
             <div class="row gy-4">
-                <div class="col-lg-8 mb-4 order-0">
-                    <div class="card">
-                        <div class="d-flex align-items-end row">
-                            <div class="col-sm-7">
-                                <div class="card-body">
-                                    <h5 class="card-title text-primary">Welcome, {{ Auth::user()->fname }}
-                                        {{ Auth::user()->lname }} 🎉</h5>
-                                    <p class="mb-4">
-                                        Devices Health Status: <span class="fw-bold">72</span> data points received today.
-                                        View
-                                        all data on the dashboard.
-                                    </p>
-                                    <a href="{{ route('devices.index') }}" title="Unread notifications" role="button"
-                                        class="btn rounded-pill btn-icon btn-outline-primary position-relative notification-button">
-                                        <i class="fa-solid fa-microchip"></i>
-                                        <span
-                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge"
-                                            title="Unread notifications">{{ $notifications }}</span>
-                                    </a>
-                                    <a href="#" title="Device Alerts" type="button"
-                                        class="btn rounded-pill btn-icon btn-outline-danger position-relative notification-button">
-                                        <i class='bx bxs-alarm-exclamation'></i>
-                                        <span
-                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success notification-badge"
-                                            title="Device Alerts">0</span>
-                                    </a>
+                <div class="col-lg-6 mb-4 order-0">
+                    <div class="d-flex align-items-end row">
+                        <div class="col-sm-12">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Hey, {{ Auth::user()->fname }}
+                                    {{ Auth::user()->lname }} Welcome to {{ env('APP_SHORT_NAME') }} 🥳</h5>
+                                <p class="mb-4 insturctions-steps">
+                                    Click Here to get Device Authentication steps: <a href="" class="auth-steps">Device
+                                        Authentication</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 col-6 mb-4">
+                                <div class="device-msg-card">
+                                    <div class="card-body">
+                                        <div class="card-title d-flex align-items-start justify-content-between">
+                                            <div class="avatar flex-shrink-0">
+                                                <i class='bx bx-comment-dots'></i>
+                                            </div>
+                                        </div>
+                                        <span class="fw-semibold d-block mb-1">Devices Messages</span>
+                                        <h3 class="card-title mb-2">0</h3>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-5 text-center text-sm-left">
-                                <div class="card-body pb-0 px-0 px-md-4">
-                                    <img src="../assets/img/illustrations/man-with-laptop-light.png" height="140"
-                                        alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png"
-                                        data-app-light-img="illustrations/man-with-laptop-light.png" />
+                            <div class="col-lg-6 col-md-12 col-6 mb-4">
+                                <div class="shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="text-muted">Total Faults</span>
+                                                <h3 class="card-title text-nowrap mb-1">0</h3>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="text-muted">Total Errors</span>
+                                                <h3 class="card-title text-nowrap mb-1">0</h3>
+                                            </div>
+                                            <div>
+                                                <i class="fas fa-bug fa-2x text-danger"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 col-6 mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="text-muted">Total Devices</span>
+                                            <h3 class="card-title text-nowrap mb-1">0</h3>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="text-muted">Total Active Devices</span>
+                                            <h3 class="card-title text-nowrap mb-1">0</h3>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-bug fa-2x text-danger"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12 col-6 mb-4">
+                                <div class="card-body">
+                                    <div class="col-md-12">
+                                        <div id="device-fault-status-shown" class="no-device-msg">
+                                            <img src="../assets/img/icons/unicons/error.png" alt=""
+                                                class="rounded no-device-img" />
+                                            <b class="mt-3">No Device Selected</b>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-4 order-1">
+                <div class="col-lg-6 col-md-6 order-1">
                     <div class="row">
-                        <div class="col-lg-6 col-md-12 col-6 mb-4">
+                        <div class="col-lg-12 col-md-12 col-12 mb-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="card-title d-flex align-items-start justify-content-between">
-                                        <div class="avatar flex-shrink-0">
-                                            <img src="../assets/img/icons/unicons/map.png" alt="Credit Card"
-                                                class="rounded" />
-                                        </div>
-                                        <div class="dropdown">
-                                            <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
-                                                <i class="bx bx-dots-vertical-rounded"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-
-                                                <a class="dropdown-item" href="{{ route('users.index') }}"><i
-                                                        class='bx bx-list-ol'></i>
-                                                    View All </a>
-                                                <a class="dropdown-item" href="{{ route('users.create') }}"> <i
-                                                        class='bx bx-plus'></i>Create New </a>
-                                            </div>
-                                        </div>
+                                    <div class="title">
+                                        <h5>Device Locations</h5>
                                     </div>
-                                    <span>Locations</span>
-                                    <h2 class="mb-0 me-2">{{ $locationCount }}</h2>
-                                    <small class="text-success">Total</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12 col-6 mb-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="card-title d-flex align-items-start justify-content-between">
-                                        <div class="avatar flex-shrink-0">
-                                            <img src="../assets/img/icons/unicons/devices.png" alt="Credit Card"
-                                                class="rounded" />
-                                        </div>
-                                        <div class="dropdown">
-                                            <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
-                                                <i class="bx bx-dots-vertical-rounded"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-
-                                                <a class="dropdown-item" href="{{ route('users.index') }}"><i
-                                                        class='bx bx-list-ol'></i>
-                                                    View All </a>
-                                                <a class="dropdown-item" href="{{ route('users.create') }}"> <i
-                                                        class='bx bx-plus'></i>Create New </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span>Devices</span>
-                                    <h2 class="mb-0 me-2">{{ $locationCount }}</h2>
-                                    <small class="text-success">Total</small>
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5918.32800522175!2d-80.08834962342908!3d42.12537214989549!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882d7fe33fa1455d%3A0xbb707491c573cbad!2sI%20-%20Hack!5e0!3m2!1sen!2sus!4v1725480747039!5m2!1sen!2sus"
+                                        width="700" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -111,26 +107,41 @@
             </div>
         </div>
 
-        <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="container-xxl flex-grow-1">
             <div class="row">
                 <!-- Total Revenue -->
                 <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
                     <div class="card">
                         <div class="row row-bordered g-0">
-                            <div class="col-md-8">
+                            <!-- Left Section for Line Chart -->
+                            <div class="col-md-10">
                                 <h5 class="card-header m-0 me-2 pb-3">Device SignWave</h5>
                                 <div id="device-fault-line-chart" class="px-2"></div>
                             </div>
-                            <div class="col-md-4">
-                                <div id="device-fault-status-shown" class="no-device-msg">
-                                    <img src="../assets/img/icons/unicons/error.png" alt="Credit Card"
-                                        class="rounded no-device-img" />
-                                    <b class="mt-3">No Device Selected</b>
+                            <!-- Right Section for Message Transfer Rate and Last Update -->
+                            <div class="col-md-2 d-flex flex-column justify-content-center align-items-start p-4">
+                                <!-- Message Transfer Rate -->
+                                <div class="d-flex align-items-center mb-4">
+                                    <i class='bx bx-share-alt text-primary fs-3 me-2'></i> <br>
+                                    <div>
+                                        <small class="text-muted">Message Transfer Rate</small>
+                                        <h6 class="mb-0">1.3 MS</h6>
+                                    </div>
+                                </div>
+                                <!-- Device Last Update -->
+                                <div class="d-flex align-items-center">
+                                    <i class='bx bx-refresh text-primary fs-3 me-2'></i>
+                                    <div>
+                                        <small class="text-muted">Device Last Update</small>
+                                        <h6 class="mb-0">12/12/2024 12:00AM</h6>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
+
             </div>
             <div class="row">
                 <div class="container-xxl flex-grow-1 container-p-y">
@@ -175,8 +186,7 @@
                                             badge in
                                             your profile.
                                         </p>
-                                        <a href="{{ route('devices.index') }}" title="Unread notifications"
-                                            role="button"
+                                        <a href="{{ route('devices.index') }}" title="Unread notifications" role="button"
                                             class="flashing btn rounded-pill btn-icon btn-outline-primary position-relative notification-button flashing">
                                             <i class="fa-solid fa-microchip"></i>
                                             <span
@@ -261,7 +271,7 @@
                                     </span>
                                 </a>
                                 {{-- <h6 class="mt-3 title-dash">Hey, {{ Auth::user()->fname }} {{ Auth::user()->lname }} 🎉
-                                </h6> --}}
+                            </h6> --}}
                                 <h5 class="mt-3">My Devices</h5>
                                 <p>To get started, please activate your new device by following the steps below.</p>
                             </div>
@@ -270,7 +280,7 @@
                                     <!-- Device List will be rendered here -->
                                 </div>
                                 {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#modalToggle">Activate Device</button> --}}
+                                data-bs-target="#modalToggle">Activate Device</button> --}}
                             </div>
                         </div>
                     </div>
@@ -661,7 +671,9 @@
                 <div class="modal-content">
                     <div class="modal-body text-center">
                         <h3>Verify This Device!!</h3>
-                        <p>Please confirm that you want to verify this device to ensure proper functionality and data visualization. This process is necessary to unlock full device capabilities and ensure security compliance.</p>
+                        <p>Please confirm that you want to verify this device to ensure proper functionality and data
+                            visualization. This process is necessary to unlock full device capabilities and ensure security
+                            compliance.</p>
                         <p id="modalContent"></p>
                     </div>
                 </div>
@@ -669,5 +681,6 @@
         </div>
     </div>
 @endsection
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 @include('dashboard.customer-dashboard-js')

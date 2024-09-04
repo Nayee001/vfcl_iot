@@ -1,6 +1,5 @@
-
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo">
+    <div class="demo">
         <a href="{{ route('home') }}" class="app-brand-link">
             <span class="app-brand-logo demo">
                 <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -46,15 +45,8 @@
                     </g>
                 </svg>
             </span>
-            <span class="app-brand-text demo menu-text fw-bolder ms-2">{{env('APP_SHORT_NAME')}}</span>
-        </a>
-
-        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-            <i class="bx bx-chevron-left bx-sm align-middle"></i>
         </a>
     </div>
-
-    <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
@@ -69,7 +61,7 @@
         <!-- Layouts -->
         <li
             class="menu-item {{ request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
-            <a href="#" class="menu-link menu-toggle">
+            <a href="#" class="menu-link ">
                 <i class="menu-icon tf-icons bx bx-dock-top"></i>
                 <div data-i18n="Account Settings">Settings</div>
             </a>
@@ -101,7 +93,7 @@
         <!-- User interface -->
         @can('device-list')
             <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <a href="javascript:void(0)" class="menu-link ">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     <div data-i18n="User interface">Device Management</div>
                 </a>
@@ -118,18 +110,18 @@
                         </a>
                     </li>
                     @can('device-create')
-                    <li class="menu-item">
-                        <a href="{{ route('devices.create') }}" class="menu-link">
-                            <div data-i18n="Alerts">Create Device</div>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="{{ route('devices.create') }}" class="menu-link">
+                                <div data-i18n="Alerts">Create Device</div>
+                            </a>
+                        </li>
                     @endcan
                     @can('device-type-list')
-                    <li class="menu-item">
-                        <a href="{{ route('devices-type.index') }}" class="menu-link">
-                            <div data-i18n="Accordion">Device Types</div>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="{{ route('devices-type.index') }}" class="menu-link">
+                                <div data-i18n="Accordion">Device Types</div>
+                            </a>
+                        </li>
                     @endcan
                 </ul>
             </li>
@@ -138,7 +130,7 @@
         <!-- Device components -->
         @can('user-list')
             <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <a href="javascript:void(0)" class="menu-link ">
                     <i class="menu-icon tf-icons bx bx-copy"></i>
                     <div data-i18n="Extended UI">User Management</div>
                 </a>
@@ -163,7 +155,7 @@
         <!-- User interface -->
         @can('role-list')
             <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <a href="javascript:void(0)" class="menu-link ">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     <div data-i18n="User interface">Roles & Permission</div>
                 </a>
@@ -189,7 +181,7 @@
         @can('edit permisssions')
             <!-- Device components -->
             <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <a href="javascript:void(0)" class="menu-link ">
                     <i class="menu-icon tf-icons bx bx-copy"></i>
                     <div data-i18n="Extended UI">Permissions</div>
                 </a>
@@ -204,20 +196,32 @@
         @endcan
 
         @can('general-settings-list')
+            <!-- Device components -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link ">
+                    <i class='menu-icon bx bxs-cog'></i>
+                    <div data-i18n="Extended UI">Web Settings</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
+                            <div data-i18n="Perfect Scrollbar">Site Settings</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endcan
+
         <!-- Device components -->
         <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class='menu-icon bx bxs-cog' ></i>
-                <div data-i18n="Extended UI">Web Settings</div>
+            <a class="menu-link" href="{{ route('logout') }}"
+                onclick="event.preventDefault();
+                                document.getElementById('logout-form').submit();">
+                <i class="bx bx-power-off me-2"></i><span class="align-middle">{{ __('Logout') }}</span>
             </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-                        <div data-i18n="Perfect Scrollbar">Site Settings</div>
-                    </a>
-                </li>
-            </ul>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
         </li>
-    @endcan
     </ul>
 </aside>

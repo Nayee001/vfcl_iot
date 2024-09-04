@@ -61,12 +61,16 @@
     <script src="{{ asset('assets/js/jquery-3-2-1.js') }}"></script>
     <script src="{{ asset('assets/js/sweetalert2.all.min.js') }}"></script>
 
+
+
+
     {{-- custom CDNS  --}}
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> --}}
     <!-- SweetAlert2 -->
     {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.29/dist/sweetalert2.all.min.js"></script> --}}
     {{-- <link href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.7.29/dist/sweetalert2.min.css" rel="stylesheet"> --}}
     {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"> --}}
+
     {{-- Datatable links --}}
 </head>
 
@@ -76,7 +80,7 @@
         <div class="layout-container">
             <!-- Menu -->
 
-            @include('navigation.sidebar')
+            @include('navigation.customer-sidebar')
             <!-- / Menu -->
 
             <!-- Layout container -->
@@ -93,7 +97,7 @@
 
                     @yield('content')
                     <!-- / Content -->
-                    @include('navigation.footer')
+                    {{-- @include('navigation.footer') --}}
                     <div class="content-backdrop fade"></div>
                     <!-- Fullscreen Loader -->
                     <div id="fullscreen-loader" style="display:none;"></div>

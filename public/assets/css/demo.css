@@ -2,6 +2,188 @@
 * demo.css
 * File include item demo only specific css only
 ******************************************************************************/
+/* Customer menu design */
+.icon-dashboard {
+    font-size: 37px;
+    color: #696cff;
+}
+
+#layout-menu {
+    background-color: #f8f9fa;
+    border-right: 1px solid #e0e0e0;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+.menu-inner {
+    padding: 0;
+    width: 100%;
+}
+
+.menu-item {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.menu-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
+
+.menu-icon {
+    font-size: 24px;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.menu-text {
+    font-size: 12px;
+    margin-top: 8px;
+    color: #333;
+    display: block;
+    text-align: center;
+}
+
+
+.app-brand.demo {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.app-brand-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+}
+
+.app-brand-logo svg {
+    width: 50px;
+    /* Adjust size as needed */
+    height: auto;
+}
+
+.logout {
+    margin-top: auto !important;
+    /* Push the logout button to the bottom */
+}
+
+/* customer sidebar end  */
+/* customer navbar start */
+#layout-navbar {
+    background-color: #ffffff; /* Change this to match your design's background color */
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); Adds a subtle shadow for depth */
+    padding: 0.75rem 1rem; /* Adjusts the padding for a balanced look */
+}
+
+.navbar-nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.nav-item .nav-link {
+    color: #333; /* Change this to the desired icon/text color */
+    padding: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.nav-item .nav-link:hover {
+    color: #696cff; /* Adjust the hover color */
+}
+
+.icon-notification {
+    font-size: 24px; /* Adjust size of the notification icon */
+    color: #696cff; /* Notification bell color */
+    position: relative;
+}
+
+.icon-notification:hover {
+    color: #333; /* Change on hover */
+}
+
+.avatar-online img {
+    border: 2px solid #34c38f; /* Border to indicate online status, adjust color if needed */
+    padding: 2px;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333; /* Adjust the text color */
+    transition: color 0.3s ease;
+}
+
+.user-name:hover {
+    color: #696cff; /* Match this with the theme */
+}
+
+.dropdown-user .dropdown-menu {
+    min-width: 200px; /* Adjust the width of the dropdown */
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    font-size: 14px; /* Adjust the font size for readability */
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #696cff; /* Match this with the theme */
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+}
+
+.dropdown-toggle::after {
+    display: none; /* Hides the default arrow */
+}
+/* Navbar end */
+
+/* Customer Dashboard before device auth*/
+.auth-steps{
+    color: green;
+    text-decoration: underline;
+}
+.insturctions-steps{
+    color:red;
+}
+
+.device-msg-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    color: white;
+    background-color: #ff5757;
+}
+
+.device-cards {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    color: rgb(255, 255, 255);
+}
 
 .menu .app-brand.demo {
     height: 64px;
@@ -9,8 +191,8 @@
 }
 
 .app-brand-logo.demo svg {
-    width: 22px;
-    height: 38px;
+    width: 61px;
+    height: 65px;
 }
 
 .app-brand-text.demo {
@@ -370,68 +552,6 @@
 .username{
     color:#696cff;
 }
-
-/* .flashing {
-    text-decoration: none;
-    background-image: linear-gradient(to right, #6400a4, #5e07b5, #5411c6, #411bd8, #1225eb);
-    border: 2px dotted white;
-    color: aliceblue;
-    border-radius: 50%;
-    padding: 15px;
-    position: relative;
-}
-
-.flashing::after {
-    position: absolute;
-    content: '';
-    bottom: -7px;
-    top: -7px;
-    left: -7px;
-    right: -7px;
-    background-color: transparent;
-    border-radius: 50%;
-    border: 4px solid #fff;
-    margin: 0px;
-    opacity: 1;
-    transform-origin: center;
-    animation: anim 800ms linear infinite;
-}
-
-.flashing::before {
-    position: absolute;
-    content: '';
-    bottom: -7px;
-    top: -7px;
-    left: -7px;
-    right: -7px;
-    background-color: transparent;
-    border-radius: 50%;
-    border: 4px solid #fff;
-    margin: 0px;
-    opacity: 0.8;
-    transform-origin: center;
-    animation: anim 800ms linear 400ms infinite;
-}
-
-@keyframes anim {
-    from {
-        margin: 0px;
-        opacity: 1;
-    }
-
-    to {
-        margin: -15px;
-        opacity: 0;
-    }
-}
-
-span {
-    color: #fff;
-    font-family: sans-serif;
-    font-weight: 600;
-    margin-left: 20px;
-} */
-
 @import "compass";
 
 
