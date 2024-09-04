@@ -43,7 +43,7 @@
             }
 
             function generateDeviceCard(device, verifyButton) {
-                const statusIconColor = device.status === 'Active' ? 'green' : '#dc3545';
+                const statusIconColor = device.status === 'Authorized' ? 'green' : '#dc3545';
                 const isPending = device.device_assigned.status === 'Not Responded' || device.device_assigned.status === 'Reject';
                 const deviceStatusText = device.device_assigned.status === 'Accept' ?
                     `Accepted by ${device.device_assigned.assignee.fname}` :

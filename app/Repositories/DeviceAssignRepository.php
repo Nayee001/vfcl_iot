@@ -36,14 +36,20 @@ class DeviceAssignRepository implements DeviceAssignRepositoryInterface
 
 
         $modifiedData = array_intersect_key($inputdata, array_flip($fillableFields));
-        if ($this->model->where('device_id', $modifiedData['device_id'])->exists()) {
-            return false;
-        }
+        // if ($this->model->where('device_id', $modifiedData['device_id'])->exists()) {
+        //     dd('aa');
+        //     return false;
+
+        // }
         $modifiedData['assign_by'] = Auth::id();
+        // dd($modifiedData);
         $user = User::find($modifiedData['assign_to']);
         $device = Device::find($modifiedData['device_id']);
         Mail::to($user->email)->send(new \App\Mail\DeviceAssigned($device, $user));
-        return (bool) $this->model->create($modifiedData);
+        $store = (bool) $this->model->create($modifiedData);
+        dd($store);
+        return $store;
+
     }
 
     public function destroy($id)

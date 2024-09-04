@@ -170,8 +170,8 @@
                                 .login_to_device && device.device_assigned.status !== 'Accept'
                             ) {
                                 Swal.fire({
-                                    title: 'Action Required!',
-                                    text: `Device ${device.name} is logged in but not yet accepted.`,
+                                    title: 'Authorization Required!',
+                                    text: `Device ${device.name} has successfully logged in but requires Authorization.`,
                                     icon: 'warning',
                                     showCancelButton: true,
                                     confirmButtonText: 'Go to Device',
@@ -220,14 +220,20 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">${device.device_name}</h5>
-                                <p class="card-text">MAC Address: ${device.mac_address}</p>
-                                <p class="card-text">API Key: <strong>${device.api_key}</strong></p>
+                                <p class="card-text highlighted yellow animating">MAC Address: ${device.mac_address}</p>
+                                <p class="card-text highlighted yellow animating">API Key: ${device.api_key}</strong></p>
                             </div>
                         </div>
                     `;
                         });
                         document.getElementById('secondModalContent').innerHTML = content;
                     }
+                    setTimeout(function() {
+                        var animating = document.querySelectorAll('.highlighted.animating');
+                        for (var i = 0; i < animating.length; i++) {
+                            animating[i].classList.remove('animating');
+                        }
+                    }, 2000);
                     var secondModal = new bootstrap.Modal(document.getElementById('modalToggle2'));
                     secondModal.show();
                 })
@@ -269,5 +275,194 @@
             var thirdModal = new bootstrap.Modal(document.getElementById('modalToggle3'));
             thirdModal.show();
         });
+
+
+        $(document).ready(function() {
+            $.ajax({
+                url: '/customer/devices/data',
+                type: 'GET',
+                dataType: 'json',
+                success: function(devices) {
+                    let contentHtml = '';
+                    let topMessageHtml = '';
+                    let deviceNames = [];
+                    if (devices.length > 0) {
+                        devices.forEach(device => {
+                            if (device.device_assigned.status === 'Not Responded' || device
+                                .device_assigned.status === 'Reject') {
+                                deviceNames.push(device.name);
+                            }
+                            const verifyButton = (device.device_assigned.status ===
+                                    'Not Responded' || device.device_assigned.status ===
+                                    'Reject') ?
+                                `<button class="btn btn-warning btn-sm" onclick="verifyDevice(${device.id})">Accept</button>` :
+                                '';
+                            contentHtml += generateDeviceCard(device, verifyButton);
+                        });
+                        if (deviceNames.length > 0) {
+                            topMessageHtml = `
+                                    <div class="alert alert-warning" role="alert">
+                                      <b style="color: red;"> ${deviceNames.join(', ')} ; need to be accepted from the command center</b>
+                                    </div>
+                                `;
+                        }
+                    } else {
+                        contentHtml = noDevicesAssignedMessage();
+                    }
+                    $('#devices').html(contentHtml);
+                    $('#top-message').html(topMessageHtml);
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: ", error);
+                    $('#devices').html(fetchDevicesErrorMessage());
+                }
+            });
+        });
+
+        function getRandomBackgroundColor() {
+            const colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-dark'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function generateDeviceCard(device, verifyButton) {
+            const statusIconColor = device.status === 'Active' ? 'green' : '#dc3545';
+            const isPending = device.device_assigned.status === 'Not Responded' || device.device_assigned.status ===
+                'Reject';
+            const deviceStatusText = device.device_assigned.status === 'Accept' ?
+                `Accepted by ${device.device_assigned.assignee.fname}` :
+                device.device_assigned.status;
+
+            const notLoggedInMessage = `
+                    <div class="alert alert-danger" role="alert">
+                        This device is not logged in or plugged in.
+                    </div>
+                `;
+
+            const needsAcceptanceMessage = `
+                    <div class="alert alert-warning" role="alert">
+                        This device needs to be accepted from the command center.
+                    </div>
+                `;
+
+            return `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card custom-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-laptop"></i> ${device.name}
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2">
+                                        <i class="bi bi-circle-fill" style="color: ${statusIconColor};"></i> ${device.device_assigned.connection_status}
+                                    </h6>
+                                </div>
+
+                                <p class="card-text"><strong>Location:</strong> ${device.device_assigned.device_location.location_name || 'i Hack'}</p>
+                                <p class="card-text"><strong>Last Sync:</strong> ${device.lastActive || 'Not Synced Yet'}</p>
+                                <p class="card-text"><strong>Connection Status:</strong> ${device.device_assigned.connection_status || 'Authorized'}</p>
+                                <p class="card-text"><strong>API KEY:</strong><span style="color: ${statusIconColor};"> ${device.short_apikey}</span></p>
+                                <p class="card-text"><strong>Mac Address:</strong><span style="color: ${statusIconColor};"> ${device.mac_address}</span></p>
+
+                                ${device.device_assigned.login_to_device == false || device.device_assigned.login_to_device == 0 ? `
+                                                ${notLoggedInMessage}
+                                            ` : isPending ? `
+                                                ${needsAcceptanceMessage}
+                                                ${verifyButton}
+                                            ` : ''}
+                            </div>
+                            <div class="card-footer">
+                                ${device.device_assigned.status === 'Accept' ? `
+                                                <p class="card-text mt-2 mb-0 text-success">${deviceStatusText}</p>
+                                            ` : ''}
+                                ${device.device_assigned.login_to_device == true || device.device_assigned.login_to_device == 1 ? `
+                                                <button class="btn btn-primary mt-3" onclick="viewGraph('${device.id}')">See Graph</button>
+                                            ` : ''}
+                                <button class="btn btn-primary btn-circle mt-3" data-bs-toggle="modal"
+                                    data-bs-target="#modalToggle" onclick="activateDevice('${device.id}')">Activate</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        function activateDevice(deviceId) {
+            // Logic to handle device activation steps
+            // alert("Activating device with ID:", deviceId);
+        }
+
+        window.verifyDevice = function(deviceId) {
+            fetch(`{{ url('verify-device-model') }}/${deviceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        showVerificationModal(data, deviceId);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during verification:', error);
+                    alert(`Failed to verify device ID ${deviceId}`);
+                });
+        };
+
+        function showVerificationModal(data, deviceId) {
+            const contentHtml = `
+                    Device Name: <b>${data.name}</b> <br>
+                    Status: ${data.status}<br>
+                `;
+
+            const verifyAgainButton = document.createElement('button');
+            verifyAgainButton.type = 'button';
+            verifyAgainButton.className = 'btn btn-warning';
+            verifyAgainButton.textContent = 'Accept';
+            verifyAgainButton.onclick = function() {
+                sendToDevice(deviceId);
+            };
+
+            document.getElementById('modalContent').innerHTML = contentHtml;
+            document.getElementById('modalContent').appendChild(verifyAgainButton);
+            $('#verificationModal').modal('show');
+        }
+
+        window.sendToDevice = function(deviceId) {
+            $('#verificationModal').modal('hide');
+
+            const timer = 10000;
+            let timerInterval;
+            Swal.fire({
+                title: 'Device Activation',
+                html: `Please wait for <b></b> seconds.`,
+                timer: timer,
+                timerProgressBar: true,
+                didOpen: () => {
+                    const b = Swal.getHtmlContainer().querySelector('b');
+                    timerInterval = setInterval(() => {
+                        b.textContent = Math.round(Swal.getTimerLeft() / 1000);
+                    }, 100);
+                },
+                didClose: () => {
+                    clearInterval(timerInterval);
+                }
+            });
+
+            console.log("sendToDevice device with ID:", deviceId);
+            fetch(`{{ url('send-device-mqtt') }}/${deviceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        Swal.fire({
+                            title: "Device Authorized",
+                            text: "Please check the device; it is now ready for use.",
+                            icon: "success"
+                        }).then(() => {
+                            window.location.reload();
+                            $('#verificationModal').modal('hide');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during verification:', error);
+                    alert(`Failed to accept device ID ${deviceId}`);
+                });
+        };
     </script>
 @endsection
