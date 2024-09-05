@@ -156,45 +156,45 @@
             });
         });
 
-        $(document).ready(function() {
-            // Function to check device status
-            function checkDeviceStatus() {
-                const authUserId = '{{ auth()->user()->id }}'; // Get the user ID dynamically
-                $.ajax({
-                    url: `/customer/assigned/devices/data/${authUserId}`,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(devices) {
-                        devices.forEach(device => {
-                            if (device.device_assigned && device.device_assigned
-                                .login_to_device && device.device_assigned.status !== 'Accept'
-                            ) {
-                                Swal.fire({
-                                    title: 'Authorization Required!',
-                                    text: `Device ${device.name} has successfully logged in but requires Authorization.`,
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Go to Device',
-                                    cancelButtonText: 'Dismiss'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        // Redirect to the device session page
-                                        window.location.href = `/devices`;
-                                    }
-                                });
-                            }
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("An error occurred: ", error);
-                    }
-                });
-            }
-            // Check device status on page load
-            checkDeviceStatus();
-            // Optionally, you can set an interval to check the device status periodically
-            setInterval(checkDeviceStatus, 6000); // Check every 60 seconds
-        });
+        // $(document).ready(function() {
+        //     // Function to check device status
+        //     function checkDeviceStatus() {
+        //         const authUserId = '{{ auth()->user()->id }}'; // Get the user ID dynamically
+        //         $.ajax({
+        //             url: `/customer/assigned/devices/data/${authUserId}`,
+        //             type: 'GET',
+        //             dataType: 'json',
+        //             success: function(devices) {
+        //                 devices.forEach(device => {
+        //                     if (device.device_assigned && device.device_assigned
+        //                         .login_to_device && device.device_assigned.status !== 'Accept'
+        //                     ) {
+        //                         Swal.fire({
+        //                             title: 'Authorization Required!',
+        //                             text: `Device ${device.name} has successfully logged in but requires Authorization.`,
+        //                             icon: 'warning',
+        //                             showCancelButton: true,
+        //                             confirmButtonText: 'Go to Device',
+        //                             cancelButtonText: 'Dismiss'
+        //                         }).then((result) => {
+        //                             if (result.isConfirmed) {
+        //                                 // Redirect to the device session page
+        //                                 window.location.href = `/devices`;
+        //                             }
+        //                         });
+        //                     }
+        //                 });
+        //             },
+        //             error: function(xhr, status, error) {
+        //                 console.error("An error occurred: ", error);
+        //             }
+        //         });
+        //     }
+        //     // Check device status on page load
+        //     checkDeviceStatus();
+        //     // Optionally, you can set an interval to check the device status periodically
+        //     setInterval(checkDeviceStatus, 6000); // Check every 60 seconds
+        // });
 
         document.getElementById('deviceStep2').addEventListener('click', function() {
             fetch('/deviceStep2')
