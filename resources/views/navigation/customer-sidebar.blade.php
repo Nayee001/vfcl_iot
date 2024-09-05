@@ -61,7 +61,7 @@
         <!-- Layouts -->
         <li
             class="menu-item {{ request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
-            <a href="#" class="menu-link ">
+            <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link ">
                 <i class="menu-icon tf-icons bx bx-dock-top"></i>
                 <div data-i18n="Account Settings">Settings</div>
             </a>
@@ -93,17 +93,11 @@
         <!-- User interface -->
         @can('device-list')
             <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link ">
+                <a  href="{{ route('devices.index') }}" class="menu-link ">
                     <i class="menu-icon tf-icons bx bx-box"></i>
-                    <div data-i18n="User interface">Device Management</div>
+                    <div data-i18n="User interface">Devices</div>
                 </a>
                 <ul class="menu-sub">
-
-                    {{-- <li class="menu-item">
-                        <a href="{{ route('devices.dashboard') }}" class="menu-link">
-                            <div data-i18n="Accordion">Device Dashboard</div>
-                        </a>
-                    </li> --}}
                     <li class="menu-item">
                         <a href="{{ route('devices.index') }}" class="menu-link">
                             <div data-i18n="Alerts">Device List</div>

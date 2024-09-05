@@ -1,71 +1,151 @@
-@extends('layouts.app')
+@extends('layouts.customer-app')
+
 @section('content')
-    <!-- Content wrapper -->
-    <div class="content-wrapper">
-        <!-- Content -->
-        <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                <img src="{{ asset('assets/img/illustrations/iot.png') }}" alt="iot"
-                                    class="d-block rounded iot" height="100" width="100" id="uploadedAvatar">
-                                <div class="button-wrapper">
-                                    <div class="card-title mb-0">
-                                        <h5 class="m-0 me-2">{{ $deviceData->name }}</h5>
-                                        <br>
-                                        <small class=""><b>Device Type :</b>
-                                            {{ $deviceData->deviceType->device_type }}</small> <br>
-                                        <small class=""><b>Description :</b> {{ $deviceData->description }}</small>
-                                        <br>
-                                        <small><b>Created Date :</b> {{ $deviceData->created_at->format('F j, Y') }}</small>
+    <style>
+        {
+            margin-right: 15px;
+        }
 
-                                    </div>
+        .form-check-label {
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+    {{-- @dd($deviceData) --}}
+    <div class="container-xl flex-grow-1">
+        <!-- Welcome Message -->
+        <div class="text-center mb-4 mt-1">
+            <h2>Hey, {{ Auth::user()->fname }}! Welcome to vFCL IoT Device 🎉</h2>
+            <p style="font-size: 18px; color:black;">
+                Please ensure your device is connected to the internet before proceeding. <br> Do not close this page until
+                the
+                process is complete.
+            </p>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="row mb-4">
+            <!-- Left Column: Device Info and Status -->
+            <div class="col-md-8 mb-4">
+                <div class="">
+                    <div class="card-body">
+                        <div class="row align-items-start">
+                            <!-- Device Information -->
+                            <div class="col-md-6 d-flex align-items-center">
+                                {{-- <img src="{{ asset('assets/img/illustrations/iot.png') }}" alt="iot"
+                                    class="d-block rounded-circle" height="80" width="80"> --}}
+                                <div class="ms-3">
+                                    <h5 class="m-0 text-primary">{{ $deviceData->name }}</h5>
+                                    <small class="text-muted">{{ $deviceData['deviceAssigned']->connection_status }}</small>
                                 </div>
+                            </div>
 
-                                <div class="ml-auto ">
-                                    <div class="button-wrapper">
-                                        <div class="card-title mb-0">
-                                            <h5 class="m-0 me-2">API KEY: <a data-bs-toggle="tooltip" data-bs-offset="0,4"
-                                                    data-bs-placement="right" data-bs-html="true" title=""
-                                                    data-bs-original-title="<i class='bx bx-copy-alt'></i> <span>Copy on Clipboard</span>"
-                                                    href="javascript:void()" id="copied"> {{ $deviceData->api_key }}</a>
-                                            </h5>
-                                            <br>
-                                            <small class=""><b>Status :</b>
-                                                {{ $deviceData->status }}</small> <br>
-                                            <small class=""><b>Health Status :</b>
-                                                {{ $deviceData->health }}</small>
-                                            <br>
-                                            <small><b>Manager :</b>
-                                                <a href="{{ route('users.show', $deviceData->deviceOwner->id) }}">{{ $deviceData->deviceOwner->fname }}
-                                                    {{ $deviceData->deviceOwner->lname }}</a> </small> <br>
-                                            @if ($deviceData->deviceAssigned)
-                                                <small><b>Assingee :</b><a
-                                                        href="{{ route('users.show', $deviceData->deviceAssigned->assignee->id) }}">{{ $deviceData->deviceAssigned->assignee->fname }}
-                                                        {{ $deviceData->deviceAssigned->assignee->lname }}</a> </small>
-                                            @endif
-                                        </div>
+                            <!-- Device Status Legends -->
+                            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                                <div class="card-title mb-0">
+                                    <div class="mt-3">
+                                        <ul class="list-unstyled d-flex flex-wrap gap-3">
+                                            <li class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox"
+                                                    {{ $deviceData['deviceAssigned']->login_to_device == 1 ? 'checked' : '' }}
+                                                    name="status" id="loginStatus" disabled value="loginStatus">
+
+                                                <label class="form-check-label" for="loginStatus">
+                                                    Login Status
+                                                </label>
+                                            </li>
+                                            <li class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" name="status"
+                                                    id="macAddressVerification" disabled value="macAddressVerification">
+                                                <label class="form-check-label" for="macAddressVerification">
+                                                    Mac Address Verification
+                                                </label>
+                                            </li>
+                                            <li class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" name="status"
+                                                    id="apiKeyVerification" disabled value="apiKeyVerification">
+                                                <label class="form-check-label" for="apiKeyVerification">
+                                                    API Key Verification
+                                                </label>
+                                            </li>
+                                            <li class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" name="status"
+                                                    id="deviceSoftwareUpdate" disabled value="deviceSoftwareUpdate">
+                                                <label class="form-check-label" for="deviceSoftwareUpdate">
+                                                    Device Software Update
+                                                </label>
+                                            </li>
+                                            <li class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" name="status"
+                                                    id="securityConnection" disabled value="securityConnection">
+                                                <label class="form-check-label" for="securityConnection">
+                                                    Security Connection
+                                                </label>
+                                            </li>
+                                        </ul>
                                     </div>
-                                </div>
 
+                                </div>
                             </div>
-                            <div class="image-container"
-                                style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                                <img src="{{ asset('assets/img/illustrations/no-devices.jpg') }}" alt="No Devices"
-                                    width="500" class="no-device img-fluid"
-                                    data-app-dark-img="illustrations/page-misc-error-dark.png"
-                                    data-app-light-img="illustrations/page-misc-error-light.png" />
+                            <!-- Device API Key and MAC Address -->
+                            <div class="col-md-12 text-start mt-3">
+                                <div class="mb-2">
+                                    <a href="javascript:void(0)" class="text-primary" style="font-size: 14px;">
+                                        <i class='bx bx-copy-alt'></i> {{ $deviceData->short_apikey }}
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="javascript:void(0)" class="text-success" style="font-size: 14px;">
+                                        <i class='bx bx-copy-alt'></i> {{ $deviceData->mac_address }}
+                                    </a>
+                                </div>
                             </div>
-                            <div class="text-container" style="text-align: center;">
-                                {{__('messages.no_msg')}}
+                            <!-- Device Auth Progress (Optional) -->
+                            <div class="col-md-12 mt-4">
+                                <h6>Device Authentication Progress</h6>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%;"
+                                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Steps for Device Authentication -->
+            <div class="col-md-4">
+                <div class="card">
+                    <h5 class="card-header">Follow these steps: </h5>
+                    <div class="card-body">
+                        <ol class="list-group list-group-numbered">
+                            <li class="">
+                                Log in to the vFCL platform using your web credentials.
+                            </li>
+                            <li class="">
+                                Enter your MAC Address and API Key into the device.
+                            </li>
+                            <li class="">
+                                Wait for the device to respond for authorization.
+                            </li>
+                            <li class="">
+                                Check your email and refresh this page for the device authentication message.
+                            </li>
+                            <li class="">
+                                Authorize your device through the vFCL web platform by clicking the Auth button.
+                            </li>
+                            <li class="">
+                                Wait for the security connections to establish.
+                            </li>
+                            <li class="">
+                                Device authorization is now complete!
+                            </li>
+                        </ol>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
-@include('users.user-js')
+
+@include('devices.customer-device-Show-js')
