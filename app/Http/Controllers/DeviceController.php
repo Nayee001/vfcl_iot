@@ -130,6 +130,9 @@ class DeviceController extends Controller
         $devices = $this->deviceService->assingedDevice($id);
         return response()->json($devices);
     }
+    public function quickStart(){
+        return view('devices.quickStart');
+    }
 
     public function deviceStep2(Request $request)
     {
