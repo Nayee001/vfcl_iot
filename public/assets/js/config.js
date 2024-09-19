@@ -164,43 +164,38 @@ var lastDate = 0;
 var data = [];
 var XAXISRANGE = 10 * 60000; // Adjust this based on your needs
 
+// Fetch waveform data (current and voltage) and update the chart
 function fetchChartDataAndUpdateChart(deviceId) {
     fetch(`/get-device-line-chart-data/${deviceId}`)
         .then((response) => response.json())
         .then((newData) => {
+            // Assuming newData contains an array of objects with 'x' (timestamp) and 'y' (voltage/current value)
             data = newData.data.map((item) => ({
-                x: new Date(item.x),
-                y: item.y,
+                x: new Date(item.x),  // Convert timestamp to JS Date object
+                y: item.y,             // Voltage or Current value
             }));
+
             if (chart) {
                 chart.updateSeries([{ data: data }]);
             }
-        });
+        })
+        .catch((error) => console.error('Error fetching chart data:', error));
 }
 
-async function showData(deviceId) {
-    try {
-        const deviceData = await fetchDeviceData(deviceId);
-        updateUIWithDeviceData(deviceData);
-        showLineChart(deviceId);
-    } catch (error) {
-        showError(error);
-    }
-}
-
+// Show the data in the chart for a given deviceId
 function showLineChart(deviceId) {
     fetchChartDataAndUpdateChart(deviceId);
 }
 
+// ApexCharts chart initialization
 document.addEventListener("DOMContentLoaded", function () {
-    // Define chart options
     var options = {
         series: [{
-            name: "Valts",
-            data: data.slice(),
+            name: "Current",  // You can update the name depending on what you're plotting (e.g., "Voltage", "Current Phase 1")
+            data: data.slice(),  // Initially, data will be empty; will be populated in real-time
         }],
         chart: {
-            type: "area",
+            type: "area",  // Can also be 'line' or other types depending on your visualization needs
             stacked: false,
             height: 350,
             zoom: {
@@ -219,6 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
             size: 0,
         },
         title: {
+            text: "Real-Time Waveform",
             align: "left",
         },
         fill: {
@@ -233,35 +229,43 @@ document.addEventListener("DOMContentLoaded", function () {
         yaxis: {
             labels: {
                 formatter: function (val) {
-                    return val;
+                    return val;  // Customize this based on what you're plotting (e.g., Current in Amps)
                 },
             },
             title: {
-                text: "Valts",
+                text: "Current (A)",  // Update based on the type of data you're showing
             },
         },
         xaxis: {
-            type: "datetime",
+            type: "datetime",  // Time-based x-axis for real-time data
         },
         tooltip: {
             shared: false,
             y: {
                 formatter: function (val) {
-                    return val;
+                    return val;  // Customize for voltage/current values
                 },
             },
         },
     };
 
+    // Initialize the chart
     chart = new ApexCharts(document.querySelector("#device-fault-line-chart"), options);
     chart.render();
 
-    // // Initially fetch some data to display
-    // fetchChartDataAndUpdateChart();
-
-    // // Then, update the chart every 1 second with new data
-    // window.setInterval(function () {
-    //     fetchChartDataAndUpdateChart(1);
-    // }, 1000); // Adjust this interval as needed
-
+    // Periodically fetch and update the chart data every second (or another interval)
+    window.setInterval(function () {
+        fetchChartDataAndUpdateChart(1);  // Replace '1' with the actual deviceId or parameter
+    }, 1000);  // Adjust the interval as needed (1 second here)
 });
+
+
+async function showData(deviceId) {
+    try {
+        const deviceData = await fetchDeviceData(deviceId);
+        updateUIWithDeviceData(deviceData);
+        showLineChart(deviceId);
+    } catch (error) {
+        showError(error);
+    }
+}

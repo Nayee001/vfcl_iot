@@ -1,6 +1,28 @@
-@extends('layouts.customer-app')<style>
+@extends('layouts.customer-app')
+<style>
     .pulse {
         animation: pulse-animation 1.5s infinite;
+    }
+
+    /* Blinking animation */
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .blink-button {
+        animation: blink 1.5s infinite;
+        text-decoration: none;
+        color: #fff;
     }
 
     @keyframes pulse-animation {
@@ -331,11 +353,11 @@
                 <div class="DocSearch-content col-12 container-p-y">
                     <h2 class="mb-6 doc-page-title">Hey {{ Auth::user()->fname }} {{ Auth::user()->lname }}, welcome to
                         {{ env('APP_SHORT_NAME') }} 🚀</h2>
-
                     <p class="lead">
                         We're excited to have you onboard. Dive into your personalized IoT dashboard and start exploring the
                         smart features and real-time insights we have to offer. Let's make the future smarter together! 🚀
                     </p>
+                    <p class="lead">Click On the Device <code>Device Quick Start Manual</code> to bootup the device.</p>
                     <hr class="my-12">
 
                     <div class="row">
@@ -349,7 +371,8 @@
                                     <p>Get your IoT device up and running with the vFCL Web Platform. Simply click "Start
                                         Now" to begin setting up your device and unlock powerful insights and control.</p>
 
-                                    <p class="fw-bold mb-0"><a class="stretched-link" href="{{route('quickStart')}}">Start now
+                                    <p class="fw-bold mb-0"><a class="stretched-link"
+                                            href="{{ route('quickStart') }}">Start now
                                             <i class="bx bx-chevron-right"></i></a></p>
                                 </div>
                             </div>
@@ -363,7 +386,8 @@
                                     <h4>Device Authentication Manual 🤩</h4>
                                     <p>Authenticate your IoT device effortlessly by logging in and inserting your API keys.
                                         No complex configurations required, just quick and secure setup.</p>
-                                    <p class="fw-bold mb-0"><a class="stretched-link" href="config.html">Start
+                                    <p class="fw-bold mb-0"><a class="stretched-link"
+                                            href="{{ route('devices.index') }}">Start
                                             Authentication <i class="bx bx-chevron-right"></i></a></p>
 
                                 </div>
@@ -372,15 +396,17 @@
                     </div>
                 </div>
             </div>
+            <hr>
+            <div class="row flex-xl-nowrap">
+                <div class="DocSearch-content col-12 container-p-y">
+                    <h2 class="mb-6 doc-page-title">My Devices</h2>
+                    <div class="row" id="myDevices">
+                    </div>
+                </div>
+            </div>
         @endif
     </div>
-
     <div class="container-xxl flex-grow-1">
-        <div class="row">
-            <!-- Total Revenue -->
-
-
-        </div>
         @if ($unAuthnewDevices->isNotEmpty())
             <div class="row">
                 <div class="container-xxl flex-grow-1 container-p-y">
@@ -542,11 +568,10 @@
             <div class="modal-dialog modal-dialog-scrollable" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalScrollableTitle">IOT-Web Terms and Conditions and Privacy
+                        <h5 class="modal-title" id="modalScrollableTitle">vFCL Platform Terms and Conditions and Privacy
                             Policies</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
                     <div class="modal-body">
                         <p>
                             Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
@@ -704,8 +729,6 @@
                             scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
                             auctor fringilla.
                         </p>
-                    </div>
-                    <div class="modal-footer">
                         <form method="post" id="terms-and-conditions-form">
                             @csrf
                             <div class="form-check">
@@ -801,40 +824,5 @@
             </div>
         </div>
     @endsection
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Function to create a beep sound
-        function beep(frequency, duration, volume) {
-            const context = new(window.AudioContext || window.webkitAudioContext)();
-            const oscillator = context.createOscillator();
-            const gainNode = context.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(context.destination);
-
-            oscillator.frequency.value = frequency;
-            gainNode.gain.value = volume;
-
-            oscillator.start();
-
-            setTimeout(() => {
-                oscillator.stop();
-            }, duration);
-        }
-
-        // Function to apply the pulse animation and play beep
-        function animateAndBeep() {
-            const element = document.querySelector(".insturctions-steps");
-            element.classList.add("pulse");
-
-            // Set interval to beep every 1.5 seconds (same duration as pulse animation)
-            setInterval(() => {
-                beep(440, 200, 1); // Beep at 440 Hz for 200 milliseconds
-            }, 1500); // Matches the 1.5s pulse animation duration
-        }
-
-        // Start the animation and beep on page load
-        document.addEventListener('DOMContentLoaded', animateAndBeep);
-    </script>
-
+    {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
     @include('dashboard.customer-dashboard-js')

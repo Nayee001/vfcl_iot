@@ -19,6 +19,116 @@
     @endif
 
     <script>
+        $(document).ready(function() {
+            // Load the devices when the page is ready
+            loadDevices();
+
+            // Function to load devices and generate cards
+            function loadDevices() {
+                $.ajax({
+                    url: '/customer/devices/data', // Your API endpoint
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(devices) {
+                        let contentHtml = ''; // This will store the generated cards
+                        let topMessageHtml = '';
+                        let deviceNames = [];
+
+                        // If devices are returned
+                        if (devices.length > 0) {
+                            devices.forEach(device => {
+                                if (device.device_assigned.status === 'Not Responded' || device
+                                    .device_assigned.status === 'Reject') {
+                                    deviceNames.push(device.name);
+                                }
+
+                                // Determine whether to show the "Accept" button
+                                const verifyButton = (device.device_assigned.status ===
+                                        'Not Responded' || device.device_assigned.status ===
+                                        'Reject') ?
+                                    `<button class="btn btn-warning btn-sm" onclick="verifyDevice(${device.id})">Accept</button>` :
+                                    '';
+
+                                // Generate and append each device card to the contentHtml
+                                contentHtml += deviceCards(device, verifyButton);
+                            });
+
+                            // Add a warning message for devices that need authorization
+                            if (deviceNames.length > 0) {
+                                topMessageHtml = `
+                                <div class="alert alert-warning" role="alert">
+                                  <b style="color: red;"> ${deviceNames.join(', ')} ; need to be Authorized from the command center by the user</b>
+                                </div>
+                            `;
+                            }
+                        } else {
+                            // No devices found
+                            contentHtml = noDevicesAssignedMessage();
+                        }
+
+                        // Populate the device cards and any top messages on the page
+                        $('#myDevices').html(contentHtml);
+                        $('#top-message').html(topMessageHtml);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle the error and display an appropriate message
+                        console.error("An error occurred: ", error);
+                        $('#myDevices').html(fetchDevicesErrorMessage());
+                    }
+                });
+            }
+
+            // Function to create the HTML for each device card
+            function deviceCards(device, verifyButton) {
+                const statusIconColor = device.status === 'Authorized' ? 'green' :
+                '#dc3545'; // Green for authorized, red for not authorized
+                const isPending = device.device_assigned.status === 'Not Responded' || device.device_assigned
+                    .status === 'Reject';
+
+                // Define background colors based on authorization status
+                const authorizedColor = '#d4edda'; // Light green
+                const notAuthorizedColor = '#f8d7da'; // Light pink/red
+
+                // Choose the card color based on device authorization
+                const cardColor = device.status === 'Authorized' ? authorizedColor : notAuthorizedColor;
+
+                // Return the HTML for a single device card
+                return `
+                <div class="col-md-2">
+                    <a href="/devices/${device.id}" class="card card-custom text-center h-100" style="background-color: ${cardColor};">
+                        <div class="card-body">
+                            <div class="icon-wrapper">
+                                <i class="bx bx-line-chart" style="color: ${statusIconColor}; font-size: 2rem;"></i>
+                            </div>
+                            <h6 class="card-title">${device.name}</h6>
+                            ${isPending ? `<span class="badge badge-new">NEW</span>` : ''}
+                        </div>
+                    </a>
+                </div>
+            `;
+            }
+
+
+            // Function to display error message when devices cannot be fetched
+            function fetchDevicesErrorMessage() {
+                return `
+                <div class="alert alert-danger" role="alert">
+                    Could not load devices. Please try again later.
+                </div>
+            `;
+            }
+
+            // Function to display when no devices are assigned
+            function noDevicesAssignedMessage() {
+                return `
+                <div class="alert alert-info" role="alert">
+                    No devices have been assigned to you.
+                </div>
+            `;
+            }
+        });
+
+
         $(function() {
             $('#terms-and-conditions-form').on('submit', function(e) {
                 e.preventDefault();
@@ -91,9 +201,6 @@
                                 // $('#password-change-modal').modal('show');
                             }
                         });
-                        sessionStorage.setItem('showDeviceGuide',
-                            'true'); // Set a flag to show the guide
-                        window.location.href = '/devices'; // Redirect to device management
                     },
                     error: function(data) {
                         $(".submit").attr("disabled", false);
@@ -156,45 +263,6 @@
             });
         });
 
-        // $(document).ready(function() {
-        //     // Function to check device status
-        //     function checkDeviceStatus() {
-        //         const authUserId = '{{ auth()->user()->id }}'; // Get the user ID dynamically
-        //         $.ajax({
-        //             url: `/customer/assigned/devices/data/${authUserId}`,
-        //             type: 'GET',
-        //             dataType: 'json',
-        //             success: function(devices) {
-        //                 devices.forEach(device => {
-        //                     if (device.device_assigned && device.device_assigned
-        //                         .login_to_device && device.device_assigned.status !== 'Accept'
-        //                     ) {
-        //                         Swal.fire({
-        //                             title: 'Authorization Required!',
-        //                             text: `Device ${device.name} has successfully logged in but requires Authorization.`,
-        //                             icon: 'warning',
-        //                             showCancelButton: true,
-        //                             confirmButtonText: 'Go to Device',
-        //                             cancelButtonText: 'Dismiss'
-        //                         }).then((result) => {
-        //                             if (result.isConfirmed) {
-        //                                 // Redirect to the device session page
-        //                                 window.location.href = `/devices`;
-        //                             }
-        //                         });
-        //                     }
-        //                 });
-        //             },
-        //             error: function(xhr, status, error) {
-        //                 console.error("An error occurred: ", error);
-        //             }
-        //         });
-        //     }
-        //     // Check device status on page load
-        //     checkDeviceStatus();
-        //     // Optionally, you can set an interval to check the device status periodically
-        //     setInterval(checkDeviceStatus, 6000); // Check every 60 seconds
-        // });
 
         document.getElementById('deviceStep2').addEventListener('click', function() {
             fetch('/deviceStep2')
@@ -277,47 +345,7 @@
         });
 
 
-        $(document).ready(function() {
-            $.ajax({
-                url: '/customer/devices/data',
-                type: 'GET',
-                dataType: 'json',
-                success: function(devices) {
-                    let contentHtml = '';
-                    let topMessageHtml = '';
-                    let deviceNames = [];
-                    if (devices.length > 0) {
-                        devices.forEach(device => {
-                            if (device.device_assigned.status === 'Not Responded' || device
-                                .device_assigned.status === 'Reject') {
-                                deviceNames.push(device.name);
-                            }
-                            const verifyButton = (device.device_assigned.status ===
-                                    'Not Responded' || device.device_assigned.status ===
-                                    'Reject') ?
-                                `<button class="btn btn-warning btn-sm" onclick="verifyDevice(${device.id})">Accept</button>` :
-                                '';
-                            contentHtml += generateDeviceCard(device, verifyButton);
-                        });
-                        if (deviceNames.length > 0) {
-                            topMessageHtml = `
-                                    <div class="alert alert-warning" role="alert">
-                                      <b style="color: red;"> ${deviceNames.join(', ')} ; need to be accepted from the command center</b>
-                                    </div>
-                                `;
-                        }
-                    } else {
-                        contentHtml = noDevicesAssignedMessage();
-                    }
-                    $('#devices').html(contentHtml);
-                    $('#top-message').html(topMessageHtml);
-                },
-                error: function(xhr, status, error) {
-                    console.error("An error occurred: ", error);
-                    $('#devices').html(fetchDevicesErrorMessage());
-                }
-            });
-        });
+
 
         function getRandomBackgroundColor() {
             const colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-dark'];
@@ -364,19 +392,19 @@
                                 <p class="card-text"><strong>Mac Address:</strong><span style="color: ${statusIconColor};"> ${device.mac_address}</span></p>
 
                                 ${device.device_assigned.login_to_device == false || device.device_assigned.login_to_device == 0 ? `
-                                                ${notLoggedInMessage}
-                                            ` : isPending ? `
-                                                ${needsAcceptanceMessage}
-                                                ${verifyButton}
-                                            ` : ''}
+                                                                ${notLoggedInMessage}
+                                                            ` : isPending ? `
+                                                                ${needsAcceptanceMessage}
+                                                                ${verifyButton}
+                                                            ` : ''}
                             </div>
                             <div class="card-footer">
                                 ${device.device_assigned.status === 'Accept' ? `
-                                                <p class="card-text mt-2 mb-0 text-success">${deviceStatusText}</p>
-                                            ` : ''}
+                                                                <p class="card-text mt-2 mb-0 text-success">${deviceStatusText}</p>
+                                                            ` : ''}
                                 ${device.device_assigned.login_to_device == true || device.device_assigned.login_to_device == 1 ? `
-                                                <button class="btn btn-primary mt-3" onclick="viewGraph('${device.id}')">See Graph</button>
-                                            ` : ''}
+                                                                <button class="btn btn-primary mt-3" onclick="viewGraph('${device.id}')">See Graph</button>
+                                                            ` : ''}
                                 <button class="btn btn-primary btn-circle mt-3" data-bs-toggle="modal"
                                     data-bs-target="#modalToggle" onclick="activateDevice('${device.id}')">Activate</button>
                             </div>
@@ -386,8 +414,7 @@
         }
 
         function activateDevice(deviceId) {
-            // Logic to handle device activation steps
-            // alert("Activating device with ID:", deviceId);
+
         }
 
         window.verifyDevice = function(deviceId) {

@@ -1,75 +1,233 @@
 @extends('layouts.customer-app')
 @section('content')
+    <style>
+        .step-container {
+            border-left: 5px solid #007bff;
+            padding-left: 20px;
+        }
+
+        .step-header .step-number {
+            font-size: 1.5rem;
+        }
+
+        .img-fluid {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .img-fluid:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-wrapper {
+            padding: 10px;
+        }
+
+        figure {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        figcaption {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .next-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Preloader Style */
+        #preloader {
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 9999;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #preloader .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #007bff;
+        }
+
+        /* Hide preloader once page is loaded */
+        .preloader-hidden {
+            display: none !important;
+        }
+
+        .card-custom {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card-custom:hover {
+            transform: scale(1.05);
+        }
+
+        .icon-wrapper {
+            background-color: #e9ecef;
+            border-radius: 50%;
+            padding: 10px;
+            display: inline-block;
+        }
+
+        .badge-new {
+            background-color: #ff5f5f;
+            color: white;
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+    </style>
     <div class="container-xxl flex-grow-1 container-p-y">
-        <!-- Welcome Message -->
-        <a href="{{ route('home') }}" class="app-brand-link">
-            <span class="app-brand-logo demo">
-                <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <defs>
-                        <path
-                            d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z"
-                            id="path-1"></path>
-                        <path
-                            d="M5.47320593,6.00457225 C4.05321814,8.216144 4.36334763,10.0722806 6.40359441,11.5729822 C8.61520715,12.571656 10.0999176,13.2171421 10.8577257,13.5094407 L15.5088241,14.433041 L18.6192054,7.984237 C15.5364148,3.11535317 13.9273018,0.573395879 13.7918663,0.358365126 C13.5790555,0.511491653 10.8061687,2.3935607 5.47320593,6.00457225 Z"
-                            id="path-3"></path>
-                        <path
-                            d="M7.50063644,21.2294429 L12.3234468,23.3159332 C14.1688022,24.7579751 14.397098,26.4880487 13.008334,28.506154 C11.6195701,30.5242593 10.3099883,31.790241 9.07958868,32.3040991 C5.78142938,33.4346997 4.13234973,34 4.13234973,34 C4.13234973,34 2.75489982,33.0538207 2.37032616e-14,31.1614621 C-0.55822714,27.8186216 -0.55822714,26.0572515 -4.05231404e-15,25.8773518 C0.83734071,25.6075023 2.77988457,22.8248993 3.3049379,22.52991 C3.65497346,22.3332504 5.05353963,21.8997614 7.50063644,21.2294429 Z"
-                            id="path-4"></path>
-                        <path
-                            d="M20.6,7.13333333 L25.6,13.8 C26.2627417,14.6836556 26.0836556,15.9372583 25.2,16.6 C24.8538077,16.8596443 24.4327404,17 24,17 L14,17 C12.8954305,17 12,16.1045695 12,15 C12,14.5672596 12.1403557,14.1461923 12.4,13.8 L17.4,7.13333333 C18.0627417,6.24967773 19.3163444,6.07059163 20.2,6.73333333 C20.3516113,6.84704183 20.4862915,6.981722 20.6,7.13333333 Z"
-                            id="path-5"></path>
-                    </defs>
-                    <g id="g-app-brand" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <g id="Brand-Logo" transform="translate(-27.000000, -15.000000)">
-                            <g id="Icon" transform="translate(27.000000, 15.000000)">
-                                <g id="Mask" transform="translate(0.000000, 8.000000)">
-                                    <mask id="mask-2" fill="white">
-                                        <use xlink:href="#path-1"></use>
-                                    </mask>
-                                    <use fill="#696cff" xlink:href="#path-1"></use>
-                                    <g id="Path-3" mask="url(#mask-2)">
-                                        <use fill="#696cff" xlink:href="#path-3"></use>
-                                        <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-3"></use>
-                                    </g>
-                                    <g id="Path-4" mask="url(#mask-2)">
-                                        <use fill="#696cff" xlink:href="#path-4"></use>
-                                        <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-4"></use>
-                                    </g>
-                                </g>
-                                <g id="Triangle"
-                                    transform="translate(19.000000, 11.000000) rotate(-300.000000) translate(-19.000000, -11.000000) ">
-                                    <use fill="#696cff" xlink:href="#path-5"></use>
-                                    <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-5"></use>
-                                </g>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </span>
-        </a>
-        <div class="text-center mb-4">
-            <h2>Hey, {{ Auth::user()->fname }}! Welcome to vFCL Platform 🎉</h2>
-        </div>
+        <!-- Preloader Section -->
+        {{-- <div id="preloader">
+            <div class="text-center">
+                <div class="spinner-border" role="status"></div>
+                <p class="mt-3">Getting your devices... <br>
+                    Please wait for a moment</p>
+            </div>
+        </div> --}}
+        <div class="row flex-xl-nowrap">
+            <div class="col-12 col-xl-12 container-p-y">
+                <!-- Hero Section -->
+                <div class="hero bg-gradient mb-4 rounded-3 text-center">
+                    <h1 class="display-4">Device Authorization 🎉</h1>
+                    <p class="lead">Easily authorize your device by following these simple steps and begin using its
+                        features right away.</p>
+                    <a href="mailto:support@vfcl.com" class="btn btn-outline-primary mt-3">Need Help? Contact Support</a>
+                </div>
+                <hr class="my-4">
+                <!-- Step by Step Instructions -->
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-10">
+                        <!-- Step 1: Unbox the Device -->
+                        <div class="step-container mb-5 p-4 shadow-sm bg-white rounded">
+                            <div class="step-header d-flex align-items-center mb-3">
+                                <div class="step-number me-3 rounded-circle bg-dark text-white d-flex justify-content-center align-items-center"
+                                    style="width: 40px; height: 40px;">1</div>
+                                <h4 class="mb-0">You've Successfully Booted the Device</h4>
+                            </div>
+                            <ul>
+                                <li>After booting, you will see the vFCL logo and a Welcome page.</li>
+                                <li>Touch anywhere on the screen to proceed.</li>
+                            </ul>
+                            <div class="row ">
+                                <div class="text-center mt-3">
+                                    <figure>
+                                        <img style="width: 450px;" src="{{ asset('assets/img/device/welcome.png') }}"
+                                            alt="4.3-inch Capacitive Touch Display" class="img-fluid">
+                                        <figcaption>Figure 1: Welcome to the vFCL Device</figcaption>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Step 2: Instructions Page -->
+                        <div class="step-container mb-5 p-4 shadow-sm bg-white rounded">
+                            <div class="step-header d-flex align-items-center mb-3">
+                                <div class="step-number me-3 rounded-circle bg-dark text-white d-flex justify-content-center align-items-center"
+                                    style="width: 40px; height: 40px;">2</div>
+                                <h4 class="mb-0">Instructions Page</h4>
+                            </div>
+                            <ul>
+                                <li>After clicking on the <code>NEXT</code> button, you will see this instructions page.
+                                </li>
+                            </ul>
+                            <div class="row ">
+                                <div class="text-center mt-3">
+                                    <figure>
+                                        <img style="width: 450px;" src="{{ asset('assets/img/device/instruction.png') }}"
+                                            alt="Instructions Page" class="img-fluid">
+                                        <figcaption>Figure 2: Instructions Page</figcaption>
+                                    </figure>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>Click on the <code>NEXT</code> button to check your internet connection.</li>
+                            </ul>
+                        </div>
 
-        <!-- Top Message (For Alerts) -->
-        <div class="mb-4" id="top-message"></div>
+                        <!-- Step 3: Internet - WiFi (optional) -->
+                        <div class="step-container mb-5 p-4 shadow-sm bg-white rounded">
+                            <div class="step-header d-flex align-items-center mb-3">
+                                <div class="step-number me-3 rounded-circle bg-dark text-white d-flex justify-content-center align-items-center"
+                                    style="width: 40px; height: 40px;">3</div>
+                                <h4 class="mb-0">Internet - WiFi <code>(optional)</code></h4>
+                            </div>
+                            <p>If you have already connected to the internet via Ethernet or WiFi, you can skip this
+                                section.</p>
+                            <ul>
+                                <li><strong>Connection:</strong> Follow the device instructions to connect via WiFi if not
+                                    already connected.</li>
+                            </ul>
+                        </div>
 
-        <!-- Devices Section -->
-        <div class="row g-4" id="devices">
-            <!-- Dynamic device cards will be inserted here by JS -->
-        </div>
-    </div>
+                        <!-- Step 4: Device Authorization Instructions -->
+                        <div class="step-container mb-5 p-4 shadow-sm bg-white rounded">
+                            <div class="step-header d-flex align-items-center mb-3">
+                                <div class="step-number me-3 rounded-circle bg-dark text-white d-flex justify-content-center align-items-center"
+                                    style="width: 40px; height: 40px;">4</div>
+                                <h4 class="mb-0">Device Authorization</h4>
+                            </div>
+                            <ul>
+                                <li><strong>Step 1:</strong> Goto Step 5 to select your Device and Log in to the DEVICE
+                                    using your web credentials.</li>
+                                <li><strong>Step 2:</strong> Enter your <code>MAC Address</code> and <code>API Key</code>
+                                    into the device, and wait for the response !</li>
+                                <li><strong>Step 3:</strong> Check your email and refresh this page for the device
+                                    authentication message.</li>
+                                <li><strong>Step 4:</strong> Authorize your device through the vFCL web platform by clicking
+                                    the <strong>Auth</strong> button.</li>
+                                <li><strong>Step 5:</strong> Wait for the security connections to be established.</li>
+                                <li><strong>Step 6:</strong> Device authorization is now complete!</li>
+                            </ul>
+                        </div>
 
-    <!-- Modal for device verification -->
-    <div class="modal fade" id="verificationModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <h3>Verify This Device!!</h3>
-                    <p>Please confirm that you want to verify this device to ensure proper functionality and data
-                        visualization.</p>
-                    <p id="modalContent"></p>
+                        <!-- Step 5: Select Your Device -->
+                        <div class="step-container mb-5 p-4 shadow-sm bg-white rounded">
+                            <div class="step-header d-flex align-items-center mb-3">
+                                <div class="step-number me-3 rounded-circle bg-dark text-white d-flex justify-content-center align-items-center"
+                                    style="width: 40px; height: 40px;">5</div>
+                                <h4 class="mb-0">Go To My devices</h4>
+                            </div>
+                            <a href="{{ route('home') }}" class="btn btn-danger">
+                                <i class='bx bx-devices'></i> Devices
+                            </a>
+                            {{-- <ul>
+                                <li><strong>Select the Device:</strong> Choose your device from the list of Assinged devices and procced with device Authentication.</li>
+                            </ul>
+                            <div class="" id="top-message"></div>
+                            <div class="row g-4" id="myDevices">
+                                <!-- Dynamic device cards will be inserted here by JS -->
+                            </div> --}}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

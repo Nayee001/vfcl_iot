@@ -249,44 +249,49 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
-
     public function getDeviceLineChartData($id)
     {
-        $data = [
-
-            ['x' => now()->subMinutes(5)->timestamp * 1000, 'y' => rand(-1, 5)],
-            ['x' => now()->subMinutes(4)->timestamp * 1000, 'y' => rand(-1, 5)],
-            ['x' => now()->subMinutes(3)->timestamp * 1000, 'y' => rand(-1, 5)],
-            ['x' => now()->subMinutes(2)->timestamp * 1000, 'y' => rand(-1, 5)],
-            ['x' => now()->subMinutes(1)->timestamp * 1000, 'y' => rand(-1, 5)],
-        ];
-
+        // Fetch the latest device data
         $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
 
+        // Check if the device data exists
         if (!$deviceData) {
             return response()->json(['message' => 'Device not found'], 404);
         }
+
+        // Get the target timestamp for the nearest data batch
         $targetTimestamp = $deviceData->timestamp;
 
-        $nearestDataBatch = $this->model::select('timestamp', 'device_timestamps', 'valts')
-            ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // time diff to get nearest data for last data batch
-            ->limit(20) // Limit to the nearest (limit (10)) entries
+        // Query for the nearest data based on the target timestamp
+        $nearestDataBatch = $this->model::select('device_timestamps', 'current_phase1', 'current_phase2', 'current_phase3')
+            ->where('device_id', $id)
+            ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // Get nearest time differences
+            ->limit(5) // Limit to 20 nearest data points
             ->get();
 
+        // Map the data to an array with 'x' as device_timestamps and 'y' values as the three phases
         $xyData = $nearestDataBatch->map(function ($item) {
-            $timestampInMilliseconds = \Carbon\Carbon::createFromTimestamp($item->device_timestamps)
-                ->timestamp * 1000;
+            $timestampInMilliseconds = \Carbon\Carbon::createFromTimestamp($item->device_timestamps)->timestamp * 1000;
             return [
                 'x' => $timestampInMilliseconds,
-                'y' => $item->valts
+                'current_phase1' => $item->current_phase1,
+                'current_phase2' => $item->current_phase2,
+                'current_phase3' => $item->current_phase3,
             ];
         });
+
+        // Convert to an array and return the device name along with the data
         $xyArray = $xyData->toArray();
         $deviceName = $deviceData->device->name ?? 'Unknown Device';
+
+        // Final array to return the data and device name
         $finalArray = [
             'data' => $xyArray,
             'deviceName' => $deviceName
         ];
+
+        // dd($finalArray);
+        // Return the JSON response
         return response()->json($finalArray);
     }
 }

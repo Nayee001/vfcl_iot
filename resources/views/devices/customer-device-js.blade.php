@@ -1,5 +1,15 @@
 @section('script')
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                const preloader = document.getElementById('preloader');
+                if (preloader) {
+                    preloader.classList.add('preloader-hidden');
+                    document.getElementById('main-content').style.display = 'block';
+                }
+            }, 2000); // Adjust this time as needed
+        });
+
         $(document).ready(function() {
             loadDevices();
 
@@ -15,17 +25,21 @@
                         let deviceNames = [];
                         if (devices.length > 0) {
                             devices.forEach(device => {
-                                if (device.device_assigned.status === 'Not Responded' || device.device_assigned.status === 'Reject') {
+                                if (device.device_assigned.status === 'Not Responded' || device
+                                    .device_assigned.status === 'Reject') {
                                     deviceNames.push(device.name);
                                 }
-                                const verifyButton = (device.device_assigned.status === 'Not Responded' || device.device_assigned.status === 'Reject') ?
-                                    `<button class="btn btn-warning btn-sm" onclick="verifyDevice(${device.id})">Accept</button>` : '';
+                                const verifyButton = (device.device_assigned.status ===
+                                        'Not Responded' || device.device_assigned.status ===
+                                        'Reject') ?
+                                    `<button class="btn btn-warning btn-sm" onclick="verifyDevice(${device.id})">Accept</button>` :
+                                    '';
                                 contentHtml += generateDeviceCard(device, verifyButton);
                             });
                             if (deviceNames.length > 0) {
                                 topMessageHtml = `
                                     <div class="alert alert-warning" role="alert">
-                                      <b style="color: red;"> ${deviceNames.join(', ')} ; need to be accepted from the command center</b>
+                                      <b style="color: red;"> ${deviceNames.join(', ')} ; need to be Authorized from the command center by the user</b>
                                     </div>
                                 `;
                             }
@@ -45,42 +59,28 @@
             function generateDeviceCard(device, verifyButton) {
                 const statusIconColor = device.status === 'Authorized' ? 'green' : '#dc3545';
                 const isPending = device.device_assigned.status === 'Not Responded' || device.device_assigned.status === 'Reject';
-                const deviceStatusText = device.device_assigned.status === 'Accept' ?
-                    `Accepted by ${device.device_assigned.assignee.fname}` :
-                    device.device_assigned.status;
-                const notLoggedInMessage = `
-                    <div class="alert alert-danger" role="alert">
-                        This device is not logged in or plugged in.
-                    </div>
-                `;
-                const needsAcceptanceMessage = `
-                    <div class="alert alert-warning" role="alert">
-                        This device needs <b>Athorization</b> from the command center.
-                    </div>
-                `;
+
+                // Define an array of possible background colors
+                const colors = ['#f8d7da', '#d4edda', '#cce5ff', '#fff3cd', '#d1ecf1', '#e2e3e5', '#f1f3f5'];
+                // Randomly select a color from the array
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
                 return `
-                    <div class="col-md-4 col-lg-3 mb-4">
-                        <div class="card custom-card h-100">
+                    <div class="col-6 col-md-3">
+                        <a href="/devices/${device.id}" class="card card-custom text-center h-100" style="background-color: ${randomColor};">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title">
-                                       <a href="/devices/${device.id}"> ${device.name} </a>
-                                    </h5>
-                                    <h6 class="card-subtitle mb-2">
-                                        <i class="bi bi-circle-fill" style="color: ${statusIconColor};"></i> ${device.device_assigned.connection_status}
-                                    </h6>
+                                <div class="icon-wrapper">
+                                    <i class="bx bx-line-chart" style="color: ${statusIconColor}; font-size: 2rem;"></i>
                                 </div>
-                                ${device.device_assigned.login_to_device == false || device.device_assigned.login_to_device == 0 ? `
-                                    ${notLoggedInMessage}
-                                ` : isPending ? `
-                                    ${needsAcceptanceMessage}
-                                    ${verifyButton}
-                                ` : ''}
+                                <h6 class="card-title">${device.name}</h6>
+                                ${isPending ? `<span class="badge badge-new">NEW</span>` : ''}
                             </div>
-                        </div>
+                        </a>
                     </div>
                 `;
             }
+
+
 
             function viewGraph(deviceId) {
                 console.log('Viewing graph for device:', deviceId);

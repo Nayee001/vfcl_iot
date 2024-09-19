@@ -2,16 +2,20 @@
     <style>
         /* Custom styles (same as before) */
         .device-card h5 {
-            font-weight: 700; /* Bold title */
-            color: #17a2b8; /* Bright teal color */
+            font-weight: 700;
+            /* Bold title */
+            color: #17a2b8;
+            /* Bright teal color */
         }
 
         .device-card small {
-            color: #6c757d; /* Muted text */
+            color: #6c757d;
+            /* Muted text */
         }
 
         .progress-bar {
-            border-radius: 5px; /* Rounded progress bar */
+            border-radius: 5px;
+            /* Rounded progress bar */
         }
 
         .form-check-input:checked {
@@ -39,25 +43,25 @@
     </style>
 
     <script>
-        // Function to dynamically load device data from the server and update the DOM, including verification button and progress bar
         function loadDeviceData(deviceId) {
             $.ajax({
-                url: `/devices/data/${deviceId}`, // API route to get device data by ID
+                url: `/devices/data/${deviceId}`,
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
                     if (response) {
-                        const verifyButton = (response.device_assigned.status === 'Not Responded' || response.device_assigned.status === 'Reject') ?
+                        const verifyButton = (response.device_assigned.status === 'Not Responded' || response
+                                .device_assigned.status === 'Reject') ?
                             `<button class="btn btn-custom btn-sm mt-3" onclick="verifyDevice(${response.id})">
-                                <i class="fas fa-check-circle"></i> Accept
+                                <i class="fas fa-check-circle"></i> Authorize Device
                              </button>` :
-                            ''; // Conditionally define the verify button
+                            '';
 
                         const checkboxes = {
                             loginStatus: response.device_assigned.login_to_device === 1,
                             macAddressVerification: response.device_assigned.send_mac === 1,
                             apiKeyVerification: response.device_assigned.send_mac === 1,
-                            deviceSoftwareUpdate: response.device_assigned.connection_status === "Authorized",
+                            deviceSoftwareUpdate: response.device_assigned.connection_status ==="Authorized",
                             securityConnection: response.device_assigned.connection_status === "Authorized"
                         };
 
@@ -69,8 +73,8 @@
                         let progress = (checkedCount / Object.keys(checkboxes).length) * 100;
 
                         const deviceInfoHTML = `
-                            <div class="device-card">
-                                <div class="device-section d-flex align-items-center justify-content-between">
+                            <div class="device-details">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div>
                                         <h5 class="text-primary">${response.name}</h5>
                                         <small>${response.device_assigned.connection_status}</small>
@@ -82,47 +86,20 @@
                                     </div>
                                 </div>
 
-                                <div class="device-section">
-                                    <ul class="list-unstyled d-flex flex-wrap gap-3">
-                                        <li class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="loginStatus" ${checkboxes.loginStatus ? 'checked' : ''} disabled>
-                                            <label class="form-check-label" for="loginStatus">
-                                                <i class="fas fa-user-check"></i> Login Status
-                                            </label>
-                                        </li>
-                                        <li class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="macAddressVerification" ${checkboxes.macAddressVerification ? 'checked' : ''} disabled>
-                                            <label class="form-check-label" for="macAddressVerification">
-                                                <i class="fas fa-network-wired"></i> MAC Verification
-                                            </label>
-                                        </li>
-                                        <li class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="apiKeyVerification" ${checkboxes.apiKeyVerification ? 'checked' : ''} disabled>
-                                            <label class="form-check-label" for="apiKeyVerification">
-                                                <i class="fas fa-key"></i> API Key
-                                            </label>
-                                        </li>
-                                        <li class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="deviceSoftwareUpdate" ${checkboxes.deviceSoftwareUpdate ? 'checked' : ''} disabled>
-                                            <label class="form-check-label" for="deviceSoftwareUpdate">
-                                                <i class="fas fa-sync-alt"></i> Software Update
-                                            </label>
-                                        </li>
-                                        <li class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="securityConnection" ${checkboxes.securityConnection ? 'checked' : ''} disabled>
-                                            <label class="form-check-label" for="securityConnection">
-                                                <i class="fas fa-shield-alt"></i> Secure Connection
-                                            </label>
-                                        </li>
-                                    </ul>
+                                <ul>
+                                    ${generateCheckboxHTML('Login Status', 'fas fa-user-check', checkboxes.loginStatus)}
+                                    ${generateCheckboxHTML('MAC Verification', 'fas fa-network-wired', checkboxes.macAddressVerification)}
+                                    ${generateCheckboxHTML('API Key', 'fas fa-key', checkboxes.apiKeyVerification)}
+                                    ${generateCheckboxHTML('Software Update', 'fas fa-sync-alt', checkboxes.deviceSoftwareUpdate)}
+                                    ${generateCheckboxHTML('Secure Connection', 'fas fa-shield-alt', checkboxes.securityConnection)}
+                                </ul>
+
+                                <div class="mt-3">
+                                    <p><strong>API Key:</strong> ${response.short_apikey}</p>
+                                    <p><strong>MAC Address:</strong> ${response.mac_address}</p>
                                 </div>
 
-                                <div class="device-section">
-                                    <p><strong>API Key: </strong>${response.short_apikey}</p>
-                                    <p><strong>MAC Address: </strong>${response.mac_address}</p>
-                                </div>
-
-                                <div class="device-section">
+                                <div class="mt-3">
                                     <h6>Device Authentication Progress</h6>
                                     <div class="progress mt-2">
                                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="deviceAuthProgress"
@@ -148,7 +125,16 @@
             });
         }
 
-        // Define the verifyDevice function in the global scope
+        function generateCheckboxHTML(label, iconClass, isChecked) {
+            return `
+                <li>
+                    <i class="${iconClass}"></i>
+                    <span>${label}</span>
+                    <input class="form-check-input ms-2" type="checkbox" ${isChecked ? 'checked' : ''} disabled>
+                </li>
+            `;
+        }
+
         function verifyDevice(deviceId) {
             fetch(`/verify-device-model/${deviceId}`)
                 .then(response => response.json())
@@ -163,7 +149,6 @@
                 });
         }
 
-        // Function to show the verification modal (example from previous code)
         function showVerificationModal(data, deviceId) {
             const contentHtml = `
                 <p>Device Name: <b>${data.name}</b></p>
@@ -173,7 +158,7 @@
             const verifyAgainButton = document.createElement('button');
             verifyAgainButton.type = 'button';
             verifyAgainButton.className = 'btn btn-warning';
-            verifyAgainButton.textContent = 'Accept';
+            verifyAgainButton.textContent = 'Authorize';
             verifyAgainButton.onclick = function() {
                 sendToDevice(deviceId);
             };
@@ -183,15 +168,54 @@
             $('#verificationModal').modal('show');
         }
 
-        // Call the function on document ready or when necessary
         $(document).ready(function() {
-            const deviceId = {{ $deviceData->id }}; // Replace with dynamic device ID
+            const deviceId = {{ $deviceData->id }};
             loadDeviceData(deviceId);
 
-            // Optionally refresh the data every 30 seconds for real-time updates
             setInterval(function() {
-                loadDeviceData(deviceId); // Reload device data every 30 seconds
-            }, 30000); // 30 seconds interval
+                loadDeviceData(deviceId);
+            }, 30000);
         });
+        window.sendToDevice = function(deviceId) {
+            $('#verificationModal').modal('hide');
+
+            const timer = 10000;
+            let timerInterval;
+            Swal.fire({
+                title: 'Device Activation',
+                html: `Please wait for <b></b> seconds.`,
+                timer: timer,
+                timerProgressBar: true,
+                didOpen: () => {
+                    const b = Swal.getHtmlContainer().querySelector('b');
+                    timerInterval = setInterval(() => {
+                        b.textContent = Math.round(Swal.getTimerLeft() / 1000);
+                    }, 100);
+                },
+                didClose: () => {
+                    clearInterval(timerInterval);
+                }
+            });
+
+            console.log("sendToDevice device with ID:", deviceId);
+            fetch(`{{ url('send-device-mqtt') }}/${deviceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        Swal.fire({
+                            title: "Device Authorized",
+                            text: "Please check the device; it is now ready for use.",
+                            icon: "success"
+                        }).then(() => {
+                            window.location.reload();
+                            $('#verificationModal').modal('hide');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during verification:', error);
+                    alert(`Failed to accept device ID ${deviceId}`);
+                });
+        };
     </script>
 @endsection
