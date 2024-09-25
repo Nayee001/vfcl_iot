@@ -38,7 +38,7 @@ class MqttService implements MqttServiceInterface
         $this->connectionSettings = (new ConnectionSettings())
             ->setUsername($this->username)
             ->setPassword($this->password);
-        $this->mqttClient->connect($this->connectionSettings, true);
+        // $this->mqttClient->connect($this->connectionSettings, true);
     }
 
     public function connectAndSubscribe($topic)

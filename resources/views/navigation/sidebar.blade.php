@@ -218,5 +218,6 @@
             </ul>
         </li>
     @endcan
+
     </ul>
 </aside>

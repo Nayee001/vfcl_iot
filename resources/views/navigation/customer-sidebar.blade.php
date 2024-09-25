@@ -53,7 +53,7 @@
         @can('dashboard')
             <li class="menu-item {{ request()->is('home') ? 'active' : '' }}">
                 <a href="{{ route('home') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <i class=" tf-icons bx bx-home-circle"></i>
                     <div data-i18n="Analytics">Dashboard</div>
                 </a>
             </li>
@@ -62,7 +62,7 @@
         <li
             class="menu-item {{ request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
             <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link ">
-                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <i class=" tf-icons bx bx-dock-top"></i>
                 <div data-i18n="Account Settings">Settings</div>
             </a>
             <ul class="menu-sub">
@@ -93,8 +93,8 @@
         <!-- User interface -->
         @can('device-list')
             <li class="menu-item">
-                <a  href="{{ route('devices.index') }}" class="menu-link ">
-                    <i class="menu-icon tf-icons bx bx-box"></i>
+                <a href="{{ route('devices.index') }}" class="menu-link ">
+                    <i class=" tf-icons bx bx-box"></i>
                     <div data-i18n="User interface">Devices</div>
                 </a>
                 <ul class="menu-sub">
@@ -125,7 +125,7 @@
         @can('user-list')
             <li class="menu-item">
                 <a href="javascript:void(0)" class="menu-link ">
-                    <i class="menu-icon tf-icons bx bx-copy"></i>
+                    <i class=" tf-icons bx bx-copy"></i>
                     <div data-i18n="Extended UI">User Management</div>
                 </a>
                 @can('user-list')
@@ -150,7 +150,7 @@
         @can('role-list')
             <li class="menu-item">
                 <a href="javascript:void(0)" class="menu-link ">
-                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <i class=" tf-icons bx bx-box"></i>
                     <div data-i18n="User interface">Roles & Permission</div>
                 </a>
 
@@ -176,7 +176,7 @@
             <!-- Device components -->
             <li class="menu-item">
                 <a href="javascript:void(0)" class="menu-link ">
-                    <i class="menu-icon tf-icons bx bx-copy"></i>
+                    <i class=" tf-icons bx bx-copy"></i>
                     <div data-i18n="Extended UI">Permissions</div>
                 </a>
                 <ul class="menu-sub">
@@ -193,7 +193,7 @@
             <!-- Device components -->
             <li class="menu-item">
                 <a href="javascript:void(0)" class="menu-link ">
-                    <i class='menu-icon bx bxs-cog'></i>
+                    <i class=' bx bxs-cog'></i>
                     <div data-i18n="Extended UI">Web Settings</div>
                 </a>
                 <ul class="menu-sub">
@@ -205,7 +205,13 @@
                 </ul>
             </li>
         @endcan
-
+        <!-- Device components -->
+        <li class="menu-item">
+            <a href="{{ route('devices.index') }}" class="menu-link ">
+                <i class='bx bx-bookmark-alt'></i>
+                <div data-i18n="User interface">Manual</div>
+            </a>
+        </li>
         <!-- Device components -->
         <li class="menu-item">
             <a class="menu-link" href="{{ route('logout') }}"
@@ -217,5 +223,7 @@
                 @csrf
             </form>
         </li>
+
+
     </ul>
 </aside>

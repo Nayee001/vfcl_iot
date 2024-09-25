@@ -1,85 +1,6 @@
 @extends('layouts.customer-app')
 <style>
-    .pulse {
-        animation: pulse-animation 1.5s infinite;
-    }
 
-    /* Blinking animation */
-    @keyframes blink {
-        0% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0;
-        }
-
-        100% {
-            opacity: 1;
-        }
-    }
-
-    .blink-button {
-        animation: blink 1.5s infinite;
-        text-decoration: none;
-        color: #fff;
-    }
-
-    @keyframes pulse-animation {
-        0% {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        50% {
-            transform: scale(1.05);
-            opacity: 0.7;
-        }
-
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
-
-    /* Add some more padding for the card header */
-    .card-header {
-        font-weight: bold;
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #007bff;
-    }
-
-    /* Style the card values */
-    .card-value {
-        font-size: 1.75rem;
-        color: #333;
-    }
-
-    /* Add shadows and padding for the cards */
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-    }
-
-    /* Icons for a visual appeal */
-    .icon-container {
-        margin-bottom: 10px;
-    }
-
-    /* Responsive Design for small devices */
-    @media (max-width: 576px) {
-        .card-title {
-            font-size: 0.875rem;
-        }
-
-        .card-value {
-            font-size: 1.25rem;
-        }
-    }
 </style>
 @section('content')
     <div class="container-xxl flex-grow-1">
@@ -197,7 +118,8 @@
                                     <div class="row row-bordered g-0">
                                         <!-- Section Header -->
                                         <div class="col-md-12">
-                                            <h5 class="card-header m-0 me-2 pb-3 text-primary">Power Consumption Overview:
+                                            <h5 class="card-header m-0 me-2 pb-3 text-primary">Power Consumption
+                                                Overview:
                                                 Total
                                                 and Active Power</h5>
                                         </div>
@@ -212,7 +134,8 @@
                                                             <i class="fas fa-bolt fa-2x text-warning"></i>
                                                         </div>
                                                         <h6 class="card-title">Total Power (PQ)</h6>
-                                                        <h3 class="card-value font-weight-bold" id="total-power">-- W</h3>
+                                                        <h3 class="card-value font-weight-bold" id="total-power">-- W
+                                                        </h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -225,7 +148,8 @@
                                                             <i class="fas fa-plug fa-2x text-success"></i>
                                                         </div>
                                                         <h6 class="card-title">Active Power (P)</h6>
-                                                        <h3 class="card-value font-weight-bold" id="active-power">-- W</h3>
+                                                        <h3 class="card-value font-weight-bold" id="active-power">-- W
+                                                        </h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -238,7 +162,8 @@
                                                             <i class="fas fa-wave-square fa-2x text-danger"></i>
                                                         </div>
                                                         <h6 class="card-title">Reactive Power (Q)</h6>
-                                                        <h3 class="card-value font-weight-bold" id="reactive-power">-- VAR
+                                                        <h3 class="card-value font-weight-bold" id="reactive-power">--
+                                                            VAR
                                                         </h3>
                                                     </div>
                                                 </div>
@@ -252,7 +177,8 @@
                                                             <i class="fas fa-tachometer-alt fa-2x text-primary"></i>
                                                         </div>
                                                         <h6 class="card-title">Voltage RMS (Vabc)</h6>
-                                                        <h3 class="card-value font-weight-bold" id="voltage-rms">-- V</h3>
+                                                        <h3 class="card-value font-weight-bold" id="voltage-rms">-- V
+                                                        </h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -265,7 +191,8 @@
                                                             <i class="fas fa-battery-half fa-2x text-info"></i>
                                                         </div>
                                                         <h6 class="card-title">Current RMS (Iabc)</h6>
-                                                        <h3 class="card-value font-weight-bold" id="current-rms">-- A</h3>
+                                                        <h3 class="card-value font-weight-bold" id="current-rms">-- A
+                                                        </h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -354,10 +281,13 @@
                     <h2 class="mb-6 doc-page-title">Hey {{ Auth::user()->fname }} {{ Auth::user()->lname }}, welcome to
                         {{ env('APP_SHORT_NAME') }} 🚀</h2>
                     <p class="lead">
-                        We're excited to have you onboard. Dive into your personalized IoT dashboard and start exploring the
-                        smart features and real-time insights we have to offer. Let's make the future smarter together! 🚀
+                        We're excited to have you onboard. Dive into your personalized IoT dashboard and start exploring
+                        the
+                        smart features and real-time insights we have to offer. Let's make the future smarter together!
+                        🚀
                     </p>
-                    <p class="lead">Click On the Device <code>Device Quick Start Manual</code> to bootup the device.</p>
+                    <p class="lead">Click On the Device <code>Device Quick Start Manual</code> to bootup the device.
+                    </p>
                     <hr class="my-12">
 
                     <div class="row">
@@ -368,8 +298,10 @@
                                         <i class="bx bx-rocket fs-3"></i>
                                     </div>
                                     <h4>Device Quick Start Manual</h4>
-                                    <p>Get your IoT device up and running with the vFCL Web Platform. Simply click "Start
-                                        Now" to begin setting up your device and unlock powerful insights and control.</p>
+                                    <p>Get your IoT device up and running with the vFCL Web Platform. Simply click
+                                        "Start
+                                        Now" to begin setting up your device and unlock powerful insights and control.
+                                    </p>
 
                                     <p class="fw-bold mb-0"><a class="stretched-link"
                                             href="{{ route('quickStart') }}">Start now
@@ -384,7 +316,8 @@
                                         <i class="bx bx-slider-alt fs-3"></i>
                                     </div>
                                     <h4>Device Authentication Manual 🤩</h4>
-                                    <p>Authenticate your IoT device effortlessly by logging in and inserting your API keys.
+                                    <p>Authenticate your IoT device effortlessly by logging in and inserting your API
+                                        keys.
                                         No complex configurations required, just quick and secure setup.</p>
                                     <p class="fw-bold mb-0"><a class="stretched-link"
                                             href="{{ route('devices.index') }}">Start
@@ -435,372 +368,141 @@
                 </div>
             </div>
         @endif
-        <!-- First Modal HTML -->
-        <div class="modal fade" id="modalToggle" aria-labelledby="modalToggleLabel" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header">
-                        <h5 class="mt-3">Device Activation Steps:</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ol class="text-start">
-                            <li>Plug in the device.</li>
-                            <li>Login with your Web Command Center Username and Password.</li>
-                            <li>Copy the MAC address from the device.</li>
-                            <li>Enter the API KEY on your device.</li>
-                            <li>Wait for a moment and refresh the command center. Check your email for an authentication
-                                request from the device.</li>
-                            <li>Accept the Auth Request from the command center for the device.</li>
-                            <li>Device Authenticated.</li>
-                        </ol>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="deviceStep2" data-bs-toggle="modal" data-bs-dismiss="modal"
-                            class="btn rounded-pill btn-icon btn-primary">
-                            <i class='bx bx-chevron-right'></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Second Modal HTML -->
-        <div class="modal fade" id="modalToggle2" aria-labelledby="modalToggle2Label" tabindex="-1"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalToggle2Label">Device Activation Steps</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ol class="text-start mb-4">
-                            <li>Log in to your vFCL Command Center account with your email: <br>
-                                <b class="username"><i class='bx bx-user'></i> {{ Auth::user()->email }}</b>
-                            </li>
-                            <li>Enter your vFCL web password <i class='bx bx-low-vision'></i></li>
-                        </ol>
-                        <hr>
-                        <ol class="text-start mb-4">
-                            <li>Verify that the MAC address matches your device. If there is a discrepancy, please
-                                contact support at <a href="mailto:support@vFCL.com">support@vFCL.com</a>.</li>
-                            <li>Paste the API Key into your device and wait for the confirmation response.</li>
-                        </ol>
-                        <div id="secondModalContent">
-                            <!-- Additional content can be dynamically inserted here -->
-                        </div>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" id="prevModal" data-bs-toggle="modal" data-bs-dismiss="modal"
-                            class="btn rounded-pill btn-icon btn-primary">
-                            <i class='bx bx-chevron-left'></i>
-                        </button>
-                        <button type="button" id="deviceStep3" data-bs-toggle="modal" data-bs-dismiss="modal"
-                            class="btn rounded-pill btn-icon btn-primary">
-                            <i class='bx bx-chevron-right'></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Third Modal HTML -->
-        <div class="modal fade" id="modalToggle3" aria-labelledby="modalToggle3Label" tabindex="-1"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header">
-                        <h5 class="modal-title text-center" id="modalToggle3Label">Device Activation Step 3</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-center">Please enter your API KEY into the device and wait for confirmation.
-                            This may take a few moments.</p>
-                        <p class="text-center text-danger"><strong>Please do not turn off the device during this
-                                process.</strong></p>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" id="prevModal2" data-bs-toggle="modal" data-bs-dismiss="modal"
-                            class="btn rounded-pill btn-icon btn-primary">
-                            <i class='bx bx-chevron-left'></i>
-                        </button>
-                        <button type="button" id="deviceStep4" data-bs-toggle="modal" data-bs-dismiss="modal"
-                            class="btn rounded-pill btn-icon btn-primary">
-                            <i class='bx bx-chevron-right'></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Fourth Modal HTML -->
-        <div class="modal fade" id="modalToggle4" aria-labelledby="modalToggle4Label" tabindex="-1"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalToggle4Label">Device Activation Complete</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="text-center mb-3">
-                            <p style="font-size: 41px;">🥳</p>
-                        </div>
-                        <p class="text-center">Congratulations! Your device has been successfully authenticated and is
-                            now ready for use. Enjoy your new device experience.</p>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" id="prevModal3" data-bs-toggle="modal" data-bs-dismiss="modal"
-                            class="btn rounded-pill btn-icon btn-primary">
-                            <i class='bx bx-chevron-left'></i>
-                        </button>
-                        <button type="button" class="btn rounded-pill btn-icon btn-success" data-bs-dismiss="modal">
-                            <i class='bx bx-check'></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Professional Modal Structure -->
         <div class="modal fade" id="terms-conditions" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalScrollableTitle">vFCL Platform Terms and Conditions and Privacy
-                            Policies</h5>
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                <div class="modal-content border-0">
+                    <div class="modal-header bg-light border-bottom-0">
+                        <h5 class="modal-title fw-bold" id="modalScrollableTitle">Terms and Conditions & Privacy Policies
+                        </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <form method="post" id="terms-and-conditions-form">
-                            @csrf
-                            <div class="form-check">
-                                <input class="form-check-input mt-2" type="checkbox" name="terms_and_conditions"
-                                    id="terms_and_conditions">
-                                <label class="form-check-label" for="terms_and_conditions"> I Agree to the terms and
-                                    conditions
-                                </label>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                    <div class="modal-body px-4">
+                        <div class="accordion" id="accordionExample">
+                            <!-- Section 1 -->
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button bg-light text-dark fw-bold collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+                                        aria-controls="collapseOne">
+                                        Terms of Use
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                    data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <p>Cras mattis consectetur purus sit amet fermentum...</p>
+                                        <!-- Shortened text for better readability -->
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                            <!-- Section 2 -->
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button bg-light text-dark fw-bold collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                                        aria-controls="collapseTwo">
+                                        Privacy Policies
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                    data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <p>Aenean lacinia bibendum nulla sed consectetur...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Agreement Section -->
+                        <div class="terms-agreement mt-4">
+                            <form method="post" id="terms-and-conditions-form">
+                                @csrf
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="terms_and_conditions"
+                                        id="terms_and_conditions">
+                                    <label class="form-check-label ms-2" for="terms_and_conditions">
+                                        I agree to the Terms and Conditions
+                                    </label>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Password Change Modal -->
         <div class="modal fade" id="password-change-modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Change Password</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg">
+                    <div class="modal-header text-white">
+                        <h5 class="modal-title">🔑 Change Password</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form id="form-users-change-password" method="post">
                             @csrf
-                            <div class="row">
-                                <div class="mb-3">
-                                    <label for="fname" class="form-label">Old Password
-                                        {!! dynamicRedAsterisk() !!}</label>
-                                    <div class="input-group input-group-merge">
-                                        {!! Form::password('oldpassword', [
-                                            'placeholder' => 'Old Password',
-                                            'id' => 'oldpassword',
-                                            'class' => 'form-control',
-                                        ]) !!}
-                                        <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                class="bx bx-hide"></i></span>
-                                    </div>
+                            <!-- Old Password -->
+                            <div class="mb-3">
+                                <label for="oldpassword" class="form-label">Old Password {!! dynamicRedAsterisk() !!}</label>
+                                <div class="input-group input-group-merge position-relative">
+                                    {!! Form::password('oldpassword', [
+                                        'placeholder' => 'Enter Old Password',
+                                        'id' => 'oldpassword',
+                                        'class' => 'form-control rounded-pill shadow-sm',
+                                    ]) !!}
+                                    <span class="input-group-text bg-white rounded-end cursor-pointer"
+                                        id="toggle-old-password">
+                                        <i class="bx bx-hide"></i>
+                                    </span>
                                 </div>
+                                <small class="form-text text-muted">Ensure your old password is correct.</small>
                             </div>
-                            <div class="row">
-                                <div class="mb-3">
-                                    <div class="form-password-toggle">
-                                        <label class="form-label" for="password">Password
-                                            {!! dynamicRedAsterisk() !!}</label>
-                                        <div class="input-group input-group-merge">
-                                            {!! Form::password('password', ['placeholder' => 'Password', 'id' => 'password', 'class' => 'form-control']) !!}
-                                            <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                    class="bx bx-hide"></i></span>
-                                        </div>
-                                    </div>
+                            <!-- New Password -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">New Password {!! dynamicRedAsterisk() !!}</label>
+                                <div class="input-group input-group-merge position-relative">
+                                    {!! Form::password('password', [
+                                        'placeholder' => 'Enter New Password',
+                                        'id' => 'password',
+                                        'class' => 'form-control rounded-pill shadow-sm',
+                                    ]) !!}
+                                    <span class="input-group-text bg-white rounded-end cursor-pointer"
+                                        id="toggle-new-password">
+                                        <i class="bx bx-hide"></i>
+                                    </span>
                                 </div>
+                                <small class="form-text text-muted">Use at least 8 characters with a mix of letters,
+                                    numbers, and symbols.</small>
                             </div>
-                            <div class="row">
-                                <div class="mb-3">
-                                    <div class="form-password-toggle">
-                                        <label class="form-label" for="confirm-password">Confirm Password
-                                            {!! dynamicRedAsterisk() !!}</label>
-                                        <div class="input-group input-group-merge">
-                                            {!! Form::password('confirm-password', [
-                                                'placeholder' => 'Confirm Password',
-                                                'id' => 'confirm_password',
-                                                'class' => 'form-control',
-                                            ]) !!}
-                                            <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                    class="bx bx-hide"></i></span>
-                                        </div>
-                                    </div>
+                            <!-- Confirm Password -->
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirm Password
+                                    {!! dynamicRedAsterisk() !!}</label>
+                                <div class="input-group input-group-merge position-relative">
+                                    {!! Form::password('confirm-password', [
+                                        'placeholder' => 'Confirm New Password',
+                                        'id' => 'confirm_password',
+                                        'class' => 'form-control rounded-pill shadow-sm',
+                                    ]) !!}
+                                    <span class="input-group-text bg-white rounded-end cursor-pointer"
+                                        id="toggle-confirm-password">
+                                        <i class="bx bx-hide"></i>
+                                    </span>
                                 </div>
+                                <small class="form-text text-muted">Make sure the passwords match.</small>
                             </div>
-                            <div class="mt-2">
-                                <button type="submit" id="submit" class="submit btn btn-primary me-2">Submit</button>
+                            <!-- Submit Button -->
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" id="submit"
+                                    class="btn btn-primary btn-lg shadow-sm rounded-pill">
+                                    <i class="bx bx-save"></i> Submit
+                                </button>
                             </div>
                         </form>
                     </div>

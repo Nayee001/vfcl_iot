@@ -39,6 +39,8 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}"
         class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
+
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
@@ -82,22 +84,16 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
-
             @include('navigation.customer-sidebar')
             <!-- / Menu -->
-
             <!-- Layout container -->
             <div class="layout-page">
                 <!-- Navbar -->
-
                 @include('navigation.nav')
-
                 <!-- / Navbar -->
-
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
-
                     @yield('content')
                     <!-- / Content -->
                     {{-- @include('navigation.footer') --}}

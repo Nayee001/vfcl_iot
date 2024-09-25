@@ -7,7 +7,7 @@
         </script>
     @endif
 
-    @if ($showPasswordChangeModal)
+    @if ($firstPassword)
         <script>
             $(document).ready(function() {
                 // You might want to delay showing this modal if the terms modal is also shown
