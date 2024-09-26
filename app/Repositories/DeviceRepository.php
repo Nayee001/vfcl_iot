@@ -111,7 +111,7 @@ class DeviceRepository implements DeviceRepositoryInterface
 
 
 
-    public function getCount()
+    public function getDeviceTotalCount()
     {
         if (isSuperAdmin()) {
             return $this->model::count();
@@ -119,6 +119,18 @@ class DeviceRepository implements DeviceRepositoryInterface
             return $this->model::where('created_by', Auth::id())->count();
         } else {
             return DeviceAssignment::where('assign_to', Auth::id())
+                ->count();
+        }
+    }
+
+    public function getTotalActiveDevice()
+    {
+        if (isSuperAdmin()) {
+            return $this->model::count();
+        } elseif (isManager()) {
+            return $this->model::where('created_by', Auth::id())->count();
+        } else {
+            return DeviceAssignment::where('assign_to', Auth::id())->where('connection_status',DeviceAssignment::ConnectionStatus['Authorized'])
                 ->count();
         }
     }

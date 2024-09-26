@@ -101,9 +101,13 @@ class DeviceService
     {
         return $this->deviceDataRepository->getDataCounts();
     }
-    public function getCount()
+    public function getTotalCount()
     {
-        return $this->deviceRepository->getCount();
+        return $this->deviceRepository->getDeviceTotalCount();
+    }
+    public function getTotalActiveDevice()
+    {
+        return $this->deviceRepository->getTotalActiveDevice();
     }
     /**
      * Get Device Statuses

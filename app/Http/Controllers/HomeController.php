@@ -41,7 +41,8 @@ class HomeController extends Controller
     {
         $managerCount = $this->dashboardService->getManagerCount();
         $userCount = $this->dashboardService->getUserCount();
-        $deviceCount = $this->dashboardService->getDeviceCount();
+        $getDeviceTotalCount = $this->dashboardService->getDeviceTotalCount();
+        $getTotalActiveDevice =$this->dashboardService->getTotalActiveDevice();
         $locationCount = $this->dashboardService->getLocationNameCount();
 
         $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
@@ -64,7 +65,9 @@ class HomeController extends Controller
                 'firstPassword' => $firstPassword,
                 'locationCount' => $locationCount,
                 'user' => $user,
-                'notifications' => $notifications
+                'notifications' => $notifications,
+                'getDeviceTotalCount' => $getDeviceTotalCount,
+                'getTotalActiveDevice' => $getTotalActiveDevice
             ]);
         }
     }

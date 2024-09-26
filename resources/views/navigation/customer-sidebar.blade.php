@@ -2,6 +2,7 @@
     <div class="demo">
         <a href="{{ route('home') }}" class="app-brand-link">
             <span class="app-brand-logo demo">
+                <!-- Your SVG logo code -->
                 <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink">
                     <defs>
@@ -44,6 +45,7 @@
                         </g>
                     </g>
                 </svg>
+                <!-- End of your SVG logo code -->
             </span>
         </a>
     </div>
@@ -51,69 +53,49 @@
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
         @can('dashboard')
-            <li class="menu-item {{ request()->is('home') ? 'active' : '' }}">
+            <li class="menu-item {{ request()->routeIs('home') ? 'active' : '' }}">
                 <a href="{{ route('home') }}" class="menu-link">
-                    <i class=" tf-icons bx bx-home-circle"></i>
+                    <i class="tf-icons bx bx-home-circle"></i>
                     <div data-i18n="Analytics">Dashboard</div>
                 </a>
             </li>
         @endcan
-        <!-- Layouts -->
-        <li
-            class="menu-item {{ request()->is('account-settings') ? 'active' : (request()->is('api-connections-manager') ? 'active' : '') }}">
-            <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link ">
-                <i class=" tf-icons bx bx-dock-top"></i>
+
+        <!-- Settings -->
+        <li class="menu-item {{ request()->routeIs('account-settings.*') ? 'active' : '' }}">
+            <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
+                <i class="tf-icons bx bx-dock-top"></i>
                 <div data-i18n="Account Settings">Settings</div>
             </a>
-            <ul class="menu-sub">
-                <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
-                    <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
-                        <div data-i18n="Account">My Account</div>
-                    </a>
-                </li>
-                {{-- <li class="menu-item {{ request()->is('account-settings') ? 'active' : '' }}">
-                    <a href="{{ route('account-settings', Auth::user()->id) }}" class="menu-link">
-                        <div data-i18n="Account">Notification Settings</div>
-                    </a>
-                </li> --}}
-                @can('api-connection')
-                    <li class="menu-item">
-                        <a href="{{ route('api-connections') }}" class="menu-link">
-                            <div data-i18n="Notifications">Api Connections</div>
-                        </a>
-                    </li>
-                @endcan
-
-            </ul>
         </li>
 
-        {{-- <!-- Components -->
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Modules</span></li> --}}
-        <!-- Cards -->
-        <!-- User interface -->
+        <!-- Devices -->
         @can('device-list')
-            <li class="menu-item">
-                <a href="{{ route('devices.index') }}" class="menu-link ">
-                    <i class=" tf-icons bx bx-box"></i>
+            <li class="menu-item {{ request()->routeIs('devices.*') ? 'active' : '' }}">
+                <a href="{{ route('devices.index') }}" class="menu-link">
+                    <i class="tf-icons bx bx-box"></i>
                     <div data-i18n="User interface">Devices</div>
                 </a>
+            </li>
+        @endcan
+
+        <!-- User Management -->
+        @can('user-list')
+            <li class="menu-item {{ request()->routeIs('users.*') ? 'active open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link">
+                    <i class="tf-icons bx bx-copy"></i>
+                    <div data-i18n="Extended UI">User Management</div>
+                </a>
                 <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a href="{{ route('devices.index') }}" class="menu-link">
-                            <div data-i18n="Alerts">Device List</div>
+                    <li class="menu-item {{ request()->routeIs('users.index') ? 'active' : '' }}">
+                        <a href="{{ route('users.index') }}" class="menu-link">
+                            <div data-i18n="Perfect Scrollbar">View All Users</div>
                         </a>
                     </li>
-                    @can('device-create')
-                        <li class="menu-item">
-                            <a href="{{ route('devices.create') }}" class="menu-link">
-                                <div data-i18n="Alerts">Create Device</div>
-                            </a>
-                        </li>
-                    @endcan
-                    @can('device-type-list')
-                        <li class="menu-item">
-                            <a href="{{ route('devices-type.index') }}" class="menu-link">
-                                <div data-i18n="Accordion">Device Types</div>
+                    @can('user-create')
+                        <li class="menu-item {{ request()->routeIs('users.create') ? 'active' : '' }}">
+                            <a href="{{ route('users.create') }}" class="menu-link">
+                                <div data-i18n="Text Divider">Create New User</div>
                             </a>
                         </li>
                     @endcan
@@ -121,67 +103,42 @@
             </li>
         @endcan
 
-        <!-- Device components -->
-        @can('user-list')
-            <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link ">
-                    <i class=" tf-icons bx bx-copy"></i>
-                    <div data-i18n="Extended UI">User Management</div>
-                </a>
-                @can('user-list')
-                    <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a href="{{ route('users.index') }}" class="menu-link">
-                                <div data-i18n="Perfect Scrollbar">View All Users</div>
-                            </a>
-                        </li>
-                        @can('user-create')
-                            <li class="menu-item">
-                                <a href="{{ route('users.create') }}" class="menu-link">
-                                    <div data-i18n="Text Divider">Create New User</div>
-                                </a>
-                            </li>
-                        @endcan
-                    </ul>
-                @endcan
-            </li>
-        @endcan
-        <!-- User interface -->
+        <!-- Roles & Permissions -->
         @can('role-list')
-            <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link ">
-                    <i class=" tf-icons bx bx-box"></i>
-                    <div data-i18n="User interface">Roles & Permission</div>
+            <li class="menu-item {{ request()->routeIs('roles.*') || request()->routeIs('menus.*') ? 'active open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link">
+                    <i class="tf-icons bx bx-box"></i>
+                    <div data-i18n="User interface">Roles & Permissions</div>
                 </a>
-
                 <ul class="menu-sub">
-                    <li class="menu-item">
-                        @can('role-list')
+                    @can('role-list')
+                        <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
                             <a href="{{ route('roles.index') }}" class="menu-link">
                                 <div data-i18n="Accordion">Roles</div>
                             </a>
-                        @endcan
-                        @can('menu-list')
+                        </li>
+                    @endcan
+                    @can('menu-list')
+                        <li class="menu-item {{ request()->routeIs('menus.*') ? 'active' : '' }}">
                             <a href="{{ route('menus.index') }}" class="menu-link">
                                 <div data-i18n="Dynamic Menus">Menus</div>
                             </a>
-                        @endcan
-                    </li>
+                        </li>
+                    @endcan
                 </ul>
             </li>
         @endcan
-        {{-- @endcan --}}
 
-        @can('edit permisssions')
-            <!-- Device components -->
-            <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link ">
-                    <i class=" tf-icons bx bx-copy"></i>
+        <!-- Permissions -->
+        @can('edit permissions')
+            <li class="menu-item {{ request()->routeIs('permissions.*') ? 'active open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link">
+                    <i class="tf-icons bx bx-copy"></i>
                     <div data-i18n="Extended UI">Permissions</div>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
+                    <li class="menu-item {{ request()->routeIs('permissions.index') ? 'active' : '' }}">
+                        <a href="{{ route('permissions.index') }}" class="menu-link">
                             <div data-i18n="Perfect Scrollbar">Manage Permissions</div>
                         </a>
                     </li>
@@ -189,41 +146,41 @@
             </li>
         @endcan
 
+        <!-- Web Settings -->
         @can('general-settings-list')
-            <!-- Device components -->
-            <li class="menu-item">
-                <a href="javascript:void(0)" class="menu-link ">
-                    <i class=' bx bxs-cog'></i>
+            <li class="menu-item {{ request()->routeIs('settings.*') ? 'active open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link">
+                    <i class='bx bxs-cog'></i>
                     <div data-i18n="Extended UI">Web Settings</div>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
+                    <li class="menu-item {{ request()->routeIs('settings.site') ? 'active' : '' }}">
+                        <a href="{{ route('settings.site') }}" class="menu-link">
                             <div data-i18n="Perfect Scrollbar">Site Settings</div>
                         </a>
                     </li>
                 </ul>
             </li>
         @endcan
-        <!-- Device components -->
-        <li class="menu-item">
-            <a href="{{ route('devices.index') }}" class="menu-link ">
+
+        <!-- Manual -->
+        <li class="menu-item {{ request()->routeIs('quickStart') ? 'active' : '' }}">
+            <a href="{{ route('quickStart') }}" class="menu-link">
                 <i class='bx bx-bookmark-alt'></i>
                 <div data-i18n="User interface">Manual</div>
             </a>
         </li>
-        <!-- Device components -->
+
+        <!-- Logout -->
         <li class="menu-item">
             <a class="menu-link" href="{{ route('logout') }}"
                 onclick="event.preventDefault();
-                                document.getElementById('logout-form').submit();">
+                             document.getElementById('logout-form').submit();">
                 <i class="bx bx-power-off me-2"></i><span class="align-middle">{{ __('Logout') }}</span>
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf
             </form>
         </li>
-
-
     </ul>
 </aside>

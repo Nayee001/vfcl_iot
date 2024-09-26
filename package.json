@@ -15,7 +15,9 @@
     },
     "dependencies": {
         "chart.js": "^4.4.1",
+        "laravel-echo": "^1.16.1",
         "mqtt": "^5.5.5",
+        "pusher-js": "^8.4.0-rc2",
         "sweetalert2": "^11.7.29"
     }
 }

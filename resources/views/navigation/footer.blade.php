@@ -1,20 +1,15 @@
 <!-- Footer -->
-
-<!-- Footer -->
-<footer class="content-footer footer bg-footer-theme">
-    <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-        <div class="mb-2 mb-md-0">
-            ©
-            <script>
-                document.write(new Date().getFullYear());
-            </script>
-            , {{env("APP_NAME")}}
-            {{-- <a href="#" target="_blank" class="footer-link fw-bolder">{{env("developer")}}</a> --}}
+<footer class="content-footer footer bg-footer-theme py-3">
+    <div class="container-xxl d-flex flex-wrap justify-content-between align-items-center">
+        <div class="col-12 col-md-6 mb-2 mb-md-0 text-center text-md-start">
+            <span>© <script>document.write(new Date().getFullYear());</script> {{ env("APP_NAME") }}.</span>
+            <span>All rights reserved.</span>
         </div>
-        {{-- <div>
-            <a href="#" target="_blank"
-                class="footer-link me-4">Documentation</a>
-        </div> --}}
+        <div class="col-12 col-md-6 text-center text-md-end">
+            <a href="javascript:void(0);" class="footer-link me-3">Privacy Policy</a>
+            <a href="javascript:void(0);" class="footer-link me-3">Terms of Service</a>
+            <a href="javascript:void(0);" class="footer-link">Contact Us</a>
+        </div>
     </div>
 </footer>
 <!-- / Footer -->

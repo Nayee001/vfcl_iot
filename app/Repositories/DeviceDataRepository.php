@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Yajra\DataTables\Datatables;
+use App\Events\DeviceRealTimeDataUpdates;
 
 class DeviceDataRepository implements DeviceDataRepositoryInterface
 {
@@ -34,8 +35,8 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
             // dd($deviceData);
             // dd($deviceData['data']);
             if ($deviceData) {
-                $getDevice = Device::select('id', 'name', 'api_key')->where('api_key', '=', $deviceData['device_api'])->first();
-                // dd($getDevice);
+                $getDevice = Device::select('id', 'name', 'short_apikey')->where('short_apikey', '=', $deviceData['API_KEY'])->first();
+                dd($getDevice);
                 if ($getDevice) {
                     // dump('Data Seeding into Database');
                     $data = [
@@ -265,15 +266,14 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         // Query for the nearest data based on the target timestamp
         $nearestDataBatch = $this->model::select('device_timestamps', 'current_phase1', 'current_phase2', 'current_phase3')
             ->where('device_id', $id)
-            ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))") // Get nearest time differences
-            ->limit(5) // Limit to 20 nearest data points
+            ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))")
+            ->limit(100) // Limit to 5 nearest data points
             ->get();
 
         // Map the data to an array with 'x' as device_timestamps and 'y' values as the three phases
         $xyData = $nearestDataBatch->map(function ($item) {
-            $timestampInMilliseconds = \Carbon\Carbon::createFromTimestamp($item->device_timestamps)->timestamp * 1000;
             return [
-                'x' => $timestampInMilliseconds,
+                'x' => $item->device_timestamps, // Keeping the device_timestamps as-is
                 'current_phase1' => $item->current_phase1,
                 'current_phase2' => $item->current_phase2,
                 'current_phase3' => $item->current_phase3,
@@ -289,9 +289,13 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
             'data' => $xyArray,
             'deviceName' => $deviceName
         ];
+        // Ensure data is not empty before broadcasting
+        if ($nearestDataBatch->isEmpty()) {
+            // $this->info('No data to broadcast.');
+            return;
+        }
 
-        // dd($finalArray);
-        // Return the JSON response
+        // $this->info('Data broadcasted successfully for device: ' . $finalArray);
         return response()->json($finalArray);
     }
 }

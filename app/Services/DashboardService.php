@@ -45,9 +45,13 @@ class DashboardService implements DashboardServiceInterface
     {
         return $this->deviceService->getAllDeviceTypeWithCounts();
     }
-    public function getDeviceCount()
+    public function getDeviceTotalCount()
     {
-        return $this->deviceService->getCount();
+        return $this->deviceService->getTotalCount();
+    }
+    public function getTotalActiveDevice()
+    {
+        return $this->deviceService->getTotalActiveDevice();
     }
     public function getDeviceDataCount()
     {

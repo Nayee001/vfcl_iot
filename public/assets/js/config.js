@@ -58,7 +58,9 @@ function fetchAndUpdateData() {
                 return response.json();
             } else {
                 return response.text().then((text) => {
-                    throw new Error(`Unexpected content type: ${contentType}. Response: ${text}`);
+                    throw new Error(
+                        `Unexpected content type: ${contentType}. Response: ${text}`
+                    );
                 });
             }
         })
@@ -71,12 +73,20 @@ function fetchAndUpdateData() {
                             <i class="mdi mdi-circle"></i>
                         </span>
                         <h6 class="fw-normal mb-0">
-                            <a href="#" onclick="showData('${record.device ? record.device.id : ""}')">
-                                ${record.device ? record.device.name : "Device Name"}
+                            <a href="#" onclick="showData('${
+                                record.device ? record.device.id : ""
+                            }')">
+                                ${
+                                    record.device
+                                        ? record.device.name
+                                        : "Device Name"
+                                }
                             </a>
                         </h6>
                     <div class="flex-grow-1"></div>
-                    <h6 class="text-end me-4 mb-0 ${record.fault_status == "ON" ? "green" : "red"}">
+                    <h6 class="text-end me-4 mb-0 ${
+                        record.fault_status == "ON" ? "green" : "red"
+                    }">
                         ${record.fault_status}
                     </h6>
                     <h6 class="text-end me-2 mb-0">${record.device_status}</h6>
@@ -86,7 +96,9 @@ function fetchAndUpdateData() {
         })
         .catch((error) => {
             console.error("Fetch and Update Data Error:", error);
-            document.getElementById("deviceDataContainer").innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
+            document.getElementById(
+                "deviceDataContainer"
+            ).innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
         });
 }
 
@@ -107,7 +119,9 @@ async function fetchDeviceData(deviceId) {
             return await response.json();
         } else {
             const errorText = await response.text();
-            throw new Error(`Unexpected content type: ${contentType}. Response: ${errorText}`);
+            throw new Error(
+                `Unexpected content type: ${contentType}. Response: ${errorText}`
+            );
         }
     } catch (error) {
         console.error("Fetch Device Data Error:", error);
@@ -116,8 +130,10 @@ async function fetchDeviceData(deviceId) {
 }
 
 function updateUIWithDeviceData(deviceData) {
-    const falutStatusClass = deviceData.fault_status === "ON" ? "text-danger" : "text-success";
-    const deviceStatusClass = deviceData.status === "Active" ? "text-danger" : "text-success";
+    const falutStatusClass =
+        deviceData.fault_status === "ON" ? "text-danger" : "text-success";
+    const deviceStatusClass =
+        deviceData.status === "Active" ? "text-danger" : "text-success";
 
     const imageSrc =
         deviceData.fault_status === "ON"
@@ -128,9 +144,13 @@ function updateUIWithDeviceData(deviceData) {
         <div class="text-center fw-semibold pt-3 mb-2">
             <img class="fault-img mb-3" src="${imageSrc}" alt="Device image" style="margin: auto;">
             <div>
-                <span class="fault ${falutStatusClass}">${deviceData.fault_status}</span><br>
+                <span class="fault ${falutStatusClass}">${
+        deviceData.fault_status
+    }</span><br>
                 <span>${deviceData.device.name}</span><br>
-                <span class="fault ${deviceStatusClass}">${deviceData.device.status}</span>
+                <span class="fault ${deviceStatusClass}">${
+        deviceData.device.status
+    }</span>
             </div>
         </div>
         <div class="d-flex justify-content-center px-xxl-4 px-lg-2 p-4">
@@ -139,14 +159,18 @@ function updateUIWithDeviceData(deviceData) {
                     <span class="badge bg-label-primary p-2 me-2"><i class='bx bxs-heart'></i></span>
                     <div>
                         <small>Health Status</small>
-                        <h6 class="mb-0"><span class="fw-medium ${falutStatusClass}">${deviceData.health_status}</span></h6>
+                        <h6 class="mb-0"><span class="fw-medium ${falutStatusClass}">${
+        deviceData.health_status
+    }</span></h6>
                     </div>
                 </div>
                 <div class="d-flex align-items-center">
                     <span class="badge bg-label-info p-2 me-2"><i class='bx bx-time'></i></span>
                     <div>
                         <small>Last Sync</small>
-                        <h6 class="mb-0">${formatTimestamp(deviceData.timestamp)}</h6>
+                        <h6 class="mb-0">${formatTimestamp(
+                            deviceData.timestamp
+                        )}</h6>
                     </div>
                 </div>
             </div>
@@ -156,109 +180,123 @@ function updateUIWithDeviceData(deviceData) {
 }
 
 function showError(error) {
-    document.getElementById("device-fault-status-shown").innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
+    document.getElementById(
+        "device-fault-status-shown"
+    ).innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
 }
-
 var chart;
-var lastDate = 0;
-var data = [];
-var XAXISRANGE = 10 * 60000; // Adjust this based on your needs
+var XAXISRANGE = 10 * 60000; // Set range for X-Axis (last 10 minutes)
 
-// Fetch waveform data (current and voltage) and update the chart
-function fetchChartDataAndUpdateChart(deviceId) {
-    fetch(`/get-device-line-chart-data/${deviceId}`)
-        .then((response) => response.json())
-        .then((newData) => {
-            // Assuming newData contains an array of objects with 'x' (timestamp) and 'y' (voltage/current value)
-            data = newData.data.map((item) => ({
-                x: new Date(item.x),  // Convert timestamp to JS Date object
-                y: item.y,             // Voltage or Current value
-            }));
-
-            if (chart) {
-                chart.updateSeries([{ data: data }]);
-            }
-        })
-        .catch((error) => console.error('Error fetching chart data:', error));
-}
-
-// Show the data in the chart for a given deviceId
-function showLineChart(deviceId) {
-    fetchChartDataAndUpdateChart(deviceId);
-}
-
-// ApexCharts chart initialization
-document.addEventListener("DOMContentLoaded", function () {
+// Initialize the
+function initializeChart() {
     var options = {
-        series: [{
-            name: "Current",  // You can update the name depending on what you're plotting (e.g., "Voltage", "Current Phase 1")
-            data: data.slice(),  // Initially, data will be empty; will be populated in real-time
-        }],
         chart: {
-            type: "area",  // Can also be 'line' or other types depending on your visualization needs
-            stacked: false,
+            type: "line",
             height: 350,
-            zoom: {
-                type: "x",
+
+            animations: {
                 enabled: true,
-                autoScaleYaxis: true,
+                easing: "linear",
+                dynamicAnimation: {
+                    speed: 1000,
+                },
+            },
+            stroke: {
+                curve: "smooth",
             },
             toolbar: {
-                autoSelected: "zoom",
+                show: false,
+            },
+            zoom: {
+                enabled: false,
             },
         },
-        dataLabels: {
-            enabled: false,
-        },
-        markers: {
-            size: 0,
-        },
-        title: {
-            text: "Real-Time Waveform",
-            align: "left",
-        },
-        fill: {
-            type: "gradient",
-            gradient: {
-                shadeIntensity: 1,
-                inverseColors: false,
-                opacityFrom: 0.5,
-                opacityTo: 0,
+        series: [
+            {
+                name: "Phase 1",
+                data: [], // Initialize empty data
             },
+            {
+                name: "Phase 2",
+                data: [], // Initialize empty data
+            },
+            {
+                name: "Phase 3",
+                data: [], // Initialize empty data
+            },
+        ],
+        xaxis: {
+            type: "datetime", // X-axis is datetime based
+            range: XAXISRANGE, // Range is 10 minutes
         },
         yaxis: {
-            labels: {
-                formatter: function (val) {
-                    return val;  // Customize this based on what you're plotting (e.g., Current in Amps)
-                },
-            },
             title: {
-                text: "Current (A)",  // Update based on the type of data you're showing
-            },
-        },
-        xaxis: {
-            type: "datetime",  // Time-based x-axis for real-time data
-        },
-        tooltip: {
-            shared: false,
-            y: {
-                formatter: function (val) {
-                    return val;  // Customize for voltage/current values
-                },
+                text: "Current (Amps)",
             },
         },
     };
 
-    // Initialize the chart
-    chart = new ApexCharts(document.querySelector("#device-fault-line-chart"), options);
+    chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
+}
 
-    // Periodically fetch and update the chart data every second (or another interval)
-    window.setInterval(function () {
-        fetchChartDataAndUpdateChart(1);  // Replace '1' with the actual deviceId or parameter
-    }, 1000);  // Adjust the interval as needed (1 second here)
+// Fetch waveform data and update the chart
+function fetchChartDataAndUpdateChart(deviceId) {
+    fetch(`/get-device-line-chart-data/${deviceId}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((newData) => {
+            // Debug: Check the data received
+            console.log("Received Data:", newData);
+
+            if (!newData.data || newData.data.length === 0) {
+                console.error("No data available for the selected device");
+                return;
+            }
+
+            // Prepare data for the chart
+            var phase1Data = [];
+            var phase2Data = [];
+            var phase3Data = [];
+
+            newData.data.forEach((item) => {
+                var timestamp = new Date(item.x * 1000).getTime(); // Convert seconds to milliseconds
+
+                // Populate data for each phase
+                phase1Data.push({ x: timestamp, y: item.current_phase1 });
+                phase2Data.push({ x: timestamp, y: item.current_phase2 });
+                phase3Data.push({ x: timestamp, y: item.current_phase3 });
+            });
+
+            // Update chart data for all phases
+            chart.updateSeries([
+                { name: "Phase 1", data: phase1Data },
+                { name: "Phase 2", data: phase2Data },
+                { name: "Phase 3", data: phase3Data },
+            ]);
+
+            // Debug: Check if the chart was updated successfully
+            console.log("Chart updated with new data");
+        })
+        .catch((error) => {
+            console.error("Error fetching chart data:", error);
+        });
+}
+
+// Show the data in the chart for a given deviceId
+function showLineChart(deviceId) {
+    // Fetch data and update chart when user selects the device
+    fetchChartDataAndUpdateChart(deviceId);
+}
+
+// Initialize the chart when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+    initializeChart(); // Initialize the chart once the DOM is loaded
 });
-
 
 async function showData(deviceId) {
     try {

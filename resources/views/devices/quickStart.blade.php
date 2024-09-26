@@ -168,7 +168,7 @@
             </div>
         </div>
         <!-- Next Button -->
-        <a href="{{route('devices.index')}}" class="btn btn-primary next-button">
+        <a href="{{route('authorizeManual')}}" class="btn btn-primary next-button">
             Next
         </a>
     </div>

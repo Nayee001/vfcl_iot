@@ -15,6 +15,7 @@ interface DeviceRepositoryInterface
     public function updateDevice($request,$id);
     public function createDevice(array $inputData): Model;
     public function getPluckedDevices();
-    public function getCount();
+    public function getDeviceTotalCount();
     public function deviceDashboard();
+    public function getTotalActiveDevice();
 }

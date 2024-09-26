@@ -50,80 +50,127 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response) {
+                        // Determine if the "Authorize Device" button should be displayed
                         const verifyButton = (response.device_assigned.status === 'Not Responded' || response
                                 .device_assigned.status === 'Reject') ?
-                            `<button class="btn btn-custom btn-sm mt-3" onclick="verifyDevice(${response.id})">
-                                <i class="fas fa-check-circle"></i> Authorize Device
-                             </button>` :
+                            `<button class="btn btn-warning btn-sm mt-3" onclick="verifyDevice(${response.id})">
+                        <i class="fas fa-check-circle"></i> Authorize Device
+                     </button>` :
                             '';
 
-                        const checkboxes = {
-                            loginStatus: response.device_assigned.login_to_device === 1,
-                            macAddressVerification: response.device_assigned.send_mac === 1,
-                            apiKeyVerification: response.device_assigned.send_mac === 1,
-                            deviceSoftwareUpdate: response.device_assigned.connection_status ==="Authorized",
-                            securityConnection: response.device_assigned.connection_status === "Authorized"
-                        };
+                        // Define the checklist items with their statuses
+                        const checklistItems = [{
+                                name: 'Login Status',
+                                icon: 'fas fa-sign-in-alt',
+                                status: response.device_assigned.login_to_device === 1
+                            },
+                            {
+                                name: 'MAC Address Verification',
+                                icon: 'fas fa-network-wired',
+                                status: response.device_assigned.send_mac === 1
+                            },
+                            {
+                                name: 'API Key Verification',
+                                icon: 'fas fa-key',
+                                status: response.device_assigned.send_apikey === 1
+                            },
+                            {
+                                name: 'Software Update',
+                                icon: 'fas fa-sync-alt',
+                                status: response.device_assigned.connection_status === 'Authorized'
+                            },
+                            {
+                                name: 'Secure Connection',
+                                icon: 'fas fa-shield-alt',
+                                status: response.device_assigned.connection_status === 'Authorized'
+                            }
+                        ];
 
-                        let checkedCount = 0;
-                        for (let key in checkboxes) {
-                            if (checkboxes[key]) checkedCount++;
-                        }
+                        // Calculate progress
+                        const checkedCount = checklistItems.filter(item => item.status).length;
+                        const progress = Math.round((checkedCount / checklistItems.length) * 100);
 
-                        let progress = (checkedCount / Object.keys(checkboxes).length) * 100;
+                        // Generate the checklist HTML
+                        const checklistHTML = checklistItems.map(item => `
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="${item.icon} me-3 ${item.status ? 'text-success' : 'text-secondary'}" style="font-size: 1.5em;"></i>
+                        <span class="flex-grow-1">${item.name}</span>
+                        <i class="fas ${item.status ? 'fa-check-circle text-success' : 'fa-times-circle text-danger'}"></i>
+                    </li>
+                `).join('');
 
+                        // Build the device info HTML
                         const deviceInfoHTML = `
-                            <div class="device-details">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div>
-                                        <h5 class="text-primary">${response.name}</h5>
-                                        <small>${response.device_assigned.connection_status}</small>
-                                    </div>
-                                    <div>
-                                        <span class="badge bg-${response.device_assigned.connection_status === 'Authorized' ? 'success' : 'danger'}">
-                                            ${response.device_assigned.connection_status}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <ul>
-                                    ${generateCheckboxHTML('Login Status', 'fas fa-user-check', checkboxes.loginStatus)}
-                                    ${generateCheckboxHTML('MAC Verification', 'fas fa-network-wired', checkboxes.macAddressVerification)}
-                                    ${generateCheckboxHTML('API Key', 'fas fa-key', checkboxes.apiKeyVerification)}
-                                    ${generateCheckboxHTML('Software Update', 'fas fa-sync-alt', checkboxes.deviceSoftwareUpdate)}
-                                    ${generateCheckboxHTML('Secure Connection', 'fas fa-shield-alt', checkboxes.securityConnection)}
-                                </ul>
-
-                                <div class="mt-3">
-                                    <p><strong>API Key:</strong> ${response.short_apikey}</p>
-                                    <p><strong>MAC Address:</strong> ${response.mac_address}</p>
-                                </div>
-
-                                <div class="mt-3">
-                                    <h6>Device Authentication Progress</h6>
-                                    <div class="progress mt-2">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="deviceAuthProgress"
-                                            role="progressbar" style="width: ${progress}%;" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100">
-                                            ${progress}%
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Insert verify button if necessary -->
-                                ${verifyButton}
+                    <div class="device-details">
+                        <!-- Device Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="text-primary mb-0">${response.name}</h4>
+                                <small class="text-muted">Status: ${response.device_assigned.connection_status}</small>
                             </div>
-                        `;
+                            <div>
+                                <span class="badge rounded-pill bg-${response.device_assigned.connection_status === 'Authorized' ? 'success' : 'danger'}">
+                                    ${response.device_assigned.connection_status}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Checklist -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Device Authentication Checklist</h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                ${checklistHTML}
+                            </ul>
+                        </div>
+
+                        <!-- Device Info -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="info-box bg-light p-3">
+                                    <h6><i class="fas fa-key me-2"></i>API Key</h6>
+                                    <p class="mb-0">${response.short_apikey}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box bg-light p-3">
+                                    <h6><i class="fas fa-network-wired me-2"></i>MAC Address</h6>
+                                    <p class="mb-0">${response.mac_address}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <h6>Device Authentication Progress</h6>
+                            <div class="progress mt-2" style="height: 25px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar"
+                                    style="width: ${progress}%;" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100">
+                                    ${progress}%
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verify Button -->
+                        ${verifyButton}
+                    </div>
+                `;
 
                         $('#deviceDetails').html(deviceInfoHTML);
                     } else {
                         console.error('No device data found.');
+                        $('#deviceDetails').html('<p class="text-danger">No device data found.</p>');
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching device data:', error);
+                    $('#deviceDetails').html(
+                        '<p class="text-danger">Error fetching device data. Please try again later.</p>');
                 }
             });
         }
+
 
         function generateCheckboxHTML(label, iconClass, isChecked) {
             return `

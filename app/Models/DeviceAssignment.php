@@ -10,6 +10,7 @@ class DeviceAssignment extends Model
     use HasFactory;
     protected $table = "device_assignments";
     protected $fillable = ['device_id', 'assign_to', 'email_sent', 'assign_by', 'location_id', 'created_at', 'updated_at', 'last_sync', 'send_mac', 'login_to_device', 'connection_status', 'status', 'encryption_key'];
+    const ConnectionStatus = ['Authorized' => 'Authorized', 'Not Authorized' => 'Not Authorized'];
 
     public function assignee()
     {

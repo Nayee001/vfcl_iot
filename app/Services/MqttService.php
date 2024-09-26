@@ -38,21 +38,20 @@ class MqttService implements MqttServiceInterface
         $this->connectionSettings = (new ConnectionSettings())
             ->setUsername($this->username)
             ->setPassword($this->password);
-        // $this->mqttClient->connect($this->connectionSettings, true);
+        $this->mqttClient->connect($this->connectionSettings, true);
     }
 
     public function connectAndSubscribe($topic)
     {
         try {
             $this->mqttClient->subscribe($topic, function ($topic, $message) {
-                dump("Received message on topic [%s]: %s\n", $topic, $message);
+                // dump("Received message on topic [%s]: %s\n", $topic, $message);
                 $associativeArray = json_decode($message, true);
                 if (isset($associativeArray['encryption_key'])) {
                     $this->deviceRepository->deviceVerifications($associativeArray);
                 }
-
-                // $this->deviceDataRepository->update_device_data($associativeArray);
-                // $this->deviceLogsRepository->create($associativeArray);
+                $this->deviceDataRepository->update_device_data($associativeArray);
+                $this->deviceLogsRepository->create($associativeArray);
             }, 0);
 
             $this->mqttClient->loop();

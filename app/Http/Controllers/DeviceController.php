@@ -133,6 +133,9 @@ class DeviceController extends Controller
     public function quickStart(){
         return view('devices.quickStart');
     }
+    public function authorizeManual(){
+        return view('devices.authorizeManual');
+    }
 
     public function deviceStep2(Request $request)
     {
