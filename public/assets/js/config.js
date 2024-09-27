@@ -250,7 +250,6 @@ function fetchChartDataAndUpdateChart(deviceId) {
             return response.json();
         })
         .then((newData) => {
-            // Debug: Check the data received
             console.log("Received Data:", newData);
 
             if (!newData.data || newData.data.length === 0) {

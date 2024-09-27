@@ -26,8 +26,7 @@
                                 deviceMap[device.id] = device;
 
                                 // Check if the device needs authorization
-                                if (device.device_assigned.status === 'Not Responded' || device
-                                    .device_assigned.status === 'Reject') {
+                                if (device.device_assigned?.status === 'Not Responded' || device.device_assigned?.status === 'Reject') {
                                     deviceNames.push(device.name);
                                 }
 
@@ -38,11 +37,11 @@
                             // Add a warning message for devices that need authorization
                             if (deviceNames.length > 0) {
                                 topMessageHtml = `
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                <strong>Attention!</strong> The following devices need authorization: ${deviceNames.join(', ')}.
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                            `;
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        <strong>Attention!</strong> The following devices need authorization: ${deviceNames.join(', ')}.
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                `;
                             }
                         } else {
                             // No devices found
@@ -60,13 +59,10 @@
                 });
             }
 
-            // Function to create the HTML for each device card
             function deviceCardTemplate(device) {
-                const isAuthorized = device.device_assigned.connection_status === 'Authorized';
-                const isPending = device.device_assigned.status === 'Not Responded' || device.device_assigned
-                    .status === 'Reject';
-                const isOnline = device.device_assigned
-                .login_to_device; // Assuming this property indicates if the device is online
+                const isAuthorized = device.device_assigned?.connection_status === 'Authorized';
+                const isPending = device.device_assigned?.status === 'Not Responded' || device.device_assigned?.status === 'Reject';
+                const isOnline = device.device_assigned?.login_to_device || false;
 
                 // Add the device to the deviceMap for later reference
                 deviceMap[device.id] = device;
@@ -80,60 +76,66 @@
                 const onlineStatusBadgeClass = isOnline ? 'bg-info' : 'bg-secondary';
                 const onlineStatusText = isOnline ? 'Online' : 'Offline';
 
+                // If the device is not logged in, show a message in place of the device card
+                const loginMessage = !isOnline ?
+                    `<p class="text-center text-danger">Device is offline or not logged in. Please check the connection.</p>` :
+                    '';
+
                 // Determine if the "Accept" button should be displayed
                 const verifyButton = isPending ?
                     `<button class="btn btn-warning btn-sm mt-2" onclick="event.stopPropagation(); verifyDevice(${device.id})">Accept</button>` :
                     '';
 
                 // Determine the onclick event based on authorization status
-                const onClickEvent = isAuthorized ?
-                    `onclick="showData(${device.id})"` :
+                const onClickEvent = isAuthorized && isOnline ?
+                    `onclick="redirectDeviceDataPage(${device.id})"` :
                     `onclick="showActivateDeviceModal(${device.id})"`;
 
                 // Return the HTML for a single device card
                 return `
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="card h-100 ${cardClass}" style="cursor: pointer;" ${onClickEvent}>
-                <div class="card-body d-flex flex-column">
-                    <!-- Device Icon or Image -->
-                    <div class="text-center mb-3">
-                        <i class="fas fa-microchip fa-3x text-primary"></i>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card h-100 ${cardClass}" style="cursor: pointer;" ${onClickEvent}>
+                            <div class="card-body d-flex flex-column">
+                                <!-- Device Icon or Image -->
+                                <div class="text-center mb-3">
+                                    <i class="fas fa-microchip fa-3x text-primary"></i>
+                                </div>
+                                <!-- Device Name -->
+                                <h5 class="card-title text-primary text-center">${device.name}</h5>
+                                <!-- Device Status Badges -->
+                                <div class="text-center mb-2">
+                                    <span class="badge ${statusBadgeClass} me-1">${statusText}</span>
+                                    ${isPending ? `<span class="badge bg-warning text-dark">Pending</span>` : ''}
+                                    <span class="badge ${onlineStatusBadgeClass} ms-1">${onlineStatusText}</span>
+                                </div>
+                                <!-- Show login message if device is offline -->
+                                ${loginMessage}
+                                <!-- Additional Device Information -->
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item">
+                                        <strong>MAC:</strong> ${device.mac_address || 'N/A'}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>API Key:</strong> ${device.short_apikey || 'N/A'}
+                                    </li>
+                                </ul>
+                                <!-- Action Buttons -->
+                                ${verifyButton}
+                            </div>
+                        </div>
                     </div>
-                    <!-- Device Name -->
-                    <h5 class="card-title text-primary text-center">${device.name}</h5>
-                    <!-- Device Status Badges -->
-                    <div class="text-center mb-2">
-                        <span class="badge ${statusBadgeClass} me-1">${statusText}</span>
-                        ${isPending ? `<span class="badge bg-warning text-dark">Pending</span>` : ''}
-                        <span class="badge ${onlineStatusBadgeClass} ms-1">${onlineStatusText}</span>
-                    </div>
-                    <!-- Additional Device Information -->
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item">
-                            <strong>MAC:</strong> ${device.mac_address || 'N/A'}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>API Key:</strong> ${device.short_apikey || 'N/A'}
-                        </li>
-                    </ul>
-                    <!-- Action Buttons -->
-                    ${verifyButton}
-                </div>
-            </div>
-        </div>
-        `;
+                `;
             }
 
-            // Function to show data when device is authorized
-            function showData(deviceId) {
-                // Redirect to the device details page
-                window.location.href = `/devices/${deviceId}`;
-            }
+            // Define redirectDeviceDataPage function
+            window.redirectDeviceDataPage = function(deviceId) {
+                window.location.href = `/devices/${deviceId}/dashboard`;
+            };
 
             // Function to show modal for activating the device (when device is not authorized)
             let currentDeviceId;
 
-            function showActivateDeviceModal(deviceId) {
+            window.showActivateDeviceModal = function(deviceId) {
                 const device = deviceMap[deviceId];
                 const deviceName = device.name;
 
@@ -141,13 +143,13 @@
                 currentDeviceId = deviceId;
 
                 // Set the modal title and body content
-                $('#activateDeviceModal .modal-title').text('Device Not Authorized');
+                $('#activateDeviceModal .modal-title').text('Device Not Authorized yet!');
                 $('#activateDeviceModal .modal-body').html(`
-                <div class="text-center">
-                    <i class="fas fa-lock fa-3x text-danger mb-3"></i>
-                    <p>Please activate the device <strong>${deviceName}</strong> to access its features.</p>
-                </div>
-            `);
+                    <div class="text-center">
+                        <i class="fas fa-lock fa-3x text-danger mb-3"></i>
+                        <p>Please activate the device <strong>${deviceName}</strong> to access its features.</p>
+                    </div>
+                `);
 
                 // Show the modal
                 $('#activateDeviceModal').modal('show');
@@ -159,27 +161,32 @@
 
             function noDevicesAssignedMessage() {
                 return `
-                <div class="col">
-                    <div class="alert alert-info text-center" role="alert">
-                        You have no devices assigned yet.
+                    <div class="col">
+                        <div class="alert alert-info text-center" role="alert">
+                            You have no devices assigned yet.
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
             }
 
             function fetchDevicesErrorMessage() {
                 return `
-                <div class="col">
-                    <div class="alert alert-danger text-center" role="alert">
-                        An error occurred while fetching the devices. Please try again later.
+                    <div class="col">
+                        <div class="alert alert-danger text-center" role="alert">
+                            An error occurred while fetching the devices. Please try again later.
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
             }
 
             window.verifyDevice = function(deviceId) {
                 fetch(`{{ url('verify-device-model') }}/${deviceId}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data) {
                             showVerificationModal(data, deviceId);
@@ -197,15 +204,15 @@
 
             function showVerificationModal(data, deviceId) {
                 const contentHtml = `
-                <p>Device Name: <strong>${data.name}</strong></p>
-                <p>Status: ${data.status}</p>
-            `;
+                    <p>Device Name: <strong>${data.name}</strong></p>
+                    <p>Status: ${data.status}</p>
+                `;
 
                 const verifyAgainButton = `
-                <button type="button" class="btn btn-warning w-100 mt-3" onclick="sendToDevice(${deviceId})">
-                    Accept
-                </button>
-            `;
+                    <button type="button" class="btn btn-warning w-100 mt-3" onclick="sendToDevice(${deviceId})">
+                        Accept
+                    </button>
+                `;
 
                 $('#modalContent').html(contentHtml + verifyAgainButton);
                 $('#verificationModal').modal('show');
@@ -233,7 +240,12 @@
                 }).then(() => {
                     // After the timer, proceed with activation
                     fetch(`{{ url('send-device-mqtt') }}/${deviceId}`)
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Server error: ${response.status}`);
+                            }
+                            return response.json();
+                        })
                         .then(data => {
                             if (data) {
                                 Swal.fire({

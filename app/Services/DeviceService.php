@@ -53,6 +53,10 @@ class DeviceService
         return $this->deviceRepository->deviceDashboard();
     }
 
+    public function deviceData($id){
+        return $this->deviceRepository->deviceData($id);
+    }
+
     public function assingedDevice($id)
     {
 

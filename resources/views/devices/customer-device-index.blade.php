@@ -13,7 +13,7 @@
 
         <!-- Devices Container -->
         <div class="row" id="devices">
-            <!-- Device cards will be injected here by the JavaScript code -->
+
         </div>
 
         <!-- Modal for device verification -->
@@ -28,6 +28,26 @@
                     <div class="modal-body text-center" id="modalContent">
                         <!-- Content will be set dynamically -->
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- Activate Device Modal -->
+        <div class="modal fade" id="activateDeviceModal" tabindex="-1" aria-labelledby="activateDeviceModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header text-white">
+                    <h5 class="modal-title mx-auto" id="activateDeviceModalLabel">Device Not Authorized Yet !</h5>
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 me-2"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <!-- Content will be set dynamically -->
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <!-- Optional: Include a button to start the activation process -->
+                    <button type="button" class="btn btn-primary" onclick="redirectToDeviceShow()">Authorize Now</button>
                 </div>
             </div>
         </div>

@@ -109,7 +109,25 @@ class DeviceRepository implements DeviceRepositoryInterface
     }
 
 
+    public function deviceData(int $id)
+    {
+        try {
+            $device = $this->model::with([
+                'deviceType',
+                'deviceOwner',
+                'createdBy',
+                'deviceAssigned',
+                'deviceAssigned.assignee',
+                'deviceAssigned.deviceLocation',
+                'deviceAssigned.assignee.locations',
+            ])->findOrFail($id);
 
+            return $device;
+        } catch (ModelNotFoundException $e) {
+            // Handle the exception, e.g., return a 404 response or custom error message
+            return response()->json(['error' => 'Device not found'], 404);
+        }
+    }
 
     public function getDeviceTotalCount()
     {
@@ -130,7 +148,7 @@ class DeviceRepository implements DeviceRepositoryInterface
         } elseif (isManager()) {
             return $this->model::where('created_by', Auth::id())->count();
         } else {
-            return DeviceAssignment::where('assign_to', Auth::id())->where('connection_status',DeviceAssignment::ConnectionStatus['Authorized'])
+            return DeviceAssignment::where('assign_to', Auth::id())->where('connection_status', DeviceAssignment::ConnectionStatus['Authorized'])
                 ->count();
         }
     }
@@ -308,7 +326,14 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function createDevice(array $inputdata): Model
     {
         $fillableFields = [
-            'name', 'device_type', 'owner', 'health', 'status', 'description', 'ip_address', 'mac_address'
+            'name',
+            'device_type',
+            'owner',
+            'health',
+            'status',
+            'description',
+            'ip_address',
+            'mac_address'
         ];
         $modifiedData = array_intersect_key($inputdata, array_flip($fillableFields));
         $modifiedData['created_by'] = Auth::id();
@@ -364,7 +389,14 @@ class DeviceRepository implements DeviceRepositoryInterface
     public function updateDevice($request, $id)
     {
         $fillableFields = [
-            'name', 'device_type', 'owner', 'health', 'status', 'description', 'mac_address', 'ip_address'
+            'name',
+            'device_type',
+            'owner',
+            'health',
+            'status',
+            'description',
+            'mac_address',
+            'ip_address'
         ];
         $modifiedData = array_intersect_key($request, array_flip($fillableFields));
         $modifiedData['updated_by'] = Auth::id();

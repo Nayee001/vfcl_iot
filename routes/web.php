@@ -14,6 +14,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Mail;
+use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 
 
 // use App\Mail\UserCreated;
@@ -79,12 +80,15 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device/dashboard', [DeviceController::class, 'dashboard'])->name('devices.dashboard');
     // Customer Device Data
     Route::get('/customer/devices/data', [DeviceController::class, 'deviceDashboard'])->name('customer.devices.data');
+
+    Route::get('/devices/{id}data', [DeviceController::class, 'deviceData'])->name('customer.deviceData');
     Route::get('/reset-device/{id}', [DeviceController::class, 'resetDevice'])->name('reset-device');
 
     Route::get('/customer/assinged/devices/data/{id}', [DeviceController::class, 'assingedDevice'])->name('customer.assinged.devices.data');
     Route::get('/deviceStep2', [DeviceController::class, 'deviceStep2'])->name('deviceStep2');
     Route::get('/device-quick-start-manual', [DeviceController::class, 'quickStart'])->name('quickStart');
     Route::get('/device-authorize-manual', [DeviceController::class, 'authorizeManual'])->name('authorizeManual');
+    Route::get('/devices/{device_id}/dashboard', [DeviceController::class, 'dashboard'])->name('devices.dashboard');
 
     Route::get('/customer/assigned/devices/data/{userId}', [DeviceController::class, 'getAssignedDevices']);
 

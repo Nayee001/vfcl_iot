@@ -14,8 +14,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Yajra\DataTables\Datatables;
-use App\Events\DeviceRealTimeDataUpdates;
-
 class DeviceDataRepository implements DeviceDataRepositoryInterface
 {
     /**
@@ -242,7 +240,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
     {
         try {
             // Assuming $id is already provided as a parameter and should not be hardcoded
-            $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
+            $deviceData = $this->model::with('device')->where('device_id', $id)->first();
 
             return response()->json($deviceData);
         } catch (\Exception $e) {
@@ -261,12 +259,13 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         }
 
         // Get the target timestamp for the nearest data batch
-        $targetTimestamp = $deviceData->timestamp;
+        $targetTimestamp = $deviceData->device_timestamps;
 
         // Query for the nearest data based on the target timestamp
         $nearestDataBatch = $this->model::select('device_timestamps', 'current_phase1', 'current_phase2', 'current_phase3')
             ->where('device_id', $id)
-            ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))")
+            // ->orderBy($targetTimestamp,'ASC')
+            // ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))")
             ->limit(100) // Limit to 5 nearest data points
             ->get();
 
@@ -296,6 +295,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         }
 
         // $this->info('Data broadcasted successfully for device: ' . $finalArray);
+        // dd($finalArray);
         return response()->json($finalArray);
     }
 }

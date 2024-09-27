@@ -41,9 +41,9 @@ class DeviceController extends Controller
         $this->middleware('permission:device-delete', ['only' => ['destroy']]);
     }
 
-    public function dashboard(): view
+    public function dashboard($device_id): view
     {
-        return view('devices.dashboard');
+        return view('devices.dashboard',compact('device_id'));
     }
 
     /**
@@ -123,6 +123,12 @@ class DeviceController extends Controller
     public function deviceDashboard()
     {
         $devices = $this->deviceService->deviceDashboard();
+        dd($devices);
+        return response()->json($devices);
+    }
+
+    public function deviceData($id){
+        $devices = $this->deviceService->deviceData($id);
         return response()->json($devices);
     }
     public function assingedDevice($id)
