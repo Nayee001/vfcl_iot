@@ -1,318 +1,220 @@
 @extends('layouts.app')
-
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="row gy-4">
-            <!--/ Ratings -->
-            <!-- Sessions -->
-            <div class="col-xl-4 col-sm-6 mt-5">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <h5 class="mb-4 pb-1 text-nowrap"><b>Customers</b></h5>
-                                    <div class="d-flex align-items-end mb-3">
-                                        <h2 class="mb-0 me-2">{{ $userCount }}</h2>
-                                        <small class="text-success">Total</small>
-                                    </div>
-                                    <a class="widget-lable" href="{{route('users.index')}}"><i class='bx bx-list-ol'></i> View All </a>
-                                    <a class="widget-lable" href="{{route('users.create')}}"> <i class='bx bx-plus'></i>Create New </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="h-100 position-relative">
-                                <img src="{{ asset('assets/img/illustrations/users.png') }}" alt="Ratings"
-                                    class="position-absolute card-img-position scaleX-n1-rtl bottom-0 w-auto end-0 me-3 me-xl-0 me-xxl-3 pe-1"
-                                    width="95" height="160">
-                            </div>
-                        </div>
-                    </div>
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <!-- Welcome Section -->
+    <div class="row align-items-center mb-4">
+        <!-- Left Column: Welcome Message -->
+        <div class="col-12 col-md-8">
+            <h4 class="fw-bold mb-3">
+                <span class="text-muted fw-light">Manager /</span> Dashboard
+            </h4>
+            <h5 class="card-title text-primary">
+                Welcome to {{ env('APP_SHORT_NAME') }}, {{ Auth::user()->fname }} {{ Auth::user()->lname }}! 🎉
+            </h5>
+            <p class="instructions-steps">
+                Manage your devices and users effectively using this dashboard.
+            </p>
+        </div>
+        <!-- Right Column: Device Dropdown -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0">
+                <div class="card-body">
+                    <label for="device-select" class="form-label">Select Device:</label>
+                    <select id="device-select" class="form-control select2">
+                        <option value="">Choose a device</option>
+                        {{-- @foreach ($devices as $device)
+                            <option value="{{ $device->id }}">{{ $device->name }}</option>
+                        @endforeach --}}
+                    </select>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="col-xl-8 align-self-end">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <h5 class="card-title m-0 me-2">Device Types </h5>
-                        <div class="dropdown">
-                            <button class="btn btn-link p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                                <a class="dropdown-item" href="javascript:void(0);">View All</a>
-                            </div>
-                        </div>
+    <!-- Statistics Cards -->
+    <div class="row gy-4">
+        <!-- Total Users Card -->
+        <div class="col-12 col-sm-6 col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="card-title d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0">Total Users</h5>
+                        <i class="fas fa-users fa-2x text-primary"></i>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3 mb-xl-2">
-                            @foreach ($deviceTypesWithDeviceCount as $key => $value)
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar">
-                                            <div class="avatar-initial {{ getRandomBackgroundColor() }} rounded shadow">
-                                                <i class='bx bx-devices'></i>
-                                            </div>
-                                        </div>
-                                        <div class="ms-3">
-                                            <div class="small mb-1">{{ $key }}</div>
-                                            <h5 class="mb-0">{{ $value }}</h5> <small>Devices</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-6 col-md-6">
-                <div class="card h-100">
-                    <div class="card-header pb-1">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="mb-0">Active Device</h5>
-                            <div class="dropdown">
-                                <button class="btn btn-link p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                </button>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body pt-lg-4 mt-lg-1 device-fault-status-shown" id="device-fault-status-shown">
-                        Please Select a Device
-                    </div>
-
-                </div>
-            </div>
-            <div class="col-xl-6 col-md-6 ">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <h5 class="card-title m-0 me-2">Devices Statistic</h5>
-                        <div class="dropdown">
-                            <button class="btn btn-link p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                                <a class="dropdown-item" href="javascript:void(0);">View All</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-end mb-3" style="position: relative;">
-                            <div class="mb-2">
-                                <h5 class="display-3 mb-0 item-">{{ $deviceCount }}</h5>
-                                <small>Total Devices</small>
-                            </div>
-                            <div class="mb-2">
-                                <h5 class="display-3 mb-0" id="dataCount">Loading...</h5>
-                                <small>Total Data Recieved</small>
-                            </div>
-                            <div class="resize-triggers">
-                                <div class="expand-trigger">
-                                    <div style="width: 409px; height: 100px;"></div>
-                                </div>
-                                <div class="contract-trigger"></div>
-                            </div>
-                        </div>
-                        <div id="deviceDataContainer">
-                            <div class="d-flex align-items-center border-top py-3">
-                                Loding ...
-                            </div>
-                        </div>
+                    <div class="mt-4">
+                        <h2 class="font-weight-bold mb-0">{{ $userCount }}</h2>
+                        <small class="text-muted">Users registered</small>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="terms-conditions" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalScrollableTitle">IOT-Web Terms and Conditions and Privacy
-                            Policies</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
 
-                    <div class="modal-body">
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
-                        <p>
-                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        </p>
-                        <p>
-                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                            lacus vel augue laoreet rutrum faucibus dolor auctor.
-                        </p>
-                        <p>
-                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                            auctor fringilla.
-                        </p>
+        <!-- Total Devices Card -->
+        <div class="col-12 col-sm-6 col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="card-title d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0">Total Devices</h5>
+                        <i class="fas fa-server fa-2x text-primary"></i>
                     </div>
-                    <div class="modal-footer">
-                        <form method="post" id="terms-and-conditions-form">
-                            @csrf
-                            <div class="form-check">
-                                <input class="form-check-input mt-2" type="checkbox" name="terms_and_conditions"
-                                    id="terms_and_conditions">
-                                <label class="form-check-label" for="terms_and_conditions"> I Agree to the terms and
-                                    conditions
-                                </label>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                        </form>
+                    <div class="mt-4">
+                        <h2 class="font-weight-bold mb-0">{{ 2 }}</h2>
+                        <small class="text-muted">Devices registered</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Devices Card -->
+        <div class="col-12 col-sm-6 col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="card-title d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0">Active Devices</h5>
+                        <i class="fas fa-plug fa-2x text-success"></i>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="font-weight-bold mb-0">{{ 1 }}</h2>
+                        <small class="text-muted">Currently active</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Auth Devices Card -->
+        <div class="col-12 col-sm-6 col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="card-title d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0">Pending Auth</h5>
+                        <i class="fas fa-key fa-2x text-warning"></i>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="font-weight-bold mb-0">{{ 0 }}</h2>
+                        <small class="text-muted">Devices awaiting authentication</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
 
+    <!-- Device Data Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h5 class="mb-3">Device Data Visualization</h5>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                        <canvas id="waveChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users and Assigned Devices Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h5 class="mb-3">Users and Assigned Devices</h5>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Assigned Devices</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Demo Data -->
+                            <tr>
+                                <td>Akshay Test</td>
+                                <td>akshaynayee1@gmail.com</td>
+                                <td>
+                                    Sample Button Device (Active)<br>
+                                    Device Test 2 (Inactive)
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-info btn-sm">View</a>
+                                    <a href="#" class="btn btn-warning btn-sm">Edit</a>
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                    <a href="#" class="btn btn-primary btn-sm">Assign Device</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Test Customer</td>
+                                <td>test@example.com</td>
+                                <td>
+                                    No Assinged Device
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-info btn-sm">View</a>
+                                    <a href="#" class="btn btn-warning btn-sm">Edit</a>
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                    <a href="#" class="btn btn-primary btn-sm">Assign Device</a>
+                                </td>
+                            </tr>
+                            <!-- Add more demo users as needed -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Device Authentication Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h5 class="mb-3">Device Authentication</h5>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Device Name</th>
+                                <th>API KEY</th>
+                                <th>Status</th>
+                                <th>Customer</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Demo Data -->
+                            <tr>
+                                <td>Sample Button Device</td>
+                                <td>6bfa9c</td>
+                                <td>Authorized</td>
+                                <td>AkshayTest</td>
+                                <td>
+                                    {{-- <button class="btn btn-success btn-sm">Authenticate</button> --}}
+                                    <a href="#" class="btn btn-info btn-sm">View</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Device Test 2</td>
+                                <td>2569ABC</td>
+                                <td>Not Assinged</td>
+                                <td>AkshayTest</td>
+                                <td>
+                                    <button class="btn btn-success btn-sm">Authenticate</button>
+                                    <a href="#" class="btn btn-info btn-sm">View</a>
+                                </td>
+                            </tr>
+                            <!-- Add more demo devices as needed -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@endsection
 @include('dashboard.admin-dashboard-js')
+
+@section('scripts')
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include your custom dashboard.js -->
+@endsection

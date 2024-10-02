@@ -159,6 +159,12 @@
                 @endcan
             </li>
         @endcan
+        <li class="menu-item {{ request()->routeIs('quickStart') ? 'active' : '' }}">
+            <a href="{{ route('quickStart') }}" class="menu-link">
+                <i class='bx bx-bookmark-alt'></i>
+                <div data-i18n="User interface">  Device Auth-Manual</div>
+            </a>
+        </li>
         <!-- User interface -->
         @can('role-list')
             <li class="menu-item">

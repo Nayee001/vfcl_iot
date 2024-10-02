@@ -266,7 +266,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
             ->where('device_id', $id)
             // ->orderBy($targetTimestamp,'ASC')
             // ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))")
-            ->limit(100) // Limit to 5 nearest data points
+            ->limit(15) // Limit to 5 nearest data points
             ->get();
 
         // Map the data to an array with 'x' as device_timestamps and 'y' values as the three phases

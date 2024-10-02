@@ -166,7 +166,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex flex-column align-items-center gap-1">
-                                <h6 class="display-3 mb-0 item-">{{ $deviceCount }}</h6>
+                                <h6 class="display-3 mb-0 item-">{{ $getDeviceTotalCount }}</h6>
                                 <small>Total Devices</small>
                             </div>
                             <div class="d-flex flex-column align-items-center gap-1">

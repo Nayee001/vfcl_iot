@@ -123,7 +123,7 @@ class DeviceController extends Controller
     public function deviceDashboard()
     {
         $devices = $this->deviceService->deviceDashboard();
-        dd($devices);
+
         return response()->json($devices);
     }
 

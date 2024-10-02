@@ -87,7 +87,7 @@
                 ],
                 xaxis: {
                     type: "datetime",
-                    range: 600000, // Show 10 minutes of data
+                    range: 1000, // Show 10 minutes of data
                 },
                 yaxis: {
                     title: {

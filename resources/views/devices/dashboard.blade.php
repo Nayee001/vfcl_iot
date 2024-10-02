@@ -37,7 +37,7 @@
 
                 <!-- Spending Chart -->
                 <div class="card p-4 mb-3 shadow-sm">
-                    <h5 class="text-secondary">Spending Overview</h5>
+                    <h5 class="text-secondary">Wave Details</h5>
                     <div id="chart"></div> <!-- Placeholder for the line chart -->
                 </div>
                 <div class="row px-3 py-3">
@@ -134,7 +134,7 @@
                     <div class="d-flex flex-column justify-content-center align-items-center">
                         <!-- Location Name with Home Emoji -->
                         <div>
-                            <h6 class="text-muted mb-1">Location Name:</h6>
+                            <h6 class="text-muted mb-1">Location Type:</h6>
                             <p class="fs-3 fw-bold text-dark" id="locationName">
                                 Home
                             </p>
@@ -155,19 +155,19 @@
                 <div class="card p-4 shadow-sm">
                     <h5 class="text-secondary">Device Control Panel</h5>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>Refrigerator</span>
+                        <span>Data Communication</span>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="fridgeSwitch" checked>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>Vacuum Cleaner</span>
+                        <span>Daily Sync</span>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="vacuumSwitch">
                         </div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>Kettle</span>
+                        <span>Updates</span>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="kettleSwitch" checked>
                         </div>

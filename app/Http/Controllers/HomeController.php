@@ -47,10 +47,10 @@ class HomeController extends Controller
 
         $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
         if (isSuperAdmin()) {
-            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'deviceCount', 'locationCount'));
+            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'getDeviceTotalCount', 'locationCount'));
         } elseif (isManager()) {
             $userCount = $this->dashboardService->getCountUsersAddedByManagers(Auth::id());
-            return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'deviceCount'));
+            return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'getDeviceTotalCount','getTotalActiveDevice'));
         } else {
             $user = auth()->user();
             // dd($user);
