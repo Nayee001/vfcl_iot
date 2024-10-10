@@ -134,7 +134,10 @@ class DeviceRepository implements DeviceRepositoryInterface
         if (isSuperAdmin()) {
             return $this->model::count();
         } elseif (isManager()) {
-            return $this->model::where('created_by', Auth::id())->count();
+            return $this->model::with(['deviceAssigned' => function ($query) {
+                $query->where('manager_id', Auth::id()); // Only fetch active device assignments
+            }, 'deviceAssigned.assignee'])
+                ->count();
         } else {
             return DeviceAssignment::where('assign_to', Auth::id())
                 ->count();
@@ -146,7 +149,11 @@ class DeviceRepository implements DeviceRepositoryInterface
         if (isSuperAdmin()) {
             return $this->model::count();
         } elseif (isManager()) {
-            return $this->model::where('created_by', Auth::id())->count();
+            return $this->model::with(['deviceAssigned' => function ($query) {
+                $query->where('manager_id', Auth::id()) // Filter by manager_id
+                      ->where('connection_status', DeviceAssignment::ConnectionStatus['Authorized']); // Filter by authorized connection status
+            }, 'deviceAssigned.assignee'])->count();
+
         } else {
             return DeviceAssignment::where('assign_to', Auth::id())->where('connection_status', DeviceAssignment::ConnectionStatus['Authorized'])
                 ->count();

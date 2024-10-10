@@ -42,7 +42,7 @@ class HomeController extends Controller
         $managerCount = $this->dashboardService->getManagerCount();
         $userCount = $this->dashboardService->getUserCount();
         $getDeviceTotalCount = $this->dashboardService->getDeviceTotalCount();
-        $getTotalActiveDevice =$this->dashboardService->getTotalActiveDevice();
+        $getTotalActiveDevice = $this->dashboardService->getTotalActiveDevice();
         $locationCount = $this->dashboardService->getLocationNameCount();
 
         $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
@@ -50,7 +50,7 @@ class HomeController extends Controller
             return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'getDeviceTotalCount', 'locationCount'));
         } elseif (isManager()) {
             $userCount = $this->dashboardService->getCountUsersAddedByManagers(Auth::id());
-            return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'getDeviceTotalCount','getTotalActiveDevice'));
+            return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'getDeviceTotalCount', 'getTotalActiveDevice'));
         } else {
             $user = auth()->user();
             // dd($user);

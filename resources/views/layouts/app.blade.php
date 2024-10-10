@@ -41,6 +41,8 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}"
         class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
+
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
@@ -49,6 +51,14 @@
 
     <link rel="stylesheet" href="{{ asset('assets/css/sweetalert2.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}" />
+    <!-- jQuery (Make sure it's included before Select2) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Select2 JS -->
+
 
     <!-- Page CSS -->
 
@@ -145,7 +155,7 @@
     </script> --}}
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.bundle.min.js"></script> --}}
-
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @yield('script')
     <script type="text/javascript">
         // Default Configuration
@@ -184,6 +194,43 @@
                 }
             });
         }
+        $(document).ready(function() {
+            // Initialize Select2
+            $('#device-select').select2();
+
+            // Function to fetch devices and populate the select dropdown
+            function fetchDevices() {
+                $.ajax({
+                    url: '{{ route('getDevicesForSelect2') }}', // Your route for the function
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.length > 0) {
+                            $('#device-select').empty(); // Clear any existing options
+                            $('#device-select').append(
+                                '<option value="">Choose a device</option>'); // Add default option
+
+                            // Loop through each device and append it as an option
+                            $.each(data, function(index, device) {
+                                $('#device-select').append('<option value="' + device.id +
+                                    '">' + device.name + '</option>');
+                            });
+                        } else {
+                            // Handle no device case
+                            $('#device-select').append(
+                                '<option value="">No devices available</option>');
+                        }
+                    },
+                    error: function(xhr) {
+                        // Handle error scenario
+                        $('#device-select').append('<option value="">Failed to load devices</option>');
+                    }
+                });
+            }
+
+            // Fetch devices on page load
+            fetchDevices();
+        });
     </script>
 </body>
 

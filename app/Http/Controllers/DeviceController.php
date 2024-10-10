@@ -43,7 +43,7 @@ class DeviceController extends Controller
 
     public function dashboard($device_id): view
     {
-        return view('devices.dashboard',compact('device_id'));
+        return view('devices.dashboard', compact('device_id'));
     }
 
     /**
@@ -84,6 +84,33 @@ class DeviceController extends Controller
             return response()->json(['error' => 'Device not found'], 404);
         }
     }
+
+    public function getDevicesForSelect2()
+    {
+        $device = null;
+
+        if (isSuperAdmin()) {
+            $device = Device::with('deviceAssigned.assignee')->get(); // Fetch all devices with assigned assignees
+        } elseif (isManager()) {
+            $device = Device::with(['deviceAssigned' => function ($query) {
+                $query->where('manager_id', Auth::id()); // Only fetch active device assignments
+            }, 'deviceAssigned.assignee'])
+                ->get();
+        } else {
+            $device = Device::with(['deviceAssigned' => function ($query) {
+                $query->where('assing_to', Auth::id()); // Only fetch active device assignments
+            }, 'deviceAssigned.assignee'])
+                ->get();
+        }
+
+        // Check if devices were found and return the result as JSON
+        if ($device && $device->isNotEmpty()) {
+            return response()->json($device);
+        } else {
+            return response()->json(['error' => 'Device not found'], 404);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -127,7 +154,8 @@ class DeviceController extends Controller
         return response()->json($devices);
     }
 
-    public function deviceData($id){
+    public function deviceData($id)
+    {
         $devices = $this->deviceService->deviceData($id);
         return response()->json($devices);
     }
@@ -136,10 +164,12 @@ class DeviceController extends Controller
         $devices = $this->deviceService->assingedDevice($id);
         return response()->json($devices);
     }
-    public function quickStart(){
+    public function quickStart()
+    {
         return view('devices.quickStart');
     }
-    public function authorizeManual(){
+    public function authorizeManual()
+    {
         return view('devices.authorizeManual');
     }
 

@@ -98,6 +98,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
     // Route to get device data by ID
     Route::get('/devices/data/{id}', [DeviceController::class, 'getDeviceById'])->name('getDeviceById');
+    Route::get('/get/devices', [DeviceController::class, 'getDevicesForSelect2'])->name('getDevicesForSelect2');
 
     Route::get('/device/{id}/api-key', [DeviceController::class, 'getApiKey'])->name('device.getApiKey');
     Route::delete('/unassign-device/{id}', [DeviceController::class, 'unAssign'])->name('device.unAssign');
