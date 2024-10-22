@@ -92,8 +92,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/customer/assigned/devices/data/{userId}', [DeviceController::class, 'getAssignedDevices']);
 
-    Route::get('/verify-device-model/{id}',[DeviceController::class, 'verifyDeviceModel'])->name('verify-device-model');
-    Route::get('/send-device-mqtt/{id}',[DeviceController::class, 'sendDeviceModel'])->name('send-device-mqtt');
+    Route::get('/verify-device-model/{id}', [DeviceController::class, 'verifyDeviceModel'])->name('verify-device-model');
+    Route::get('/send-device-mqtt/{id}', [DeviceController::class, 'sendDeviceModel'])->name('send-device-mqtt');
 
     Route::post('/assign-device', [DeviceController::class, 'assignDevice'])->name('assign.device');
     // Route to get device data by ID

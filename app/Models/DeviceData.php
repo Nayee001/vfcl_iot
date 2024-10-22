@@ -15,13 +15,10 @@ class DeviceData extends Model
         'device_id',
         'fault_status',
         'topic',
-        'device_status',
-        'health_status',
-        'device_timestamps',
-        'valts',
+        'device_health',
         'timestamp',
+        'event_data'
     ];
-
 
     /**
      * This function establishes an inverse one-to-many (belongsTo) relationship

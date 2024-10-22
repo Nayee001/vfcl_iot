@@ -47,6 +47,7 @@ class MqttService implements MqttServiceInterface
             $this->mqttClient->subscribe($topic, function ($topic, $message) {
                 // dump("Received message on topic [%s]: %s\n", $topic, $message);
                 $associativeArray = json_decode($message, true);
+                // dd($associativeArray);
                 if (isset($associativeArray['encryption_key'])) {
                     $this->deviceRepository->deviceVerifications($associativeArray);
                 }

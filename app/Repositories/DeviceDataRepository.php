@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Yajra\DataTables\Datatables;
+
 class DeviceDataRepository implements DeviceDataRepositoryInterface
 {
     /**
@@ -30,75 +31,52 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
     public function update_device_data($deviceData)
     {
         try {
-            // dd($deviceData);
-            // dd($deviceData['data']);
             if ($deviceData) {
-                $getDevice = Device::select('id', 'name', 'short_apikey')->where('short_apikey', '=', $deviceData['API_KEY'])->first();
-                dd($getDevice);
-                if ($getDevice) {
-                    // dump('Data Seeding into Database');
-                    $data = [
-                        'device_id' => $getDevice->id,
-                        'fault_status' => $deviceData['fault_status'],
-                        'topic' => $deviceData['topic'],
-                        'device_status' => $deviceData['device_status'],
-                        'health_status' => $deviceData['health_status'],
-                        'timestamp' => $deviceData['timestamp'],
-                    ];
-                    // Find the latest record for the device
-                    $latestRecord = $this->model->where('device_id', $getDevice->id)->latest('created_at')->first();
-                    // dd($latestRecord);
-                    // Determine the time difference based on the interval
-                    $timeDifference = $latestRecord ? now()->diffInMinutes($latestRecord->created_at) : PHP_INT_MAX;
-
-                    // Set the threshold based on the interval
-                    $threshold = interval(1);
-
-
-                    if ($latestRecord && $timeDifference < $threshold) {
-                        dump('update Function');
-                        // Assuming $data needs to be merged with additional data before updating
-                        if (!empty($deviceData['data'])) {
-                            foreach ($deviceData['data'] as $key => $value) {
-
-                                $updateData = [
-                                    "device_timestamps" => $value['device_timestamps'],
-                                    "valts" => $value['valts'],
-                                ] + $data;
-
-                                $latestRecord->update($updateData);
-                            }
-                        } else {
-                            // If there's no additional data to merge, update directly
-                            $latestRecord->update($data);
-                        }
-                        return $latestRecord;
-                    } else {
-                        dump('create Function');
-                        // Create a new record(s) with optimizations applied from the previous explanation
-                        // dd($deviceData);
-                        if (!empty($deviceData['data'])) {
-                            $creation = null;
-                            foreach ($deviceData['data'] as $key => $value) {
-                                $recordData = [
-                                    "device_timestamps" => $value['device_timestamps'],
-                                    "valts" => $value['valts'],
-                                ] + $data;
-
-                                $creation = $this->model->create($recordData);
-                            }
-                            return $creation;
-                        } else {
-                            Log::channel('mqttlogs')->error("Device Data - Something Wrong With Device Data: ", $deviceData);
-                            return false;
-                        }
-                    }
-                } else {
-                    Log::channel('mqttlogs')->error("Device  - Something Wrong With DEVICE in Web-Command-Center",);
+                // Find the device using the API key from the payload
+                $getDevice = Device::select('id', 'name', 'short_apikey')
+                    ->where('short_apikey', $deviceData['device_api'])
+                    ->first();
+                if (!$getDevice) {
+                    Log::channel('mqttlogs')->error("Device not found in Web-Command-Center", [
+                        'device_api' => $deviceData['device_api']
+                    ]);
                     return false;
                 }
+                // Prepare the data for insertion/update
+                $data = [
+                    'device_id' => $getDevice->id,
+                    'fault_status' => 'ON',
+                    'topic' => $deviceData['topic'],
+                    'health_status' => $deviceData['health_status'],
+                    'timestamp' => $deviceData['timestamps'],
+                    'event_data' => json_encode($deviceData['event_data'] ?? []),  // Encode as JSON string
+                ];
+                // dd($data);
+                // Find the latest record for the device
+                $latestRecord = $this->model->where('device_id', $getDevice->id)
+                    ->latest('created_at')
+                    ->first();
+                // Calculate time difference and set threshold
+                $timeDifference = $latestRecord ? now()->diffInMinutes($latestRecord->created_at) : PHP_INT_MAX;
+                $threshold = interval(1);  // Interval in minutes
+                if ($latestRecord && $timeDifference < $threshold) {
+                    $latestRecord->update($data);  // Update with JSON-encoded event data
+                    return $latestRecord;
+                } else {
+                    try {
+                        // Create a new record with JSON-encoded event data
+                        $creation = $this->model->create($data);
+                        return $creation;
+                    } catch (\Exception $e) {
+                        Log::channel('mqttlogs')->error("Error creating new record", [
+                            'error' => $e->getMessage(),
+                            'deviceData' => $deviceData
+                        ]);
+                        return false;
+                    }
+                }
             } else {
-                Log::channel('mqttlogs')->error("Device Data - Something Wrong With Device Data: ", $deviceData);
+                Log::channel('mqttlogs')->error("Invalid Device Data Received", $deviceData);
                 return false;
             }
         } catch (Exception $e) {
@@ -250,52 +228,21 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
     }
     public function getDeviceLineChartData($id)
     {
-        // Fetch the latest device data
-        $deviceData = $this->model::with('device')->where('device_id', $id)->latest()->first();
+        $deviceData = $this->model::with('device')
+            ->where('device_id', $id)
+            ->latest()
+            ->first();
 
-        // Check if the device data exists
         if (!$deviceData) {
             return response()->json(['message' => 'Device not found'], 404);
         }
 
-        // Get the target timestamp for the nearest data batch
-        $targetTimestamp = $deviceData->device_timestamps;
-
-        // Query for the nearest data based on the target timestamp
-        $nearestDataBatch = $this->model::select('device_timestamps', 'current_phase1', 'current_phase2', 'current_phase3')
-            ->where('device_id', $id)
-            // ->orderBy($targetTimestamp,'ASC')
-            // ->orderByRaw("ABS(TIMESTAMPDIFF(SECOND, timestamp, '{$targetTimestamp}'))")
-            ->limit(15) // Limit to 5 nearest data points
-            ->get();
-
-        // Map the data to an array with 'x' as device_timestamps and 'y' values as the three phases
-        $xyData = $nearestDataBatch->map(function ($item) {
-            return [
-                'x' => $item->device_timestamps, // Keeping the device_timestamps as-is
-                'current_phase1' => $item->current_phase1,
-                'current_phase2' => $item->current_phase2,
-                'current_phase3' => $item->current_phase3,
-            ];
-        });
-
-        // Convert to an array and return the device name along with the data
-        $xyArray = $xyData->toArray();
-        $deviceName = $deviceData->device->name ?? 'Unknown Device';
-
-        // Final array to return the data and device name
-        $finalArray = [
-            'data' => $xyArray,
-            'deviceName' => $deviceName
-        ];
-        // Ensure data is not empty before broadcasting
-        if ($nearestDataBatch->isEmpty()) {
-            // $this->info('No data to broadcast.');
-            return;
-        }
-
-        // $this->info('Data broadcasted successfully for device: ' . $finalArray);
-        // dd($finalArray);
-        return response()->json($finalArray);
+        // Decode the event_data JSON field
+        $eventData = json_decode($deviceData->event_data, true);
+        // dd($eventData);
+        return response()->json([
+            'deviceName' => $deviceData->device->name ?? 'Unknown Device',
+            'eventData' => $eventData,
+        ]);
     }
 }

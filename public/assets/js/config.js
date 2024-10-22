@@ -252,7 +252,7 @@ function fetchChartDataAndUpdateChart(deviceId) {
         .then((newData) => {
             console.log("Received Data:", newData);
 
-            if (!newData.data || newData.data.length === 0) {
+            if (!newData.data || newData.dataEvent.length === 0) {
                 console.error("No data available for the selected device");
                 return;
             }
@@ -306,3 +306,5 @@ async function showData(deviceId) {
         showError(error);
     }
 }
+
+

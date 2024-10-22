@@ -37,8 +37,9 @@
 
                 <!-- Spending Chart -->
                 <div class="card p-4 mb-3 shadow-sm">
-                    <h5 class="text-secondary">Wave Details</h5>
-                    <div id="chart"></div> <!-- Placeholder for the line chart -->
+                    <div id="currentChart" class="chart-container"></div>
+                    <div id="voltageChart" class="chart-container"></div>
+                    <div id="powerChart" class="chart-container"></div>
                 </div>
                 <div class="row px-3 py-3">
                     <!-- Total Power (PQ) -->

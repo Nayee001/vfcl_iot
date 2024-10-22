@@ -15,16 +15,15 @@ use App\Repositories\NotificationRepository;
 
 class HomeController extends Controller
 {
-    /**
-     * vFCL IOT Main Dashboard.
-     *
-     * @return void
-     */
-
     protected $dashboardService;
     protected $notificationRepository;
 
-
+    /**
+     * Constructor to inject services and middleware.
+     *
+     * @param DashboardService $dashboardService
+     * @param NotificationRepository $notificationRepository
+     */
     public function __construct(DashboardService $dashboardService, NotificationRepository $notificationRepository)
     {
         $this->dashboardService = $dashboardService;
@@ -39,26 +38,50 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $managerCount = $this->dashboardService->getManagerCount();
-        $userCount = $this->dashboardService->getUserCount();
-        $getDeviceTotalCount = $this->dashboardService->getDeviceTotalCount();
-        $getTotalActiveDevice = $this->dashboardService->getTotalActiveDevice();
-        $locationCount = $this->dashboardService->getLocationNameCount();
+        try {
+            // Retrieve common dashboard data
+            $managerCount = $this->dashboardService->getManagerCount();
+            $userCount = $this->dashboardService->getUserCount();
+            $getDeviceTotalCount = $this->dashboardService->getDeviceTotalCount();
+            $getTotalActiveDevice = $this->dashboardService->getTotalActiveDevice();
+            $locationCount = $this->dashboardService->getLocationNameCount();
+            $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
 
-        $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
-        if (isSuperAdmin()) {
-            return view('dashboard.admin-dashboard', compact('managerCount', 'userCount', 'deviceTypesWithDeviceCount', 'getDeviceTotalCount', 'locationCount'));
-        } elseif (isManager()) {
-            $userCount = $this->dashboardService->getCountUsersAddedByManagers(Auth::id());
-            return view('dashboard.manager-dashboard', compact('userCount', 'deviceTypesWithDeviceCount', 'getDeviceTotalCount', 'getTotalActiveDevice'));
-        } else {
+            // Role-based view rendering
+            if (isSuperAdmin()) {
+                return view('dashboard.admin-dashboard', compact(
+                    'managerCount',
+                    'userCount',
+                    'deviceTypesWithDeviceCount',
+                    'getDeviceTotalCount',
+                    'locationCount'
+                ));
+            }
+            // Customer Dashboard
             $user = auth()->user();
-            // dd($user);
-            $showNewUserModel = $user->status == User::USER_STATUS['NEWUSER'];
-            $firstPassword = $user->status == User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
+            $showNewUserModel = $user->status === User::USER_STATUS['NEWUSER'];
+            $firstPassword = $user->status === User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
             $notifications = $this->notificationRepository->notifictionCount($user->id);
-            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)->where('connection_status', 'Authorized')->where('status', 'Accept')->get();
-            // dd($unAuthnewDevices);
+            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)
+                ->where('connection_status', 'Authorized')
+                ->where('status', 'Accept')
+                ->get();
+
+            if (isManager()) {
+                $userCount = $this->dashboardService->getCountUsersAddedByManagers(Auth::id());
+                return view('dashboard.manager-dashboard', compact([
+                    'unAuthnewDevices' => $unAuthnewDevices,
+                    'showNewUserModel' => $showNewUserModel,
+                    'firstPassword' => $firstPassword,
+                    'userCount',
+                    'deviceTypesWithDeviceCount',
+                    'getDeviceTotalCount',
+                    'getTotalActiveDevice'
+                ]));
+            }
+
+
+
             return view('dashboard.customer-dashboard', [
                 'unAuthnewDevices' => $unAuthnewDevices,
                 'showNewUserModel' => $showNewUserModel,
@@ -69,48 +92,104 @@ class HomeController extends Controller
                 'getDeviceTotalCount' => $getDeviceTotalCount,
                 'getTotalActiveDevice' => $getTotalActiveDevice
             ]);
+
+        } catch (Exception $e) {
+            Log::error("Error loading dashboard: {$e->getMessage()}");
+            return view('errors.500');  // Show an error page to the user
         }
-    }
-    public function getDeviceDataCounts()
-    {
-        return $this->dashboardService->getDeviceDataCount();
-    }
-    public function getDeviceLineChartData($id)
-    {
-        return $this->dashboardService->getDeviceLineChartData($id);
-    }
-
-    public function getDeviceAllMessages()
-    {
-        return $this->dashboardService->getDeviceAllMessages();
-    }
-    public function getDeviceData($id)
-    {
-        return $this->dashboardService->getDeviceData($id);
-    }
-
-    public function getdeviceMessage($id)
-    {
-        return $this->dashboardService->getDeviceData($id);
     }
 
     /**
-     * Retrieves devices for datatable asynchronously using AJAX.
+     * Get device data counts for the dashboard.
      *
-     * This function receives a request and delegates the task of data retrieval
-     * to the deviceTypeRepository's dataTable method. In case of any exception,
-     * it returns an exception message.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDeviceDataCounts()
+    {
+        try {
+            return response()->json($this->dashboardService->getDeviceDataCount());
+        } catch (Exception $e) {
+            Log::error("Error fetching device data counts: {$e->getMessage()}");
+            return response()->json(['error' => 'Failed to retrieve data counts'], 500);
+        }
+    }
+
+    /**
+     * Get device line chart data for a specific device.
      *
-     * @param Request $request The incoming request object, usually containing query parameters.
-     * @return mixed Returns the datatable data for devices or an exception message.
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDeviceLineChartData($id)
+    {
+        try {
+            return response()->json($this->dashboardService->getDeviceLineChartData($id));
+        } catch (Exception $e) {
+            Log::error("Error fetching line chart data for device ID {$id}: {$e->getMessage()}");
+            return response()->json(['error' => 'Failed to retrieve line chart data'], 500);
+        }
+    }
+
+    /**
+     * Get all device messages asynchronously.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDeviceAllMessages()
+    {
+        try {
+            return response()->json($this->dashboardService->getDeviceAllMessages());
+        } catch (Exception $e) {
+            Log::error("Error fetching all device messages: {$e->getMessage()}");
+            return response()->json(['error' => 'Failed to retrieve device messages'], 500);
+        }
+    }
+
+    /**
+     * Get detailed data for a specific device.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDeviceData($id)
+    {
+        try {
+            return response()->json($this->dashboardService->getDeviceData($id));
+        } catch (Exception $e) {
+            Log::error("Error fetching data for device ID {$id}: {$e->getMessage()}");
+            return response()->json(['error' => 'Failed to retrieve device data'], 500);
+        }
+    }
+
+    /**
+     * Get device-specific messages.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getdeviceMessage($id)
+    {
+        try {
+            return response()->json($this->dashboardService->getDeviceData($id));
+        } catch (Exception $e) {
+            Log::error("Error fetching messages for device ID {$id}: {$e->getMessage()}");
+            return response()->json(['error' => 'Failed to retrieve device messages'], 500);
+        }
+    }
+
+    /**
+     * Fetch devices asynchronously for a datatable via AJAX.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getDashboardDevicesAjaxDatatable(Request $request)
     {
         try {
             return $this->dashboardService->dashboarddevicedataTable($request);
         } catch (Exception $e) {
-            Log::error("Error fetching devices: {$e->getMessage()}");
-            return exceptionMessage($e->getMessage());
+            Log::error("Error fetching devices for datatable: {$e->getMessage()}");
+            return response()->json(['error' => 'Failed to retrieve devices'], 500);
         }
     }
 }
