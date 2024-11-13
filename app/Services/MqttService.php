@@ -34,20 +34,36 @@ class MqttService implements MqttServiceInterface
         $this->deviceDataRepository = $deviceDataRepository;
         $this->deviceLogsRepository = $deviceLogsRepository;
         $this->deviceRepository = $deviceRepository;
-        $this->mqttClient = new MqttClient($this->server, $this->port, uniqid());
-        $this->connectionSettings = (new ConnectionSettings())
-            ->setUsername($this->username)
-            ->setPassword($this->password);
-        $this->mqttClient->connect($this->connectionSettings, true);
-    }
 
+        try {
+            // Initialize the MQTT client and connection settings
+            $this->mqttClient = new MqttClient($this->server, $this->port, uniqid());
+            $this->connectionSettings = (new ConnectionSettings())
+                ->setUsername($this->username)
+                ->setPassword($this->password);
+
+            // Attempt to connect to the MQTT broker
+            $this->mqttClient->connect($this->connectionSettings, $this->cleanSession);
+            Log::info('MQTT - Successfully connected to broker');
+        } catch (Exception $e) {
+            // Log the connection error
+            Log::channel('mqttlogs')->error("MQTT Connection Error: {$e->getMessage()}");
+
+            // Set $mqttClient to null to indicate the connection failed
+            $this->mqttClient = null;
+        }
+    }
     public function connectAndSubscribe($topic)
     {
+        if (!$this->mqttClient) {
+            dd('whats happaning');
+            Log::channel('mqttlogs')->error("MQTT - Unable to subscribe as client is not connected.");
+            return response()->view('errors.500', [], 500);
+        }
+
         try {
             $this->mqttClient->subscribe($topic, function ($topic, $message) {
-                // dump("Received message on topic [%s]: %s\n", $topic, $message);
                 $associativeArray = json_decode($message, true);
-                // dd($associativeArray);
                 if (isset($associativeArray['encryption_key'])) {
                     $this->deviceRepository->deviceVerifications($associativeArray);
                 }
@@ -58,6 +74,7 @@ class MqttService implements MqttServiceInterface
             $this->mqttClient->loop();
         } catch (Exception $e) {
             Log::channel('mqttlogs')->error("MQTT - Something went wrong: {$e->getMessage()}");
+            return response()->view('errors.500', [], 500);
         }
     }
 

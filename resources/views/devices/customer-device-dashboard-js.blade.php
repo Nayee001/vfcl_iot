@@ -1,211 +1,117 @@
 @section('script')
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <script>
-        // Function to format timestamp (helper function)
-        function formatTimestamp(timestamp) {
-            const date = new Date(timestamp * 1000); // Convert to milliseconds
-            return date.toLocaleString();
+        // Helper function to calculate RMS values
+        function rmsValue(signal) {
+            const squared = signal.map(x => x ** 2);
+            const mean = squared.reduce((a, b) => a + b, 0) / squared.length;
+            return Math.sqrt(mean);
         }
 
-        // Function to update the UI with real-time fault detection data
-        function updateUIWithDeviceData(deviceData) {
-            const faultStatusClass =
-                deviceData.fault_status === "ON" ? "text-danger" : "text-success";
-            const deviceStatusClass =
-                deviceData.device.status === "Active" ? "text-danger" : "text-success";
-
-            const imageSrc =
-                deviceData.fault_status === "ON" ?
-                "assets/img/illustrations/red.png" :
-                "assets/img/illustrations/green.png";
-
-            const html = `
-        <div class="text-center fw-semibold pt-3 mb-2">
-            <img class="fault-img mb-3" src="${imageSrc}" alt="Device image" style="margin: auto;">
-            <div>
-                <span class="fault ${faultStatusClass}">${deviceData.fault_status}</span><br>
-                <span>${deviceData.device.name}</span><br>
-                <span class="fault ${deviceStatusClass}">${deviceData.device.status}</span>
-            </div>
-        </div>
-        <div class="d-flex justify-content-center px-xxl-4 px-lg-2 p-4">
-            <div class="d-flex gap-xxl-3 gap-lg-1 gap-3">
-                <div class="d-flex align-items-center me-4">
-                    <span class="badge bg-label-primary p-2 me-2"><i class='bx bxs-heart'></i></span>
-                    <div>
-                        <small>Health Status</small>
-                        <h6 class="mb-0"><span class="fw-medium ${faultStatusClass}">${deviceData.health_status}</span></h6>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center">
-                    <span class="badge bg-label-info p-2 me-2"><i class='bx bx-time'></i></span>
-                    <div>
-                        <small>Last Sync</small>
-                        <h6 class="mb-0">${formatTimestamp(deviceData.timestamp)}</h6>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-
-            document.getElementById("device-fault-status-shown").innerHTML = html;
+        // Function to calculate instantaneous power P(t)
+        function instantaneousPower(VA, IA, VB, IB, VC, IC) {
+            return VA.map((v, i) => v * IA[i] + VB[i] * IB[i] + VC[i] * IC[i]);
         }
 
-        // Function to initialize the line chart
-        function initializeChart() {
-            var options = {
-                chart: {
-                    type: "line",
-                    height: 350,
-                    animations: {
-                        enabled: true,
-                        easing: "linear",
-                        dynamicAnimation: {
-                            speed: 1000
-                        },
-                    },
-                    stroke: {
-                        curve: "smooth"
-                    },
-                    toolbar: {
-                        show: false
-                    },
-                    zoom: {
-                        enabled: false
-                    },
-                },
-                series: [{
-                        name: "Phase 1",
-                        data: []
-                    },
-                    {
-                        name: "Phase 2",
-                        data: []
-                    },
-                    {
-                        name: "Phase 3",
-                        data: []
-                    },
-                ],
-                xaxis: {
-                    type: "datetime",
-                    range: 1000, // Show 10 minutes of data
-                },
-                yaxis: {
-                    title: {
-                        text: "Current (Amps)"
-                    },
-                },
+        // Function to display metrics
+        function displayMetrics(VA_rms, VB_rms, VC_rms, IA_rms, IB_rms, IC_rms, Vabc_rms, Iabc_rms, S) {
+            document.getElementById('metrics').innerHTML = `
+                <b>Calculated Metrics:</b><br>
+                RMS Voltages: VA = ${VA_rms.toFixed(2)} V, VB = ${VB_rms.toFixed(2)} V, VC = ${VC_rms.toFixed(2)} V<br>
+                RMS Currents: IA = ${IA_rms.toFixed(2)} A, IB = ${IB_rms.toFixed(2)} A, IC = ${IC_rms.toFixed(2)} A<br>
+                Three-phase RMS Voltage: Vabc_rms = ${Vabc_rms.toFixed(2)} V<br>
+                Three-phase RMS Current: Iabc_rms = ${Iabc_rms.toFixed(2)} A<br>
+                Apparent Power (S): ${S.toFixed(2)} VA
+            `;
+        }
+
+        // Function to create a Plotly chart with smooth curves
+        function createPlotlyChart(containerId, seriesData, title, yTitle) {
+            const data = seriesData.map(series => ({
+                x: series.data.map(point => point[0]),
+                y: series.data.map(point => point[1]),
+                mode: 'lines',
+                name: series.name,
+                line: { shape: 'spline', smoothing: 1.3 }, // Smooth curve with spline
+            }));
+
+            const layout = {
+                title: { text: title, font: { size: 18 } },
+                xaxis: { title: 'Time', type: 'date' },
+                yaxis: { title: yTitle },
+                margin: { t: 50, r: 30, b: 50, l: 70 },
+                showlegend: true
             };
 
-            chart = new ApexCharts(document.querySelector("#chart"), options);
-            chart.render();
+            Plotly.newPlot(containerId, data, layout);
         }
 
-        // Function to fetch line chart data and update the chart
-        function fetchChartDataAndUpdateChart(deviceId) {
+        // Fetch event data and generate Plotly charts
+        function fetchAndGenerateCharts(deviceId) {
             fetch(`/get-device-line-chart-data/${deviceId}`)
                 .then(response => response.json())
                 .then(newData => {
-                    if (!newData.data || newData.data.length === 0) {
-                        console.error("No data available for the selected device");
+                    const eventData = newData.original.eventData || [];
+                    console.log(eventData);
+                    if (eventData.length === 0) {
+                        console.error("No event data available for the selected device");
                         return;
                     }
 
-                    const phase1Data = [];
-                    const phase2Data = [];
-                    const phase3Data = [];
+                    const time = eventData.map(entry => new Date(entry['Time (seconds)'] * 1000).toISOString());
+                    const VA = eventData.map(entry => entry['VAB(V)']);
+                    const VB = eventData.map(entry => entry['VBC(V)']);
+                    const VC = eventData.map(entry => entry['VCA(V)']);
+                    const IA = eventData.map(entry => entry['IA(A)']);
+                    const IB = eventData.map(entry => entry['IB(A)']);
+                    const IC = eventData.map(entry => entry['IC(A)']);
 
-                    newData.data.forEach(item => {
-                        const timestamp = new Date(item.x * 1000).getTime(); // Convert seconds to milliseconds
-                        phase1Data.push({
-                            x: timestamp,
-                            y: item.current_phase1
-                        });
-                        phase2Data.push({
-                            x: timestamp,
-                            y: item.current_phase2
-                        });
-                        phase3Data.push({
-                            x: timestamp,
-                            y: item.current_phase3
-                        });
-                    });
+                    // Calculate RMS and Power values
+                    const VA_rms = rmsValue(VA);
+                    const VB_rms = rmsValue(VB);
+                    const VC_rms = rmsValue(VC);
+                    const IA_rms = rmsValue(IA);
+                    const IB_rms = rmsValue(IB);
+                    const IC_rms = rmsValue(IC);
 
-                    chart.updateSeries([{
-                            name: "Phase 1",
-                            data: phase1Data
-                        },
-                        {
-                            name: "Phase 2",
-                            data: phase2Data
-                        },
-                        {
-                            name: "Phase 3",
-                            data: phase3Data
-                        },
-                    ]);
+                    const Vabc_rms = Math.sqrt((VA_rms ** 2 + VB_rms ** 2 + VC_rms ** 2) / 3);
+                    const Iabc_rms = Math.sqrt((IA_rms ** 2 + IB_rms ** 2 + IC_rms ** 2) / 3);
+
+                    const P_t = instantaneousPower(VA, IA, VB, IB, VC, IC);
+                    const S = Vabc_rms * Iabc_rms;
+                    const Q_t = P_t.map(p => Math.sqrt(Math.abs(S ** 2 - p ** 2)));
+
+                    displayMetrics(VA_rms, VB_rms, VC_rms, IA_rms, IB_rms, IC_rms, Vabc_rms, Iabc_rms, S);
+
+                    // Prepare series data for the charts
+                    const currentSeries = [
+                        { name: 'IA (A)', data: time.map((t, i) => [t, IA[i]]) },
+                        { name: 'IB (A)', data: time.map((t, i) => [t, IB[i]]) },
+                        { name: 'IC (A)', data: time.map((t, i) => [t, IC[i]]) },
+                    ];
+                    const voltageSeries = [
+                        { name: 'VAB (V)', data: time.map((t, i) => [t, VA[i]]) },
+                        { name: 'VBC (V)', data: time.map((t, i) => [t, VB[i]]) },
+                        { name: 'VCA (V)', data: time.map((t, i) => [t, VC[i]]) },
+                    ];
+                    const powerSeries = [
+                        { name: 'P(t) (W)', data: time.map((t, i) => [t, P_t[i]]) },
+                        { name: 'Q(t) (Var)', data: time.map((t, i) => [t, Q_t[i]]) },
+                    ];
+
+                    // Create the Plotly charts with smooth curves
+                    createPlotlyChart('currentChart', currentSeries, 'Current Waveforms', 'Current (A)');
+                    createPlotlyChart('voltageChart', voltageSeries, 'Voltage Waveforms', 'Voltage (V)');
+                    createPlotlyChart('powerChart', powerSeries, 'Power Waveforms', 'Power (W / Var)');
                 })
                 .catch(error => console.error("Error fetching chart data:", error));
         }
 
-        // Function to fetch fault detection data
-        function fetchDeviceDataAndUpdateUI(deviceId) {
-            fetch(`/device-data/${deviceId}`)
-                .then(response => response.json())
-                .then(deviceData => {
-                    updateUIWithDeviceData(deviceData);
-                })
-                .catch(error => console.error("Error fetching device data:", error));
-        }
-
-        // Real-time update function using setInterval
-        function startRealTimeUpdates(deviceId) {
-            // Fetch data every 10 seconds for real-time updates
-            setInterval(() => {
-                fetchDeviceDataAndUpdateUI(deviceId);
-                fetchChartDataAndUpdateChart(deviceId);
-            }, 10000); // 10 seconds
-        }
-
-        function fetchDeviceData(deviceId) {
-            const apiUrl = `/devices/${deviceId}data`;
-
-            fetch(apiUrl)
-                .then(response => response.json()) // Parse the JSON response
-                .then(data => {
-                    // Update device details as before
-                    document.getElementById('deviceName').textContent = data.name;
-                    document.getElementById('deviceHealth').textContent = data.health;
-                    document.getElementById('mqttStatus').textContent = data.device_assigned.connection_status;
-                    document.getElementById('encryptionStatus').textContent =
-                        `Encryption: ${data.device_assigned.encryption_key ? "True" : "False"}`;
-                    document.getElementById('lastSync').textContent =
-                        `Last Sync: ${data.device_assigned.last_sync || 'No sync data'}`;
-                    document.getElementById('dataCommunication').textContent =
-                        `Data Comm: ${data.device_assigned.send_mac ? 'Active' : 'Inactive'}`;
-
-                    // Update location details
-                    const location = data.device_assigned.device_location;
-                    const assigneeLocation = data.device_assigned.assignee.locations;
-
-                    // Set location name
-                    document.getElementById('locationName').textContent =
-                        `🏠 ${location.location_name || 'Unknown Location'}`;
-
-                    // Set location address
-                    document.getElementById('locationAddress').textContent =
-                        `${assigneeLocation.address}, ${assigneeLocation.city}, ${assigneeLocation.state}, ${assigneeLocation.country}` ||
-                        'No address available';
-                })
-                .catch(error => {
-                    console.error('Error fetching device data:', error);
-                });
-        }
-        // Call the function to fetch and render the device data
-        window.onload = function() {
-            const deviceId = {{ $device_id }}; // Example device ID
-            fetchDeviceData(deviceId);
-            initializeChart();
-            startRealTimeUpdates(deviceId);
-        };
+        // Initialize charts on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            const deviceId = {{ $device_id }}; // Replace with actual device ID
+            fetchAndGenerateCharts(deviceId);
+        });
     </script>
 @endsection

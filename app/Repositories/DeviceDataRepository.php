@@ -228,18 +228,21 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
     }
     public function getDeviceLineChartData($id)
     {
+        // Fetch the latest device data with the associated device
         $deviceData = $this->model::with('device')
             ->where('device_id', $id)
             ->latest()
             ->first();
 
+        // Check if the device data exists, otherwise return a 404 response
         if (!$deviceData) {
             return response()->json(['message' => 'Device not found'], 404);
         }
 
-        // Decode the event_data JSON field
-        $eventData = json_decode($deviceData->event_data, true);
-        // dd($eventData);
+        // Decode the event_data JSON field safely
+        $eventData = json_decode($deviceData->event_data, true) ?? [];
+
+        // Prepare and return the response
         return response()->json([
             'deviceName' => $deviceData->device->name ?? 'Unknown Device',
             'eventData' => $eventData,
