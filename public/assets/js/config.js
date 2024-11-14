@@ -124,7 +124,7 @@ function updateUIWithDeviceData(deviceData) {
             ? "assets/img/illustrations/red.png"
             : "assets/img/illustrations/green.png";
     const html = `
-        <div class="col-md-12 mt-3">
+        <div class="">
         <div class="text-center fw-semibold pt-3 mb-2">
             <img class="fault-img mb-3" src="${imageSrc}" alt="Device image" style="margin: auto;">
             <div>

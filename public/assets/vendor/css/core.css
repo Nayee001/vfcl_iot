@@ -46,7 +46,7 @@
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.53;
   --bs-body-color: #697a8d;
-  --bs-body-bg: #f5f5f9;
+  /* --bs-body-bg: #f5f5f9; */
 }
 
 *,
@@ -15069,12 +15069,12 @@ html:not(.layout-menu-fixed) .menu-inner-shadow {
 .menu-vertical:not(.menu-no-animation) {
   transition: width 0.3s;
 }
-.menu-vertical,
+/* .menu-vertical,
 .menu-vertical .menu-block,
 .menu-vertical .menu-inner > .menu-item,
 .menu-vertical .menu-inner > .menu-header {
   width: 16.25rem;
-}
+} */
 .menu-vertical .menu-inner {
   flex-direction: column;
   flex: 1 1 auto;
@@ -15406,7 +15406,9 @@ html:not(.layout-menu-fixed) .menu-inner-shadow {
 
   .layout-menu-fixed:not(.layout-menu-collapsed) .layout-page,
 .layout-menu-fixed-offcanvas:not(.layout-menu-collapsed) .layout-page {
-    padding-left: 16.25rem;
+    /* padding-left: 16.25rem; */
+    /* just for temporary basis  */
+    padding-left: 8.25rem;
   }
 }
 html:not(.layout-navbar-fixed):not(.layout-menu-fixed):not(.layout-menu-fixed-offcanvas) .layout-page,

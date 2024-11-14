@@ -638,9 +638,9 @@ a:hover {
           backdrop-filter: saturate(200%) blur(6px);
 }
 
-.navbar-detached {
+/* .navbar-detached {
   box-shadow: 0 0 0.375rem 0.25rem rgba(161, 172, 184, 0.15);
-}
+} */
 
 .layout-navbar-fixed .layout-page:before {
   -webkit-backdrop-filter: saturate(200%) blur(10px);
