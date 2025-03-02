@@ -131,12 +131,12 @@ async function fetchDeviceData(deviceId) {
 
 function updateUIWithDeviceData(deviceData) {
     const falutStatusClass =
-        deviceData.fault_status === "ON" ? "text-danger" : "text-success";
+        deviceData.original.fault_status === "ON" ? "text-danger" : "text-success";
     const deviceStatusClass =
-        deviceData.status === "Active" ? "text-danger" : "text-success";
+        deviceData.original.status === "Active" ? "text-danger" : "text-success";
 
     const imageSrc =
-        deviceData.fault_status === "ON"
+        deviceData.original.fault_status === "ON"
             ? "assets/img/illustrations/red.png"
             : "assets/img/illustrations/green.png";
     const html = `
@@ -145,11 +145,11 @@ function updateUIWithDeviceData(deviceData) {
             <img class="fault-img mb-3" src="${imageSrc}" alt="Device image" style="margin: auto;">
             <div>
                 <span class="fault ${falutStatusClass}">${
-        deviceData.fault_status
+        deviceData.original.fault_status
     }</span><br>
-                <span>${deviceData.device.name}</span><br>
+                <span>${deviceData.original.device.name}</span><br>
                 <span class="fault ${deviceStatusClass}">${
-        deviceData.device.status
+        deviceData.original.device.status
     }</span>
             </div>
         </div>
@@ -160,7 +160,7 @@ function updateUIWithDeviceData(deviceData) {
                     <div>
                         <small>Health Status</small>
                         <h6 class="mb-0"><span class="fw-medium ${falutStatusClass}">${
-        deviceData.health_status
+        deviceData.original.health_status
     }</span></h6>
                     </div>
                 </div>
@@ -169,7 +169,7 @@ function updateUIWithDeviceData(deviceData) {
                     <div>
                         <small>Last Sync</small>
                         <h6 class="mb-0">${formatTimestamp(
-                            deviceData.timestamp
+                            deviceData.original.timestamp
                         )}</h6>
                     </div>
                 </div>
@@ -299,6 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function showData(deviceId) {
     try {
+
         const deviceData = await fetchDeviceData(deviceId);
         updateUIWithDeviceData(deviceData);
         showLineChart(deviceId);

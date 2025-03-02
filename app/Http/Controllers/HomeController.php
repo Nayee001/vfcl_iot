@@ -47,6 +47,15 @@ class HomeController extends Controller
             $locationCount = $this->dashboardService->getLocationNameCount();
             $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
 
+            // Customer Dashboard
+            $user = auth()->user();
+            $showNewUserModel = $user->status === User::USER_STATUS['NEWUSER'];
+            $firstPassword = $user->status === User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
+        $notifications = $this->notificationRepository->notifictionCount($user->id);
+            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)
+                ->where('connection_status', 'Authorized')
+                ->where('status', 'Accept')
+                ->get();
             // Role-based view rendering
             if (isSuperAdmin()) {
                 return view('dashboard.admin-dashboard', compact(
@@ -57,30 +66,20 @@ class HomeController extends Controller
                     'locationCount'
                 ));
             }
-            // Customer Dashboard
-            $user = auth()->user();
-            $showNewUserModel = $user->status === User::USER_STATUS['NEWUSER'];
-            $firstPassword = $user->status === User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
-            $notifications = $this->notificationRepository->notifictionCount($user->id);
-            $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)
-                ->where('connection_status', 'Authorized')
-                ->where('status', 'Accept')
-                ->get();
+
 
             if (isManager()) {
                 $userCount = $this->dashboardService->getCountUsersAddedByManagers(Auth::id());
-                return view('dashboard.manager-dashboard', compact([
-                    'unAuthnewDevices' => $unAuthnewDevices,
-                    'showNewUserModel' => $showNewUserModel,
-                    'firstPassword' => $firstPassword,
+                return view('dashboard.manager-dashboard', compact(
+                    'unAuthnewDevices',
+                    'showNewUserModel',
+                    'firstPassword',
                     'userCount',
                     'deviceTypesWithDeviceCount',
                     'getDeviceTotalCount',
                     'getTotalActiveDevice'
-                ]));
+                ));
             }
-
-
 
             return view('dashboard.customer-dashboard', [
                 'unAuthnewDevices' => $unAuthnewDevices,
@@ -92,7 +91,6 @@ class HomeController extends Controller
                 'getDeviceTotalCount' => $getDeviceTotalCount,
                 'getTotalActiveDevice' => $getTotalActiveDevice
             ]);
-
         } catch (Exception $e) {
             Log::error("Error loading dashboard: {$e->getMessage()}");
             return view('errors.500');  // Show an error page to the user

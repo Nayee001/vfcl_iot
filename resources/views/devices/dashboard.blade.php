@@ -1,4 +1,9 @@
-@extends('layouts.customer-app')
+@php
+    $layout = isSuperAdmin()
+        ? 'layouts.app'
+        : 'layouts.customer-app';
+@endphp
+@extends($layout)
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center mt-1">
@@ -36,20 +41,15 @@
                     <div id="metrics"></div>
                 </div>
 
+                <!-- HTML for metric boxes -->
                 <div class="row g-3">
-                    @foreach ([
-                        ['fas fa-bolt', 'Total Power (PQ)', 'total-power', ' W', 'text-warning'],
-                        ['fas fa-plug', 'Active Power (P)', 'active-power', ' W', 'text-success'],
-                        ['fas fa-wave-square', 'Reactive Power (Q)', 'reactive-power', ' VAR', 'text-danger'],
-                        ['fas fa-tachometer-alt', 'Voltage RMS (Vabc)', 'voltage-rms', ' V', 'text-primary'],
-                        ['fas fa-battery-half', 'Current RMS (Iabc)', 'current-rms', ' A', 'text-info']
-                    ] as $metric)
+                    @foreach ([['fas fa-bolt', 'Total Power (PQ)', 'total-power', ' W', 'text-warning'], ['fas fa-plug', 'Active Power (P)', 'active-power', ' W', 'text-success'], ['fas fa-wave-square', 'Reactive Power (Q)', 'reactive-power', ' VAR', 'text-danger'], ['fas fa-tachometer-alt', 'Voltage RMS (Vabc)', 'voltage-rms', ' V', 'text-primary'], ['fas fa-battery-half', 'Current RMS (Iabc)', 'current-rms', ' A', 'text-info']] as $metric)
                         <div class="col-6 col-md-4 col-lg-2">
                             <div class="card bg-light border-0 shadow-sm text-center p-3">
                                 <div class="icon-container mb-2">
                                     <i class="{{ $metric[0] }} fa-lg {{ $metric[4] }}"></i>
                                 </div>
-                                <h6 class="card-title" style="font-size: 0.85rem;">{{ $metric[1] }}</h6>
+                                <h6 class="card-title" style="font-size: 0.85rem; color:black;">{{ $metric[1] }}</h6>
                                 <h4 class="font-weight-bold" id="{{ $metric[2] }}" style="font-size: 1.25rem;">
                                     --{{ $metric[3] }}
                                 </h4>
@@ -81,16 +81,12 @@
 
                 <div class="card p-4 shadow-sm">
                     <h5 class="text-secondary fw-bold mb-3">Device Control Panel</h5>
-                    @foreach ([
-                        ['Data Communication', 'fridgeSwitch', true],
-                        ['Daily Sync', 'vacuumSwitch', false],
-                        ['Updates', 'kettleSwitch', true]
-                    ] as $control)
+                    @foreach ([['Data Communication', 'fridgeSwitch', true], ['Daily Sync', 'vacuumSwitch', false], ['Updates', 'kettleSwitch', true]] as $control)
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span>{{ $control[0] }}</span>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="{{ $control[1] }}"
-                                       {{ $control[2] ? 'checked' : '' }}>
+                                    {{ $control[2] ? 'checked' : '' }}>
                             </div>
                         </div>
                     @endforeach

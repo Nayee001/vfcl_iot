@@ -95,19 +95,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Device Data Section -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <h5 class="mb-3">Device Data Visualization</h5>
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <canvas id="waveChart" height="100"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Users and Assigned Devices Table -->
         <div class="row mt-4">
             <div class="col-12">
@@ -177,17 +164,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Demo Data -->
-                                <tr>
-                                    <td>Sample Button Device</td>
-                                    <td>6bfa9c</td>
-                                    <td>Authorized</td>
-                                    <td>AkshayTest</td>
-                                    <td>
-                                        {{-- <button class="btn btn-success btn-sm">Authenticate</button> --}}
-                                        <a href="#" class="btn btn-info btn-sm">View</a>
-                                    </td>
-                                </tr>
+
                                 <tr>
                                     <td>Device Test 2</td>
                                     <td>2569ABC</td>

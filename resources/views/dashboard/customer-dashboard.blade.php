@@ -18,17 +18,6 @@
                         features we've crafted just for you.
                     </p>
                 </div>
-                <!-- Right Column: Device Dropdown -->
-                <div class="col-12 col-md-4">
-                    <div class="card border-0">
-                        <div class="card-body">
-                            <label for="device-select" class="form-label">Select Device:</label>
-                            <select id="device-select" class="form-control select2">
-                                <option value="">Choose a device</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
                 <div class="row gy-4">
                     <div class="row gy-4">
                         <div class="col-12 mb-4">

@@ -13,8 +13,8 @@
                     }, // Index column
 
                     {
-                        data: 'name',
-                        name: 'name'
+                        data: 'deviceName',
+                        name: 'deviceName'
                     },
                     {
                         data: 'health',

@@ -1,63 +1,122 @@
-# vFCL IOT Device Health Status Ecosystem
-<p align="center"><a href="#" target="_blank"><img src="public\assets\img\illustrations\MQTT Broker.jpg" width="800" alt="Project Work Flow"></a></p>
 
+# vFCL IoT Device Health Status Ecosystem
 
-The project consists of two parts: one is on virtualizing the Fault Current Limiter, and the other is monitoring and tracking the Health Status using an IoT device (Internet of Things Device).  The work reported here focuses on the Ecosystem for the IoT components with sensing ability for health tracking and monitoring. The Department of Electrical and Cyber Engineering owns this project. Creating a software-based fuse cutout (FCL) system is the initial step. This new technology combines sensors, inverters, and control to provide more dynamic control over electricity, replacing traditional physical fuses. However, this report does not focus on creating control for the vFCL.  The work reported focuses on establishing an IoT-enabled Command Center for Device Health Monitoring as the second step. The IoT ecosystem will use various sensors, Raspberry PI as the primary IoT device for interfacing with the vFCL system, and the MQTT security protocol technologies to collect real-time Device health data for secure communication. The collected data will be transmitted to a central hub to be monitored in real-time, examined in the past, and utilized data to send out notifications for any unusual device health concerns. 
+This repository hosts the web application component of the vFCL IoT Device Health Status Ecosystem. The application provides a command center for monitoring and managing virtualized Fault Current Limiter (vFCL) devices. It leverages Laravel as a backend framework, integrates with MQTT for secure IoT communications, and enables real-time monitoring, historical data analysis, and alert notifications for device health anomalies.
 
-## About Laravel
+## Key Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **IoT Integration (MQTT):** Collect device health data from sensors and Raspberry Pi IoT endpoints.
+- **Real-Time Monitoring:** Visualize device performance and receive alerts for unusual conditions.
+- **Historical Data Review:** Access stored historical data to identify trends and potential issues.
+- **Secure and Scalable:** Built with Laravel, ensuring a robust and maintainable codebase.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prerequisites
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP (8.0+ recommended)**
+- **Composer** (PHP dependency manager)
+- **Database Server** (MySQL, PostgreSQL, or compatible)
+- **Web Server** (Nginx, Apache, or Laravel’s built-in server)
+- **MQTT Broker** (e.g., Mosquitto) accessible to the application and IoT devices
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/your-username/your-project.git
+   cd your-project
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. **Install Dependencies:**
+   ```bash
+   composer install
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. **Set Up Environment Variables:**
+   Copy the example `.env` file and then edit it:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Open `.env` in your preferred editor and update the following:
 
-## Laravel Sponsors
+   - **Application Settings:**
+     ```env
+     APP_NAME="vFCL IOT Health"
+     APP_ENV=local
+     APP_URL=http://localhost
+     ```
+   
+   - **Database Configuration:**
+     ```env
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=vfcl_db
+     DB_USERNAME=root
+     DB_PASSWORD=secret
+     ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+   - **MQTT Settings:**
+     Ensure your IoT devices and MQTT broker align with these settings.
+     ```env
+     MQTT_HOST=broker.example.com
+     MQTT_PORT=1883
+     MQTT_USERNAME=mqttuser
+     MQTT_PASSWORD=mqttpass
+     MQTT_TOPIC=vfcl/health/#
+     ```
 
-### Premium Partners
+   Adjust these values to reflect your actual environment.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+4. **Generate Application Key:**
+   ```bash
+   php artisan key:generate
+   ```
+   
+   This command sets the `APP_KEY` in your `.env` file, ensuring encrypted data remains secure.
+
+5. **Migrate the Database:**
+   Create the necessary tables and optionally seed initial data:
+   ```bash
+   php artisan migrate --seed
+   ```
+
+6. **Start the Server:**
+   Use Laravel’s built-in server for development:
+   ```bash
+   php artisan serve
+   ```
+   
+   The application is now accessible at `http://localhost:8000` (or the URL you specified).
+
+## MQTT Integration
+
+Before integrating real devices, test your MQTT setup:
+
+- **Broker Connectivity:** Confirm you can connect to `MQTT_HOST:MQTT_PORT`.
+- **Test Messages:** Use a tool like `mosquitto_pub` to publish test messages to your topic.
+  
+When devices publish health metrics to the specified MQTT topic, the application listens, processes incoming data, and updates the database and dashboard in real-time.
+
+## Production Deployment
+
+For production:
+
+- Set `APP_ENV=production` and `APP_DEBUG=false` in `.env`.
+- Serve via a stable web server (Nginx/Apache) configured for HTTPS.
+- Ensure proper firewall rules and secure ports for MQTT and web access.
+- Consider load balancing and caching (Redis) for high availability.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Contributions are welcome! Please fork the repository, create a feature branch, and submit a pull request. For significant changes, open an issue first to discuss what you’d like to add.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+This README provides instructions for setting up the Laravel application, configuring the `.env` file, and establishing the MQTT integration within the context of the vFCL IoT Device Health Status Ecosystem.
+
+## Develop by Akshaykumar Nayee made with  ❤️

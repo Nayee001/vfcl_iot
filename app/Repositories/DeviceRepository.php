@@ -151,9 +151,8 @@ class DeviceRepository implements DeviceRepositoryInterface
         } elseif (isManager()) {
             return $this->model::with(['deviceAssigned' => function ($query) {
                 $query->where('manager_id', Auth::id()) // Filter by manager_id
-                      ->where('connection_status', DeviceAssignment::ConnectionStatus['Authorized']); // Filter by authorized connection status
+                    ->where('connection_status', DeviceAssignment::ConnectionStatus['Authorized']); // Filter by authorized connection status
             }, 'deviceAssigned.assignee'])->count();
-
         } else {
             return DeviceAssignment::where('assign_to', Auth::id())->where('connection_status', DeviceAssignment::ConnectionStatus['Authorized'])
                 ->count();
@@ -427,6 +426,11 @@ class DeviceRepository implements DeviceRepositoryInterface
                 $device = $this->getDevices();
                 return DataTables::of($device)
                     ->addIndexColumn()
+                    ->addColumn('deviceName', function ($row) {
+                        $deviceName = '<a href="' . route('devices.dashboard', $row->id) . '" class="text-primary">'
+                            . htmlspecialchars($row->name) . '</a>';
+                        return $deviceName;
+                    })
                     ->addColumn('deviceStatus', function ($row) {
                         switch ($row->status) {
                             case $this->model::STATUS['Active']:
@@ -513,7 +517,7 @@ class DeviceRepository implements DeviceRepositoryInterface
 
                         return $actions;
                     })
-                    ->rawColumns(['deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'assignee', 'location', 'actions', 'apikey'])
+                    ->rawColumns(['deviceName', 'deviceStatus', 'ownedBy', 'createdBy', 'createdtime', 'assignee', 'location', 'actions', 'apikey'])
                     ->make(true);
             }
         } catch (Exception $e) {
