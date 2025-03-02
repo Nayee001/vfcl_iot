@@ -1,4 +1,9 @@
-@extends('layouts.customer-app')
+@php
+    $layout = isSuperAdmin()
+        ? 'layouts.app'
+        : 'layouts.customer-app';
+@endphp
+@extends($layout)
 @section('content')
     <style>
         .step-container {
