@@ -141,7 +141,7 @@
                                 color: axisColor,
                                 label: 'Devices',
                                 formatter: function() {
-                                    return '{{ $deviceTypesWithDeviceCount->sum() }} Devices';
+                                    return '{{ $deviceTypesWithDeviceCount->sum() }}';
                                 }
                             }
                         }
