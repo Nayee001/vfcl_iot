@@ -27,7 +27,7 @@ class UpdateUsersRequest extends FormRequest
             'lname' => 'required',
             'title' => 'required',
             'roles' => 'required',
-            'password' => 'nullable|confirmed',
+            // 'password' => 'nullable|confirmed',
             'email' => "required|email|unique:users,email,{$userId}",
             'phonenumber' => "required|numeric|digits:10|unique:users,phonenumber,{$userId}",
             'address' => 'required',

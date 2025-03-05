@@ -117,7 +117,7 @@ class UserController extends Controller
     {
         $user =  $this->userRepository->getUserById($id);
         $userCount = User::where('created_by', '=', (int)$id)->count();
-        $deviceCount = $this->deviceService->getCount();
+        $deviceCount = $this->deviceService->getTotalCount();
         return view('users.show', compact('user', 'userCount', 'deviceCount'));
     }
 

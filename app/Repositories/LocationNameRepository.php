@@ -106,7 +106,9 @@ class LocationNameRepository implements LocationNameRepositoryInterface
      */
     public function getLocationNamesAsPerCustomer($customer_id)
     {
+        // dump($customer_id);
         $locationName = $this->model::where('user_id', $customer_id)->get();
+        // dd($locationName);
         if ($locationName) {
             return response()->json(['locations' => $locationName]);
         } else {

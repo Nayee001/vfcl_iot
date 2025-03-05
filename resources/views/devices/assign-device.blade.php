@@ -117,17 +117,34 @@
                             $('#loading_spinner').hide(); // Hide spinner
                             $('.no-customer').hide();
                             $('div#location_radio_buttons')
-                                .empty(); // Clear the previous radio buttons
-                            $.each(data.locations, function(key, location) {
+                        .empty(); // Clear previous radio buttons
+
+                            if (data.locations.length > 0) {
+                                $.each(data.locations, function(key, location) {
+                                    $('div#location_radio_buttons').append(
+                                        `<div class="form-check">
+                                <input type="radio" class="form-check-input" name="location_id" id="location_${location.id}" value="${location.id}">
+                                <label class="form-check-label" for="location_${location.id}">${location.location_name}</label>
+                            </div>`
+                                    );
+                                });
+                            } else {
+                                // Alternative message when no location is set
                                 $('div#location_radio_buttons').append(
-                                    `<input type="radio" class="form-check-input" name="location_id" id="location_${location.id}" value="${location.id}">
-                                <label class="form-check-label" for="location_${location.id}">${location.location_name}</label><br>`
+                                    `<div class="alert alert-warning" role="alert">
+                            No location assigned to this user.
+                        </div>`
                                 );
-                            });
+                            }
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             $('#loading_spinner').hide(); // Hide spinner
                             $('.no-customer').hide();
+                            $('div#location_radio_buttons').empty().append(
+                                `<div class="alert alert-danger" role="alert">
+                        Unable to load locations. Please try again later.
+                    </div>`
+                            );
                         }
                     });
                 }, 1000);
@@ -135,6 +152,7 @@
                 $('#loading_spinner').hide(); // Hide spinner immediately if no customer is selected
                 $('div#location_radio_buttons').empty();
             }
+
         });
     });
 </script>
