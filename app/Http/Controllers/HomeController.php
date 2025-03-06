@@ -51,7 +51,7 @@ class HomeController extends Controller
             $user = auth()->user();
             $showNewUserModel = $user->status === User::USER_STATUS['NEWUSER'];
             $firstPassword = $user->status === User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
-        $notifications = $this->notificationRepository->notifictionCount($user->id);
+            $notifications = $this->notificationRepository->notifictionCount($user->id);
             $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)
                 ->where('connection_status', 'Authorized')
                 ->where('status', 'Accept')
@@ -77,7 +77,8 @@ class HomeController extends Controller
                     'userCount',
                     'deviceTypesWithDeviceCount',
                     'getDeviceTotalCount',
-                    'getTotalActiveDevice'
+                    'getTotalActiveDevice',
+                    'user'
                 ));
             }
 

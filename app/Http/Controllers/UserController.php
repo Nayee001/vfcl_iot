@@ -94,7 +94,7 @@ class UserController extends Controller
             if (!$user) {
                 return errorMessage();
             }
-            Mail::to($user->email)->send(new UserCreated($user, $tempPassword));
+            // Mail::to($user->email)->send(new UserCreated($user, $tempPassword));
 
             $location = $this->locationRepository->create($user, $input);
             if ($location) {
@@ -368,19 +368,22 @@ class UserController extends Controller
      */
     public function termsandconditions(Request $request)
     {
-        $this->validate($request, [
-            'terms_and_conditions' => 'required',
+        // Validate input before proceeding
+        $validated = $request->validate([
+            'terms_and_conditions' => 'required|in:1', // Ensures only '1' is accepted
         ]);
+
         try {
-            if ($request->terms_and_conditions) {
-                $user = User::findOrFail(Auth::user()->id);
-                $input['status'] = User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
-                $input['terms_and_conditions'] = User::TERMS_AND_CONDITIONS;
-                $user->update($input);
-                return successMessage('Please Wait ...');
-            }
+            // Update user status
+            $user = User::findOrFail(Auth::id());
+            $user->update([
+                'status' => User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'],
+                'terms_and_conditions' => User::TERMS_AND_CONDITIONS
+            ]);
+
+            return response()->json(['code' => 200, 'message' => 'Terms accepted successfully!']);
         } catch (Exception $e) {
-            return errorMessage();
+            return response()->json(['code' => 500, 'message' => 'Something went wrong!'], 500);
         }
     }
 
