@@ -31,26 +31,34 @@ class DeviceAssignRepository implements DeviceAssignRepositoryInterface
     public function assignDeviceToUser(array $inputdata): bool
     {
         $fillableFields = [
-            'device_id', 'assign_to', 'location_id'
+            'device_id',
+            'assign_to',
+            'location_id'
         ];
 
-
+        // Filter input data based on allowed fields
         $modifiedData = array_intersect_key($inputdata, array_flip($fillableFields));
-        // if ($this->model->where('device_id', $modifiedData['device_id'])->exists()) {
-        //     dd('aa');
-        //     return false;
 
-        // }
-        $modifiedData['assign_by'] = Auth::id();
-        // dd($modifiedData);
+        // Assign the currently authenticated manager
+        $modifiedData['assign_by'] = Auth::id(); // Manager assigning the device
+        $modifiedData['manager_id'] = $modifiedData['assign_to']; // Store manager_id
+
+        // Find the user and device
         $user = User::find($modifiedData['assign_to']);
         $device = Device::find($modifiedData['device_id']);
-        Mail::to($user->email)->send(new \App\Mail\DeviceAssigned($device, $user));
-        $store = (bool) $this->model->create($modifiedData);
-        dd($store);
-        return $store;
 
+        // Check if both user and device exist before proceeding
+        if (!$user || !$device) {
+            return false;
+        }
+
+        // Send email notification (Uncomment if required)
+        // Mail::to($user->email)->send(new \App\Mail\DeviceAssigned($device, $user));
+
+        // Store the assignment
+        return (bool) $this->model->create($modifiedData);
     }
+
 
     public function destroy($id)
     {
