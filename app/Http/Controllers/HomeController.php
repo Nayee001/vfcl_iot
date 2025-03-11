@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DeviceAssignment;
+use App\Models\DeviceData;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,21 +47,27 @@ class HomeController extends Controller
             $getTotalActiveDevice = $this->dashboardService->getTotalActiveDevice();
             $locationCount = $this->dashboardService->getLocationNameCount();
             $deviceTypesWithDeviceCount = $this->dashboardService->getDeviceTypeWithDevicesCount();
-
+            $deviceDataCount = DeviceData::count();
             // Customer Dashboard
             $user = auth()->user();
             $showNewUserModel = $user->status === User::USER_STATUS['NEWUSER'];
             $firstPassword = $user->status === User::USER_STATUS['FIRSTTIMEPASSWORDCHANGED'];
             $notifications = $this->notificationRepository->notifictionCount($user->id);
             $unAuthnewDevices = DeviceAssignment::where('assign_to', $user->id)
-                ->where('connection_status', 'Authorized')
-                ->where('status', 'Accept')
+                ->where('connection_status', 'Not Authorized')
+                ->where('status', 'Reject')
                 ->get();
             // Role-based view rendering
             if (isSuperAdmin()) {
+                $unAuth = DeviceAssignment::where('connection_status', 'Not Authorized')
+                    ->where('status', 'Reject')
+                    ->count();
                 return view('dashboard.admin-dashboard', compact(
                     'managerCount',
+                    'deviceDataCount',
+                    'getTotalActiveDevice',
                     'userCount',
+                    'unAuth',
                     'deviceTypesWithDeviceCount',
                     'getDeviceTotalCount',
                     'locationCount'
@@ -128,6 +135,34 @@ class HomeController extends Controller
             return response()->json(['error' => 'Failed to retrieve line chart data'], 500);
         }
     }
+
+    public function getFaultData()
+    {
+        // Get device IDs assigned to the authenticated user
+        if (isManager()) {
+            $deviceIds = DeviceAssignment::where('manager_id', Auth::id())
+                ->pluck('device_id');
+        } else {
+            $deviceIds = DeviceAssignment::where('assign_to', Auth::id())
+                ->pluck('device_id');
+        }
+        // dd($deviceIds);
+
+        // Fetch fault data for the assigned devices along with device names
+        $faultData = DeviceData::whereIn('device_data.device_id', $deviceIds)
+            ->whereNotNull('device_data.fault_status') // Ensure we only fetch records with a fault status
+            ->join('devices', 'device_data.device_id', '=', 'devices.id') // Join with the devices table
+            ->selectRaw('device_data.fault_status, COUNT(*) as count, device_data.device_id, devices.name')
+            ->groupBy('device_data.fault_status', 'device_data.device_id', 'devices.name')
+            ->get();
+
+        // dd($faultData);
+        return response()->json([
+            'assignedDeviceIds' => $deviceIds,
+            'faultData' => $faultData
+        ]);
+    }
+
 
     /**
      * Get all device messages asynchronously.

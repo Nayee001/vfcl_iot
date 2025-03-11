@@ -74,14 +74,20 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'created_by');
     }
 
+
+    public function deviceAssignments()
+    {
+        return $this->hasMany(DeviceAssignment::class, 'assign_to');
+    }
+
     public function locations()
     {
-        return $this->belongsTo(Location::class, 'id','user_id');
+        return $this->belongsTo(Location::class, 'id', 'user_id');
     }
 
     public function locationNames()
     {
-        return $this->belongsTo(LocationName::class, 'id','user_id');
+        return $this->belongsTo(LocationName::class, 'id', 'user_id');
     }
 
     public function roles()

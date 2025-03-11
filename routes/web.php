@@ -63,7 +63,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/change-password/{id}', [UserController::class, 'changePasswordRequest'])->name('users.password-change');
     Route::post('/terms-and-conditions', [UserController::class, 'termsandconditions'])->name('users.terms-and-conditions');
     Route::get('/users-ajax-datatable', [UserController::class, 'userAjaxDatatable'])->name('users-ajax-datatables');
-    Route::get('/users-show-hierarchy-ajax-datatables/{id}', [UserController::class, 'userShowHierarchyAjaxDatatable'])->name('users-show-hierarchy-ajax-datatables');
+    Route::get('/users-show-hierarchy-ajax-datatables', [UserController::class, 'userShowHierarchyAjaxDatatable'])->name('users-show-hierarchy-ajax-datatables');
     Route::get('/api-connections', [ApiManagerController::class, 'index'])->name('api-connections');
     Route::get('/roles-ajax-datatable', [RoleController::class, 'roleAjaxDatatable'])->name('roles-ajax-datatables');
 
@@ -109,6 +109,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/device-data/{id}', [HomeController::class, 'getdeviceMessage']);
 
     Route::get('/get-device-line-chart-data/{id}', [HomeController::class, 'getDeviceLineChartData']);
+    Route::get('/device-faults/data', [HomeController::class, 'getFaultData']);
 
     Route::get('/notifications/{id}', [NotificationController::class, 'index'])->name('notifications');
 

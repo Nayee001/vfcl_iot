@@ -117,7 +117,7 @@
                             $('#loading_spinner').hide(); // Hide spinner
                             $('.no-customer').hide();
                             $('div#location_radio_buttons')
-                        .empty(); // Clear previous radio buttons
+                                .empty(); // Clear previous radio buttons
 
                             if (data.locations.length > 0) {
                                 $.each(data.locations, function(key, location) {

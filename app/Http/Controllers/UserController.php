@@ -23,7 +23,8 @@ use App\Services\DeviceService;
 use App\Repositories\LocationNameRepository;
 use App\Mail\UserCreated;
 use Illuminate\Support\Facades\Mail;
-
+use App\Models\Device;
+use App\Models\DeviceAssignment;
 
 class UserController extends Controller
 {
@@ -395,13 +396,40 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function userShowHierarchyAjaxDatatable(Request $request, $id)
+    public function userShowHierarchyAjaxDatatable(Request $request)
     {
+        $id = Auth::id();
+        // // Step 1: Fetch users created by the main user
+        // $users = User::where('created_by', (int)$id)
+        //     ->orderBy('id', 'DESC')
+        //     ->with(['creater', 'deviceAssinged'])
+        //     ->get();
+        // // dd($users->pluck('id'));
+        // // Step 2: Fetch devices assigned to these users
+        // $assignedDevices = DeviceAssignment::where('assign_to', $users->pluck('id'))
+        //     ->with('assignee', 'device') // if you want user details in device records
+        //     ->get();
+
+        // Debugging output
+        // dd([
+        //     'users_created_by_main_user' => $users,
+        //     'devices_assigned_to_users' => $assignedDevices
+        // ]);
+        //         $users = User::orderBy('id', 'DESC')
+        //         ->with('creater', 'deviceAssignments.device') // eager load devices through assignments
+        //         ->withTrashed()
+        //         ->where('created_by', '=', (int)$id)
+        //         ->get();
+        // dd($users);
+
         if ($request->ajax()) {
+            // Fetch users created by the main user
             $users = User::orderBy('id', 'DESC')
-                ->with('creater')
-                ->withTrashed()->where('created_by', '=', (int)$id);
-            $users = $users->get();
+                ->with('creater', 'deviceAssignments.device') // eager load devices through assignments
+                ->withTrashed()
+                ->where('created_by', '=', (int)$id)
+                ->get();
+
             return DataTables::of($users)
                 ->addIndexColumn()
                 ->addColumn('role', function ($row) {
@@ -413,39 +441,38 @@ class UserController extends Controller
                     }
                     return $role;
                 })
-                ->addColumn('creater', function ($row) {
-                    $creater = '';
-                    if ($row->creater) {
-                        $role = $row->creater->roles->pluck('name')->first();
-                        $name = $row->creater->fname;
-                        $creater = '<span class="badge bg-label-secondary me-1">' . $name . '</span>';
-                    } else {
-                        $creater = '<span class="badge bg-label-secondary me-1">--</span>';
-                    }
-
-                    return $creater;
+                ->addColumn('user', function ($row) {
+                    return $row->fname;
                 })
                 ->addColumn('devices', function ($row) {
-                    $devices = '<span class="badge bg-label-secondary me-1">--</span>';
-                    return $devices;
+                    // Check if the user has assigned devices
+                    if ($row->deviceAssignments && $row->deviceAssignments->count() > 0) {
+                        $deviceBadges[] = '';
+                        foreach ($row->deviceAssignments as $assignment) {
+                            $deviceBadges[] = '<span class="badge bg-label-success me-1">' . $assignment->device->name . '</span>';
+                        }
+                        return implode(' ', $deviceBadges);
+                    }
+                    return '<span class="badge bg-label-secondary me-1">--</span>';
                 })
                 ->addColumn('status', function ($row) {
-                    $status = '';
-                    if ($row->status == User::USER_STATUS['ACTIVE']) {
-                        $status .= '<span class="badge rounded-pill bg-label-success me-1">Active</span>';
-                    } elseif ($row->status == User::USER_STATUS['NEWUSER']) {
-                        $status .= '<span class="badge rounded-pill bg-label-primary me-1">New User</span>';
-                    } elseif ($row->status == User::USER_STATUS['NOACTIVEDEVICE']) {
-                        $status .= '<span class="badge rounded-pill bg-label-warning me-1">No Active Devices</span>';
-                    } elseif ($row->status == User::USER_STATUS['INACTIVE']) {
-                        $status .= '<span class="badge rounded-pill bg-label-danger me-1">In Active</span>';
+                    switch ($row->status) {
+                        case User::USER_STATUS['NEWUSER']:
+                            return '<span class="badge rounded-pill bg-label-primary">New User</span>';
+                        case User::USER_STATUS['NOACTIVEDEVICE']:
+                            return '<span class="badge rounded-pill bg-label-warning">No Active Device</span>';
+                        case User::USER_STATUS['NOACTIVEDEVICE']:
+                            return '<span class="badge rounded-pill bg-label-warning">No Active Device</span>';
+                        default:
+                            return '<span class="badge rounded-pill bg-label-success">Active</span>';
                     }
-                    return $status;
-                })->addColumn('actions', function ($row) {
+                })
+                ->addColumn('actions', function ($row) {
                     $actions = '';
                     if (Gate::allows('user-edit', $row)) {
-                        $actions .= '<a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn" href="javascript:void(0);"><i
-                    class="bx bx-edit-alt"></i></a>';
+                        $actions .= '<a href="' . route('users.edit', $row->id) . '" title="Edit" class="btn rounded-pill btn-icon btn-outline-primary edit-btn">
+                                        <i class="fa fa-edit"></i>
+                                     </a>';
                     }
                     return $actions;
                 })

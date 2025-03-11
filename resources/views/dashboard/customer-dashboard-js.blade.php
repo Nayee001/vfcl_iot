@@ -1,3 +1,5 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 @section('script')
     @if ($showNewUserModel)
         <script>
@@ -151,7 +153,7 @@
 
         let currentDeviceId;
 
-            function showActivateDeviceModal(deviceId) {
+        function showActivateDeviceModal(deviceId) {
             const device = deviceMap[deviceId];
             const deviceName = device.name;
 
@@ -368,19 +370,19 @@
                                 <p class="card-text"><strong>Mac Address:</strong><span style="color: ${statusIconColor};"> ${device.mac_address}</span></p>
 
                                 ${device.device_assigned.login_to_device == false || device.device_assigned.login_to_device == 0 ? `
-                                                                                                                            ${notLoggedInMessage}
-                                                                                                                        ` : isPending ? `
-                                                                                                                            ${needsAcceptanceMessage}
-                                                                                                                            ${verifyButton}
-                                                                                                                        ` : ''}
+                                                                                                                                        ${notLoggedInMessage}
+                                                                                                                                    ` : isPending ? `
+                                                                                                                                        ${needsAcceptanceMessage}
+                                                                                                                                        ${verifyButton}
+                                                                                                                                    ` : ''}
                             </div>
                             <div class="card-footer">
                                 ${device.device_assigned.status === 'Accept' ? `
-                                                                                                                            <p class="card-text mt-2 mb-0 text-success">${deviceStatusText}</p>
-                                                                                                                        ` : ''}
+                                                                                                                                        <p class="card-text mt-2 mb-0 text-success">${deviceStatusText}</p>
+                                                                                                                                    ` : ''}
                                 ${device.device_assigned.login_to_device == true || device.device_assigned.login_to_device == 1 ? `
-                                                                                                                            <button class="btn btn-primary mt-3" onclick="viewGraph('${device.id}')">See Graph</button>
-                                                                                                                        ` : ''}
+                                                                                                                                        <button class="btn btn-primary mt-3" onclick="viewGraph('${device.id}')">See Graph</button>
+                                                                                                                                    ` : ''}
                                 <button class="btn btn-primary btn-circle mt-3" data-bs-toggle="modal"
                                     data-bs-target="#modalToggle" onclick="activateDevice('${device.id}')">Activate</button>
                             </div>
@@ -467,5 +469,147 @@
                     alert(`Failed to accept device ID ${deviceId}`);
                 });
         };
+
+
+
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     fetch('/device-faults/data')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (!data.faultData || data.faultData.length === 0) {
+        //                 console.error("No fault data found.");
+        //                 return;
+        //             }
+
+        //             let labels = [];
+        //             let datasetData = {};
+
+        //             data.faultData.forEach(entry => {
+        //                 let deviceId = "Device " + entry.device_id;
+        //                 let faultType = entry.fault_status;
+
+        //                 if (!datasetData[faultType]) {
+        //                     datasetData[faultType] = {};
+        //                 }
+
+        //                 datasetData[faultType][deviceId] = entry.count;
+
+        //                 if (!labels.includes(deviceId)) {
+        //                     labels.push(deviceId);
+        //                 }
+        //             });
+
+        //             let datasets = [];
+        //             let colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#BA68C8'];
+
+        //             Object.keys(datasetData).forEach((faultType, index) => {
+        //                 let dataValues = labels.map(device => datasetData[faultType][device] || 0);
+
+        //                 datasets.push({
+        //                     label: faultType,
+        //                     data: dataValues,
+        //                     backgroundColor: colors[index % colors.length]
+        //                 });
+        //             });
+
+        //             let ctx = document.getElementById('faultChart').getContext('2d');
+        //             new Chart(ctx, {
+        //                 type: 'bar', // You can change this to 'pie' for a pie chart
+        //                 data: {
+        //                     labels: labels,
+        //                     datasets: datasets
+        //                 },
+        //                 options: {
+        //                     responsive: true,
+        //                     scales: {
+        //                         x: {
+        //                             title: { display: true, text: "Assigned Devices" }
+        //                         },
+        //                         y: {
+        //                             title: { display: true, text: "Fault Count" },
+        //                             beginAtZero: true
+        //                         }
+        //                     }
+        //                 }
+        //             });
+        //         })
+        //         .catch(error => console.error("Error fetching fault data:", error));
+        // });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/device-faults/data')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.faultData || data.faultData.length === 0) {
+                        console.error("No fault data found.");
+                        document.getElementById("totalFaults").innerText = 0;
+                        return;
+                    }
+
+                    let totalFaults = 0;
+                    let labels = [];
+                    let datasetData = {};
+
+                    data.faultData.forEach(entry => {
+                        let deviceName = entry.name; // Use device name instead of ID
+                        let faultType = entry.fault_status;
+
+                        totalFaults += entry.count;
+
+                        if (!datasetData[faultType]) {
+                            datasetData[faultType] = {};
+                        }
+
+                        datasetData[faultType][deviceName] = entry.count;
+
+                        if (!labels.includes(deviceName)) {
+                            labels.push(deviceName);
+                        }
+                    });
+
+                    document.getElementById("totalFaults").innerText = totalFaults;
+
+                    let datasets = [];
+                    let colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#BA68C8'];
+
+                    Object.keys(datasetData).forEach((faultType, index) => {
+                        let dataValues = labels.map(device => datasetData[faultType][device] || 0);
+
+                        datasets.push({
+                            label: faultType,
+                            data: dataValues,
+                            backgroundColor: colors[index % colors.length]
+                        });
+                    });
+
+                    let ctx = document.getElementById('faultChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: datasets
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: "Assigned Devices"
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: "Fault Count"
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error("Error fetching fault data:", error));
+        });
     </script>
 @endsection

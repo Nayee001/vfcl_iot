@@ -3,101 +3,106 @@
     <div class="container-xxl flex-grow-1">
 
         @if ($showNewUserModel == false)
-
             <div class="row align-items-center mb-4">
                 <!-- Left Column: Welcome Message -->
-                <div class="col-12 col-md-8">
-                    <h4 class="fw-bold mb-3">
-                        <span class="text-muted fw-light">Customer /</span> Dashboard
-                    </h4>
-                    <h5 class="card-title text-primary">
-                        Welcome to {{ env('APP_SHORT_NAME') }}, {{ Auth::user()->fname }} {{ Auth::user()->lname }}! 🎉
-                    </h5>
-                    <p class="instructions-steps">
-                        We're delighted to have you on board. Dive into your personalized dashboard to explore the exciting
-                        features we've crafted just for you.
-                    </p>
-                </div>
-                <div class="row gy-4">
-                    <div class="row gy-4">
-                        <div class="col-12 mb-4">
-                            <div class="row">
-                                <!-- Total Faults Card -->
-                                <div class="col-12 col-sm-6 col-lg-3 mb-4">
-                                    <div class="card text-white bg-danger shadow-sm">
-                                        <div class="card-body">
-                                            <div class="card-title d-flex align-items-center justify-content-between">
-                                                <h5 class="mb-0">Total Faults</h5>
-                                                <i class="fas fa-exclamation-triangle fa-2x"></i>
-                                            </div>
-                                            <div class="mt-4">
-                                                <h2 class="font-weight-bold mb-0">0</h2>
-                                                <small class="text-white-50">Critical issues detected</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Total Devices Card -->
-                                <div class="col-12 col-sm-6 col-lg-3 mb-4">
-                                    <div class="card text-white shadow-sm">
-                                        <div class="card-body">
-                                            <div class="card-title d-flex align-items-center justify-content-between">
-                                                <h5 class="mb-0">Total Devices</h5>
-                                                <i class="text-primary fas fa-server fa-2x"></i>
-                                            </div>
-                                            <div class="mt-4">
-                                                <h2 class="font-weight-bold mb-0">{{ $getDeviceTotalCount }}</h2>
-                                                <small class="text-muted">Devices registered</small>
-                                            </div>
-                                            <div class="progress mt-3" style="height: 5px;">
-                                                <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: {{ ($getTotalActiveDevice / max($getDeviceTotalCount, 1)) * 100 }}%;"
-                                                    aria-valuenow="{{ $getTotalActiveDevice }}" aria-valuemin="0"
-                                                    aria-valuemax="{{ $getDeviceTotalCount }}"></div>
-                                            </div>
-                                            <small class="text-muted">{{ $getTotalActiveDevice }} Active Devices</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- System Health Card -->
-                                <div class="col-12 col-sm-6 col-lg-3 mb-4">
-                                    <div class="card text-white bg-success shadow-sm">
-                                        <div class="card-body">
-                                            <div class="card-title d-flex align-items-center justify-content-between">
-                                                <h5 class="mb-0">System Health</h5>
-                                                <i class="fas fa-heartbeat fa-2x"></i>
-                                            </div>
-                                            <div class="mt-4">
-                                                <h2 class="font-weight-bold mb-0">Good</h2>
-                                                <small class="text-white-50">All systems operational</small>
+                <div class="card bg-transparent shadow-none my-6 border-0">
+                    <div class="card-body row p-0 pb-6 g-6">
+                        <div class="col-12 col-lg-8 card-separator">
+                            <h5 class="mb-2">Welcome back,<span class="h4"> {{ Auth::user()->fname }}
+                                    {{ Auth::user()->lname }} 🎉</span></h5>
+                            <div class="col-12 col-lg-5">
+                                <p>We're delighted to have you on board. Dive into your personalized dashboard to explore
+                                    the exciting
+                                    features we've crafted just for you.</p>
+                            </div>
+                            <div class="d-flex justify-content-between flex-wrap gap-4 me-12">
+                                <div class="d-flex align-items-center gap-4 me-6 me-sm-0">
+                                    <div class="avatar avatar-lg">
+                                        <div class="avatar-initial bg-label-info rounded">
+                                            <div class="text-info">
+                                                <svg width="38" height="38" viewBox="0 0 38 38" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <g id="Laptop">
+                                                        <path id="Vector" opacity="0.2"
+                                                            d="M5.9375 26.125V10.6875C5.9375 10.0576 6.18772 9.45352 6.63312 9.00812C7.07852 8.56272 7.68261 8.3125 8.3125 8.3125H29.6875C30.3174 8.3125 30.9215 8.56272 31.3669 9.00812C31.8123 9.45352 32.0625 10.0576 32.0625 10.6875V26.125H5.9375Z"
+                                                            fill="currentColor"></path>
+                                                        <path id="Vector_2"
+                                                            d="M5.9375 26.125V10.6875C5.9375 10.0576 6.18772 9.45352 6.63312 9.00812C7.07852 8.56272 7.68261 8.3125 8.3125 8.3125H29.6875C30.3174 8.3125 30.9215 8.56272 31.3669 9.00812C31.8123 9.45352 32.0625 10.0576 32.0625 10.6875V26.125M21.375 13.0625H16.625M3.5625 26.125H34.4375V28.5C34.4375 29.1299 34.1873 29.734 33.7419 30.1794C33.2965 30.6248 32.6924 30.875 32.0625 30.875H5.9375C5.30761 30.875 4.70352 30.6248 4.25812 30.1794C3.81272 29.734 3.5625 29.1299 3.5625 28.5V26.125Z"
+                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round"></path>
+                                                    </g>
+                                                </svg>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Locations Card -->
-                                <div class="col-12 col-sm-6 col-lg-3 mb-4">
-                                    <div class="card shadow-sm">
-                                        <div class="card-body">
-                                            <div class="card-title d-flex align-items-center justify-content-between">
-                                                <h5 class="mb-0">Locations</h5>
-                                                <i class="fas fa-map-marker-alt fa-2x text-primary"></i>
-                                            </div>
-                                            <div class="mt-4">
-                                                <h2 class="font-weight-bold mb-0">{{ $locationCount }}</h2>
-                                                <small class="text-muted">Total locations</small>
-                                            </div>
-
+                                    <div class="content-right">
+                                        <p class="mb-0 fw-medium">Total Devices</p>
+                                        <h2 class="font-weight-bold mb-0">{{ $getDeviceTotalCount }}</h2>
+                                        <small class="text-muted">Devices registered</small>
+                                        <div class="progress mt-3" style="height: 5px;">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                style="width: {{ ($getTotalActiveDevice / max($getDeviceTotalCount, 1)) * 100 }}%;"
+                                                aria-valuenow="{{ $getTotalActiveDevice }}" aria-valuemin="0"
+                                                aria-valuemax="{{ $getDeviceTotalCount }}"></div>
                                         </div>
+                                        <small class="text-muted">{{ $getTotalActiveDevice }} Active Devices</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-4">
+                                    <div class="avatar avatar-lg">
+                                        <div class="avatar-initial bg-label-success rounded">
+                                            <div class="text-success">
+                                                <i class="fas fa-heartbeat fa-1x"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="content-right">
+                                        <p class="mb-0 fw-medium">Device System Health</p>
+                                        <h4 class="text-success mb-0">82%</h4>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-4">
+                                    <div class="avatar avatar-lg">
+                                        <div class="avatar-initial bg-label-warning rounded">
+                                            <div class="text-warning">
+                                                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M12 2C8.13 2 5 5.13 5 9C5 13.25 9.5 19.25 11.24 21.44C11.64 21.95 12.36 21.95 12.76 21.44C14.5 19.25 19 13.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z"
+                                                        fill="currentColor" />
+                                                </svg>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="content-right">
+                                        <p class="mb-0 fw-medium">Locations</p>
+                                        <h4 class="text-warning mb-0">{{ $locationCount }}</h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12 col-lg-4 ps-md-4 ps-lg-6">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div>
+                                        <h5 class="mb-1">Total Faults</h5>
+                                        {{-- <p class="mb-9">Weekly report</p> --}}
+                                    </div>
+                                    <div class="time-spending-chart">
+                                        <h4 class="mb-2">
+                                            <span id="totalFaults">0</span>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div id="faultChartContainer" style="min-height: 157px;">
+                                    <canvas id="faultChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-
+                </div>
+                <div class="row gy-4">
                     <!-- Power Consumption Overview -->
                     <div class="col-12 col-lg-8 mb-4">
                         <div class="card shadow-sm">
@@ -327,21 +332,21 @@
     </div>
 
 
-        <div class="container-xxl flex-grow-1">
-            <div class="row">
-                <div class="col-12">
-                    <h1>My Devices</h1>
-                    <!-- Warning Message -->
-                    <div id="top-message"></div>
+    <div class="container-xxl flex-grow-1">
+        <div class="row">
+            <div class="col-12">
+                <h1>My Devices</h1>
+                <!-- Warning Message -->
+                <div id="top-message"></div>
 
-                    <!-- Device Cards Container -->
-                    <div class="row" id="myDevices">
-                        <!-- Device cards will be injected here -->
-                    </div>
-
+                <!-- Device Cards Container -->
+                <div class="row" id="myDevices">
+                    <!-- Device cards will be injected here -->
                 </div>
+
             </div>
         </div>
+    </div>
 
     <!-- Terms and Conditions Modal -->
     <div class="modal fade" id="terms-conditions" tabindex="-1" aria-hidden="true">
@@ -521,7 +526,8 @@
                 </div>
                 <div class="modal-footer justify-content-center">
                     <!-- Optional: Include a button to start the activation process -->
-                    <button type="button" class="btn btn-primary" onclick="redirectToDeviceShow()">Authorize Now</button>
+                    <button type="button" class="btn btn-primary" onclick="redirectToDeviceShow()">Authorize
+                        Now</button>
                 </div>
             </div>
         </div>

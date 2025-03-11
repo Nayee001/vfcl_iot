@@ -134,8 +134,12 @@ class DeviceRepository implements DeviceRepositoryInterface
         if (isSuperAdmin()) {
             return $this->model::count();
         } elseif (isManager()) {
-            return DeviceAssignment::where('assign_to', Auth::id())
-            ->count();
+            // return DeviceAssignment::where('assign_to', Auth::id())
+            // ->count();
+            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->orWhereHas('deviceAssigned', function ($query) {
+                $query->where('assign_to', Auth::id());
+            })
+                ->count();
         } else {
             return DeviceAssignment::where('assign_to', Auth::id())
                 ->count();
@@ -167,16 +171,19 @@ class DeviceRepository implements DeviceRepositoryInterface
             $device =  $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->get();
             return $device;
         } elseif (isManager()) {
-            return $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->orWhereHas('deviceAssigned', function ($query) {
+            $device =  $this->model::with('deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations')->where('created_by', Auth::id())->orWhereHas('deviceAssigned', function ($query) {
                 $query->where('assign_to', Auth::id());
             })
                 ->get();
+
+            return $device;
         } else {
             $device =  $this->model::with(['deviceType', 'deviceOwner', 'createdBy', 'deviceAssigned', 'deviceAssigned.assignee', 'deviceAssigned.deviceLocation', 'deviceAssigned.assignee.locations'])
                 ->whereHas('deviceAssigned', function ($query) {
                     $query->where('assign_to', Auth::id());
                 })
                 ->get();
+
             return $device;
         }
     }

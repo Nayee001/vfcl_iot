@@ -29,8 +29,10 @@
                                                             <div class="d-flex align-items-center">
                                                                 <i class="fas fa-clock me-2 fs-5"></i>
                                                                 <div>
-                                                                    <span class="time-display fs-4 fw-medium">Loading...</span>
-                                                                    <span class="date-display ms-2 text-muted d-block small">MM/DD/YYYY</span>
+                                                                    <span
+                                                                        class="time-display fs-4 fw-medium">Loading...</span>
+                                                                    <span
+                                                                        class="date-display ms-2 text-muted d-block small">MM/DD/YYYY</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -46,10 +48,12 @@
                                                 <div class="status-card bg-soft-primary hover-lift">
                                                     <div class="p-3 text-center position-relative">
                                                         <div class="icon-badge bg-soft-primary">
-                                                            <i class="fas fa-microchip text-primary"></i>
+                                                            {{-- <i class="fas fa-microchip text-primary"></i> --}}
+                                                            <i class='bx bxs-microchip text-primary' ></i>
                                                         </div>
                                                         <h6 class="mb-1 text-primary mt-2">Active Devices</h6>
-                                                        <span class="fw-bold fs-4 text-dark" id="active-devices">0</span>
+                                                        <span class="fw-bold fs-4 text-dark"
+                                                            id="active-devices">{{ $getTotalActiveDevice }}</span>
                                                         <div class="progress mt-2 bg-light" style="height: 2px;">
                                                             <div class="progress-bar bg-primary" style="width: 75%"></div>
                                                         </div>
@@ -60,10 +64,12 @@
                                                 <div class="status-card bg-soft-warning hover-lift">
                                                     <div class="p-3 text-center position-relative">
                                                         <div class="icon-badge bg-soft-warning">
-                                                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                                                            {{-- <i class="fas fa-exclamation-triangle text-warning"></i> --}}
+                                                            <i class='bx bx-question-mark text-warning'></i>
                                                         </div>
-                                                        <h6 class="mb-1 text-warning mt-2">Faulty Devices</h6>
-                                                        <span class="fw-bold fs-4 text-dark" id="faulty-devices">0</span>
+                                                        <h6 class="mb-1 text-warning mt-2">Pending Devices</h6>
+                                                        <span class="fw-bold fs-4 text-dark"
+                                                            id="faulty-devices">{{ $unAuth }}</span>
                                                         <div class="progress mt-2 bg-light" style="height: 2px;">
                                                             <div class="progress-bar bg-warning" style="width: 45%"></div>
                                                         </div>
@@ -74,10 +80,11 @@
                                                 <div class="status-card bg-soft-danger hover-lift">
                                                     <div class="p-3 text-center position-relative">
                                                         <div class="icon-badge bg-soft-danger">
-                                                            <i class="fas fa-bell text-danger"></i>
+                                                            {{-- <i class="fas fa-bell text-danger"></i> --}}
+                                                            <i class='bx bxs-bell-ring text-danger'></i>
                                                         </div>
                                                         <h6 class="mb-1 text-danger mt-2">Alerts Devices</h6>
-                                                        <span class="fw-bold fs-4 text-dark" id="critical-alerts">0</span>
+                                                        <span class="fw-bold fs-4 text-dark" id="critical-alerts">{{$deviceDataCount}}</span>
                                                         <div class="progress mt-2 bg-light" style="height: 2px;">
                                                             <div class="progress-bar bg-danger" style="width: 90%"></div>
                                                         </div>
@@ -90,42 +97,55 @@
                             </div>
 
                             <style>
-                            .hover-lift {
-                                transition: all 0.25s ease;
-                                border-radius: 8px;
-                                box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-                            }
+                                .hover-lift {
+                                    transition: all 0.25s ease;
+                                    border-radius: 8px;
+                                    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+                                }
 
-                            .hover-lift:hover {
-                                transform: translateY(-3px);
-                                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-                            }
+                                .hover-lift:hover {
+                                    transform: translateY(-3px);
+                                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                                }
 
-                            .icon-badge {
-                                width: 36px;
-                                height: 36px;
-                                border-radius: 50%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                position: absolute;
-                                top: -18px;
-                                left: 50%;
-                                transform: translateX(-50%);
-                            }
+                                .icon-badge {
+                                    width: 36px;
+                                    height: 36px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    position: absolute;
+                                    top: -18px;
+                                    left: 50%;
+                                    transform: translateX(-50%);
+                                }
 
-                            .bg-soft-primary { background-color: rgba(13,110,253,0.08); }
-                            .bg-soft-warning { background-color: rgba(255,193,7,0.08); }
-                            .bg-soft-danger { background-color: rgba(220,53,69,0.08); }
+                                .bg-soft-primary {
+                                    background-color: rgba(13, 110, 253, 0.08);
+                                }
 
-                            .btn-soft-primary {
-                                background-color: rgba(13,110,253,0.1);
-                                border-color: transparent;
-                                color: #0d6efd;
-                            }
+                                .bg-soft-warning {
+                                    background-color: rgba(255, 193, 7, 0.08);
+                                }
 
-                            .fs-4 { font-size: 1.5rem; }
-                            .fs-5 { font-size: 1.25rem; }
+                                .bg-soft-danger {
+                                    background-color: rgba(220, 53, 69, 0.08);
+                                }
+
+                                .btn-soft-primary {
+                                    background-color: rgba(13, 110, 253, 0.1);
+                                    border-color: transparent;
+                                    color: #0d6efd;
+                                }
+
+                                .fs-4 {
+                                    font-size: 1.5rem;
+                                }
+
+                                .fs-5 {
+                                    font-size: 1.25rem;
+                                }
                             </style>
 
                             <!-- ✅ Right Side: Illustration (Kept Your Original Image) -->
@@ -180,8 +200,8 @@
                                                 class="rounded" />
                                         </div>
                                         <div class="dropdown">
-                                            <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn p-0" type="button" id="cardOpt6"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
@@ -208,7 +228,8 @@
                         <div class="row row-bordered g-0">
                             <div class="col-md-12">
                                 <h5 class="card-header m-0 me-2 pb-3">Device Hourly Data</h5>
-                                <div id="currentChart" class="px-2"></div> <!-- Updated ID for Current Waveform Chart -->
+                                <div id="currentChart" class="px-2"></div>
+                                <!-- Updated ID for Current Waveform Chart -->
                             </div>
 
                         </div>
@@ -223,11 +244,12 @@
                                 <div class="card-body">
                                     <div class="card-title d-flex align-items-start justify-content-between">
                                         <div class="avatar flex-shrink-0">
-                                            <img src="../assets/img/icons/unicons/map.png" alt="Credit Card" class="rounded" />
+                                            <img src="../assets/img/icons/unicons/map.png" alt="Credit Card"
+                                                class="rounded" />
                                         </div>
                                         <div class="dropdown">
-                                            <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn p-0" type="button" id="cardOpt6"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
@@ -251,11 +273,11 @@
                                 <div class="card-body">
                                     <div class="card-title d-flex align-items-start justify-content-between">
                                         <div class="avatar flex-shrink-0">
-                                            <img src="../assets/img/icons/unicons/devices.png" alt="Credit Card"  />
+                                            <img src="../assets/img/icons/unicons/devices.png" alt="Credit Card" />
                                         </div>
                                         <div class="dropdown">
-                                            <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn p-0" type="button" id="cardOpt6"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
@@ -356,7 +378,7 @@
                 <!-- Transactions -->
                 <div class="col-md-6 col-lg-8  order-2 mb-4">
                     <div class="card h-auto">
-                        <h5 class="card-header m-0 me-2 pb-3">Device Data</h5>
+                        <h5 class="card-header m-0 me-2 pb-3">Alert Devices</h5>
 
                         <div class="card-body">
                             <div class="table-responsive">

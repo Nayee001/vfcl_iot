@@ -114,7 +114,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         }
 
         // Further logic to execute or return the query results
-
+        // dd($latestRecords);
         return $latestRecords;
     }
 
@@ -139,7 +139,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                 $latestRecords = $this->queryLatestDeviceRecords();
 
                 $device =  $latestRecords->get();
-                // dd($device);
+            // dd($device);
                 return DataTables::of($device)
                     ->addIndexColumn()
                     ->addColumn('deviceName', function ($row) {

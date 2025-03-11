@@ -4,8 +4,8 @@
         <h4 class="fw-bold mb-3">
             <span class="text-muted fw-light">Customer /</span> Dashboard
         </h4>
-         <!-- Hero Section -->
-         <div class="hero bg-gradient mb-4 rounded-3 text-center">
+        <!-- Hero Section -->
+        <div class="hero bg-gradient mb-4 rounded-3 text-center">
             <h1 class="display-4">My Deivces 🚀</h1>
         </div>
         <hr class="my-4">
@@ -32,8 +32,8 @@
             </div>
         </div>
     </div>
-        <!-- Activate Device Modal -->
-        <div class="modal fade" id="activateDeviceModal" tabindex="-1" aria-labelledby="activateDeviceModalLabel"
+    <!-- Activate Device Modal -->
+    <div class="modal fade" id="activateDeviceModal" tabindex="-1" aria-labelledby="activateDeviceModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content shadow-lg">
