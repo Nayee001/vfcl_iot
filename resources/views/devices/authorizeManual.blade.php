@@ -1,7 +1,5 @@
 @php
-    $layout = isSuperAdmin()
-        ? 'layouts.app'
-        : 'layouts.customer-app';
+    $layout = isCustomer() ? 'layouts.customer-app' : 'layouts.app';
 @endphp
 @extends($layout)
 @section('content')
