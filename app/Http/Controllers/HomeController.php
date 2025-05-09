@@ -139,14 +139,14 @@ class HomeController extends Controller
     public function getFaultData()
     {
         // Get device IDs assigned to the authenticated user
-        if (isManager()) {
+        if(isManager()){
             $deviceIds = DeviceAssignment::where('manager_id', Auth::id())
-                ->pluck('device_id');
-        } else {
+            ->pluck('device_id');
+        }else{
             $deviceIds = DeviceAssignment::where('assign_to', Auth::id())
-                ->pluck('device_id');
+            ->pluck('device_id');
         }
-        // dd($deviceIds);
+
 
         // Fetch fault data for the assigned devices along with device names
         $faultData = DeviceData::whereIn('device_data.device_id', $deviceIds)
@@ -156,7 +156,6 @@ class HomeController extends Controller
             ->groupBy('device_data.fault_status', 'device_data.device_id', 'devices.name')
             ->get();
 
-        // dd($faultData);
         return response()->json([
             'assignedDeviceIds' => $deviceIds,
             'faultData' => $faultData

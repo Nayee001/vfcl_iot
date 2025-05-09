@@ -72,7 +72,7 @@
                             {
                                 name: 'API Key Verification',
                                 icon: 'fas fa-key',
-                                status: response.device_assigned.send_apikey === 1
+                                status: response.device_assigned.send_mac === 1
                             },
                             {
                                 name: 'Software Update',
@@ -82,7 +82,7 @@
                             {
                                 name: 'Secure Connection',
                                 icon: 'fas fa-shield-alt',
-                                status: response.device_assigned.connection_status === 'Authorized'
+                                status: response.device_assigned.status === 'Accept'
                             }
                         ];
 

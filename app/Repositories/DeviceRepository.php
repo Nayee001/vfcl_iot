@@ -50,7 +50,7 @@ class DeviceRepository implements DeviceRepositoryInterface
 
             // Retrieve device using the API key
             $device = $this->model::where('short_apikey', $associativeArray['api_key'])->first();
-
+            dump($device);
             if (!$device) {
                 Log::error('No device found with the provided API key.', ['api_key' => $associativeArray['api_key']]);
                 throw new \RuntimeException('No device found with the provided API key.');

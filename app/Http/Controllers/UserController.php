@@ -370,9 +370,9 @@ class UserController extends Controller
     public function termsandconditions(Request $request)
     {
         // Validate input before proceeding
-        $validated = $request->validate([
-            'terms_and_conditions' => 'required|in:1', // Ensures only '1' is accepted
-        ]);
+        // $validated = $request->validate([
+        //     'terms_and_conditions' => 'required|in:1', // Ensures only '1' is accepted
+        // ]);
 
         try {
             // Update user status
