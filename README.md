@@ -22,7 +22,7 @@ This repository hosts the web application component of the vFCL IoT Device Healt
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/your-project.git
+   git clone https://github.com/Nayee001/vfcl_iot.git
    cd your-project
    ```
 
