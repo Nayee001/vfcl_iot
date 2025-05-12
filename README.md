@@ -81,7 +81,12 @@ This repository hosts the web application component of the vFCL IoT Device Healt
    php artisan migrate --seed
    ```
 
-6. **Start the Server:**
+6. **Run MQTT Command :**
+   Run Command for connection mqtt to command center over the devices:
+   ```bash
+   php artisan mqtt:app-listener
+   ```
+7. **Start the Server:**
    Use Laravel’s built-in server for development:
    ```bash
    php artisan serve
