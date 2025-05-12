@@ -30,6 +30,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
 
     public function update_device_data($deviceData)
     {
+        dump($deviceData);
         try {
             if ($deviceData) {
                 // Find the device using the API key from the payload
@@ -48,7 +49,8 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                     'fault_status' => 'ON',
                     'topic' => $deviceData['topic'],
                     'health_status' => $deviceData['health_status'],
-                    'timestamp' => $deviceData['timestamps'],
+                    // 'timestamp' => $deviceData['timestamps'],
+                    'timestamp' => Carbon::now(),
                     'event_data' => json_encode($deviceData['event_data'] ?? []),  // Encode as JSON string
                 ];
                 // dd($data);
@@ -60,7 +62,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
                 $timeDifference = $latestRecord ? now()->diffInMinutes($latestRecord->created_at) : PHP_INT_MAX;
                 $threshold = interval(1);  // Interval in minutes
                 if ($latestRecord && $timeDifference < $threshold) {
-                    $latestRecord->update($data);  // Update with JSON-encoded event data
+                    $latestRecord->create($data);  // Update with JSON-encoded event data
                     return $latestRecord;
                 } else {
                     try {
@@ -231,7 +233,7 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
         // Fetch the latest device data with the associated device
         $deviceData = $this->model::with('device')
             ->where('device_id', $id)
-            ->latest()
+
             ->first();
 
         // Check if the device data exists, otherwise return a 404 response
@@ -239,8 +241,10 @@ class DeviceDataRepository implements DeviceDataRepositoryInterface
             return response()->json(['message' => 'Device not found'], 404);
         }
 
-        // Decode the event_data JSON field safely
-        $eventData = json_decode($deviceData->event_data, true) ?? [];
+    $firstDecoded = json_decode($deviceData->event_data, true);
+
+    // Then decode the inner JSON if still string
+    $eventData = is_string($firstDecoded) ? json_decode($firstDecoded, true) : $firstDecoded;
 
         // Prepare and return the response
         return response()->json([

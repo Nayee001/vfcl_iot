@@ -1,5 +1,5 @@
 @php
-    $layout = isCustomer() ? 'layouts.customer-app':'layouts.app';
+    $layout = isCustomer() ? 'layouts.customer-app' : 'layouts.app';
 @endphp
 @extends($layout)
 @section('content')
@@ -33,14 +33,21 @@
             <div class="col-lg-9">
                 <div class="card shadow-sm p-4 mb-4">
                     <h5 class="text-secondary fw-bold mb-3">Wave Metrics</h5>
-                    <div id="currentChart" class="mb-3"></div>
-                    <div id="voltageChart" class="mb-3"></div>
-                    <div id="powerChart" class="mb-3"></div>
-                    <div id="metrics"></div>
+                    <div id="voltageChart" style="height: 400px;"></div>
+                    <div id="currentChart" style="height: 400px;"></div>
+                    <div id="powerChart" style="height: 400px;"></div>
+
+                    <!-- Metric boxes -->
+                    <div id="total-power"></div>
+                    <div id="voltage-rms"></div>
+                    <div id="current-rms"></div>
+                    <div id="active-power"></div>
+                    <div id="reactive-power"></div>
+
                 </div>
 
                 <!-- HTML for metric boxes -->
-                <div class="row g-3">
+                {{-- <div class="row g-3">
                     @foreach ([['fas fa-bolt', 'Total Power (PQ)', 'total-power', ' W', 'text-warning'], ['fas fa-plug', 'Active Power (P)', 'active-power', ' W', 'text-success'], ['fas fa-wave-square', 'Reactive Power (Q)', 'reactive-power', ' VAR', 'text-danger'], ['fas fa-tachometer-alt', 'Voltage RMS (Vabc)', 'voltage-rms', ' V', 'text-primary'], ['fas fa-battery-half', 'Current RMS (Iabc)', 'current-rms', ' A', 'text-info']] as $metric)
                         <div class="col-6 col-md-4 col-lg-2">
                             <div class="card bg-light border-0 shadow-sm text-center p-3">
@@ -54,7 +61,7 @@
                             </div>
                         </div>
                     @endforeach
-                </div>
+                </div> --}}
             </div>
 
             <div class="col-lg-3">

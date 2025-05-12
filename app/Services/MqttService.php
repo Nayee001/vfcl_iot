@@ -16,10 +16,11 @@ class MqttService implements MqttServiceInterface
     protected $mqttClient;
     protected $connectionSettings;
 
-    protected $server = '172.20.120.102';
+    // protected $server = '172.20.120.102';
+    protected $server = "broker.hivemq.com";
     protected $port = 1883;
-    protected $username = 'ubuntu';
-    protected $password = 'Mqtt001';
+    protected $username = '';
+    protected $password = '';
     protected $cleanSession = true;
 
     protected $deviceDataRepository;
@@ -38,9 +39,19 @@ class MqttService implements MqttServiceInterface
         try {
             // Initialize the MQTT client and connection settings
             $this->mqttClient = new MqttClient($this->server, $this->port, uniqid());
-            $this->connectionSettings = (new ConnectionSettings())
-                ->setUsername($this->username)
-                ->setPassword($this->password);
+            // $this->connectionSettings = (new ConnectionSettings())
+            //     ->setUsername($this->username)
+            //     ->setPassword($this->password);
+            $this->connectionSettings = new ConnectionSettings();
+
+            // Only apply if username is not empty or whitespace
+            if (trim($this->username) !== '') {
+                $this->connectionSettings->setUsername($this->username);
+            }
+            if (trim($this->password) !== '') {
+                $this->connectionSettings->setPassword($this->password);
+            }
+
 
             // Attempt to connect to the MQTT broker
             $this->mqttClient->connect($this->connectionSettings, $this->cleanSession);
@@ -56,17 +67,18 @@ class MqttService implements MqttServiceInterface
     public function connectAndSubscribe($topic)
     {
         if (!$this->mqttClient) {
-            dd('whats happaning');
             Log::channel('mqttlogs')->error("MQTT - Unable to subscribe as client is not connected.");
             return response()->view('errors.500', [], 500);
         }
 
         try {
             $this->mqttClient->subscribe($topic, function ($topic, $message) {
+                // dd($message);
                 $associativeArray = json_decode($message, true);
                 if (isset($associativeArray['encryption_key'])) {
                     $this->deviceRepository->deviceVerifications($associativeArray);
                 }
+                dump($associativeArray);
                 $this->deviceDataRepository->update_device_data($associativeArray);
                 $this->deviceLogsRepository->create($associativeArray);
             }, 0);
